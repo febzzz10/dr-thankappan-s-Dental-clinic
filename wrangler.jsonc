@@ -1,6 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "dr-thankappan-s-dental-clinic",
+  "pages_build_command": "npm run build",
   "pages_build_output_dir": "out",
   "compatibility_date": "2026-06-20",
   "compatibility_flags": ["nodejs_compat"],
