@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "deploy": "next build && git add -A && git commit -m \"deploy: %DATE% %TIME%\" && git push"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
