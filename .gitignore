@@ -39,6 +39,9 @@ yarn-error.log*
 # opennext
 .open-next/
 
+# cloudflare (dashboard config takes precedence)
+wrangler.jsonc
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
