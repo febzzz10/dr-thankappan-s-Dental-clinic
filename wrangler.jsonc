@@ -1,0 +1,13 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "dr-thankappan-s-dental-clinic",
+  "compatibility_date": "2026-06-20",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "dental_clinic",
+      "database_name": "dental_clinic",
+      "database_id": "c43ee25b-054a-4c89-8daa-801f1cb3ca81"
+    }
+  ]
+}
