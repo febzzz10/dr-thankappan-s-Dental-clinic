@@ -9,5 +9,11 @@
       "database_name": "dental-clinic",
       "database_id": "3519e5c0-10a1-4a70-9f72-83dc26644b24"
     }
+  ],
+  "r2_buckets": [
+    {
+      "bucket_name": "dental-clinic",
+      "binding": "dental_clinic"
+    }
   ]
 }
