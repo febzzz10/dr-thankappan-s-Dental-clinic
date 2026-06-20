@@ -1,0 +1,3 @@
+module.exports=[62067,a=>{"use strict";var b=a.i(56164),c=a.i(68114);a.s(["Card",0,function({className:a,children:d,as:e="div"}){return(0,b.jsx)(e,{className:(0,c.cn)("doppelrand transition-[transform,opacity,box-shadow] duration-700 ease-[cubic-bezier(0.32,0.72,0,1)] hover:shadow-elevated focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2",a),children:(0,b.jsx)("div",{className:"doppelrand-inner p-6",children:d})})}])},99556,a=>{a.v(b=>Promise.all(["server/chunks/ssr/src_components_home_HeroSection_tsx_0ebospr._.js"].map(b=>a.l(b))).then(()=>b(32217)))}];
+
+//# sourceMappingURL=src_components_05qkdzq._.js.map
