@@ -1,0 +1,145 @@
+'use client';
+
+import Link from 'next/link';
+import { ArrowLeft, Calendar, BadgeCheck } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Container } from '@/components/ui/Section';
+import { Button } from '@/components/ui/Button';
+
+const pageEase = [0.16, 1, 0.3, 1] as const;
+
+const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const dayKeys = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'] as const;
+
+interface DoctorDetailContentProps {
+  doctor: {
+    slug: string;
+    doctor_name: string;
+    qualification: string;
+    specialization: string;
+    experience_yrs: number;
+    bio: string;
+  };
+  availability: Record<string, boolean>;
+}
+
+export function DoctorDetailContent({ doctor, availability }: DoctorDetailContentProps) {
+  return (
+    <div className="min-h-dvh bg-white">
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: pageEase }}
+        className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-12 md:py-16"
+      >
+        <Container>
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <Link
+              href="/doctors"
+              className="mb-6 inline-flex items-center gap-1.5 text-sm font-medium text-slate-500 transition-colors hover:text-teal-600"
+            >
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              Back to Doctors
+            </Link>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.15, ease: pageEase }}
+            className="flex flex-col items-center gap-6 md:flex-row md:items-start"
+          >
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.25 }}
+              className="flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+            >
+              <span className="text-5xl font-bold text-teal-600">
+                {doctor.doctor_name.charAt(0)}
+              </span>
+            </motion.div>
+            <div className="text-center md:text-left">
+              <h1 className="font-display text-fluid-h1 font-bold tracking-tight text-slate-900">
+                {doctor.doctor_name}
+              </h1>
+              <p className="mt-1 text-base font-medium text-teal-600">
+                {doctor.qualification}
+              </p>
+              <p className="mt-1 text-fluid-sm text-slate-600">{doctor.specialization}</p>
+              <div className="mt-4 flex flex-wrap items-center justify-center gap-4 md:justify-start">
+                <span className="rounded-full bg-teal-100 px-4 py-1.5 text-sm font-medium text-teal-700">
+                  {doctor.experience_yrs} years experience
+                </span>
+                <span className="flex items-center gap-1.5 text-sm text-slate-600">
+                  <BadgeCheck className="h-4 w-4 text-teal-600" aria-hidden="true" />
+                  Verified Professional
+                </span>
+              </div>
+            </div>
+          </motion.div>
+        </Container>
+      </motion.div>
+
+      <Container className="py-16">
+        <div className="grid gap-12 grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, ease: pageEase }}
+            className="md:col-span-2"
+          >
+              <h2 className="font-display text-fluid-h3 font-bold text-slate-900">Biography</h2>
+            <p className="mt-4 text-fluid-body text-slate-600">
+              {doctor.bio}
+            </p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, x: 20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.1, ease: pageEase }}
+            className="rounded-2xl border border-slate-100 bg-slate-50 p-6"
+          >
+            <h3 className="font-display text-fluid-h4 font-bold text-slate-900">Availability</h3>
+            <div className="mt-4 space-y-2">
+              {dayNames.map((name, i) => {
+                const key = dayKeys[i];
+                const isAvailable = availability[key];
+                return (
+                  <motion.div
+                    key={key}
+                    initial={{ opacity: 0, x: -10 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.3, delay: i * 0.05 }}
+                    className={`flex items-center justify-between rounded-lg px-3 py-2 text-sm ${isAvailable ? 'bg-white text-slate-700' : 'text-slate-400'}`}
+                  >
+                    <span>{name}</span>
+                    <span className={`text-xs font-medium ${isAvailable ? 'text-emerald-600' : 'text-slate-300'}`}>
+                      {isAvailable ? 'Available' : 'Unavailable'}
+                    </span>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mt-6 block">
+              <Link href="/book">
+                <Button variant="primary" size="md" className="w-full">
+                  <Calendar className="h-4 w-4" aria-hidden="true" />
+                  Book Appointment
+                </Button>
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
+      </Container>
+    </div>
+  );
+}
