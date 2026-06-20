@@ -5,7 +5,7 @@ import Image from 'next/image';
 import { PiHouse, PiStethoscope, PiUsers, PiInfo, PiPhoneCall, PiQuestion, PiCalendarBlank } from 'react-icons/pi';
 import { NavBar as TubelightNav } from '@/components/ui/tubelight-navbar';
 
-const navItems = [
+const desktopNav = [
   { name: 'Home', url: '/', icon: PiHouse },
   { name: 'Services', url: '/services', icon: PiStethoscope },
   { name: 'Doctors', url: '/doctors', icon: PiUsers },
@@ -14,12 +14,14 @@ const navItems = [
   { name: 'FAQ', url: '/faq', icon: PiQuestion },
 ];
 
+const mobileNav = desktopNav.filter((item) => item.name !== 'FAQ');
+
 export function Navbar() {
   return (
     <>
       {/* Mobile — tubelight nav at bottom */}
       <div className="md:hidden">
-        <TubelightNav items={navItems} />
+        <TubelightNav items={mobileNav} />
       </div>
 
       {/* Desktop — floating glass pill nav */}
@@ -36,7 +38,7 @@ export function Navbar() {
 
           {/* Nav links */}
           <nav className="flex items-center gap-1">
-            {navItems.map((item) => (
+            {desktopNav.map((item) => (
               <Link
                 key={item.name}
                 href={item.url}
