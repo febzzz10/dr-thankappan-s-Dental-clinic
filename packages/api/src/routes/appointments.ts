@@ -16,7 +16,7 @@ const createSchema = z.object({
   phone: z.string().min(7).max(20),
   email: z.string().email().optional().or(z.literal('')),
   service_id: z.number().int().positive().optional(),
-  doctor_id: z.number().int().positive().optional(),
+  doctor_id: z.number().int().positive(),
   appointment_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   appointment_time: z.string().regex(/^\d{2}:\d{2}$/),
   slot_id: z.number().int().positive(),
@@ -102,9 +102,9 @@ appointments.post('/', async (c) => {
 
   return c.json({
     success: true,
+    message: 'Appointment booked successfully',
     data: {
       booking_ref: bookingRef,
-      message: 'Appointment booked successfully',
     },
   }, 201);
 });
