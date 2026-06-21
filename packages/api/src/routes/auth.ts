@@ -1,8 +1,8 @@
-import { Hono } from 'hono';
-import { setCookie, deleteCookie } from 'hono/cookie';
-import { compare } from 'bcryptjs';
-import { createToken } from '../lib/jwt';
-import { get } from '../lib/db';
+import { Hono, Context } from 'hono';
+import { setCookie, deleteCookie, getCookie } from 'hono/cookie';
+import { compare, hash } from 'bcryptjs';
+import { createToken, verifyToken } from '../lib/jwt';
+import { get, run } from '../lib/db';
 import { authMiddleware } from '../middleware/auth';
 
 const auth = new Hono<{ Bindings: Env }>();
@@ -19,7 +19,7 @@ interface AdminRow {
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 15 * 60; // 15 minutes in seconds
 
-async function checkRateLimit(c: any, ip: string): Promise<boolean> {
+async function checkRateLimit(c: Context, ip: string): Promise<boolean> {
   const key = `rl:login:${ip}`;
   const kv = c.env.KV_RATE_LIMIT as KVNamespace | undefined;
   if (!kv) return true; // allow if KV not configured
@@ -33,7 +33,7 @@ async function checkRateLimit(c: any, ip: string): Promise<boolean> {
   return true;
 }
 
-async function resetRateLimit(c: any, ip: string): Promise<void> {
+async function resetRateLimit(c: Context, ip: string): Promise<void> {
   const kv = c.env.KV_RATE_LIMIT as KVNamespace | undefined;
   if (kv) await kv.delete(`rl:login:${ip}`);
 }

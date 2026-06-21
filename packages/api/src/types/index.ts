@@ -1,2 +1,1 @@
-export type D1Result<T = unknown> = globalThis.D1Result<T>;
-export type D1Response = Record<string, unknown>;
+// Re-exports provided for convenience. Worker uses @cloudflare/workers-types globals directly.

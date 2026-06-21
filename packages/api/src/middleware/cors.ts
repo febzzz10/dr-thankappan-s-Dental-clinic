@@ -9,7 +9,7 @@ const ALLOWED_ORIGINS = [
 
 export const corsMiddleware = cors({
   origin: (origin, c) => {
-    if (!origin) return '*';
+    if (!origin) return 'http://localhost:3000';
     for (const allowed of ALLOWED_ORIGINS) {
       if (typeof allowed === 'string' && origin === allowed) return origin;
       if (allowed instanceof RegExp && allowed.test(origin)) return origin;
