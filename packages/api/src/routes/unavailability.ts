@@ -35,7 +35,10 @@ unavailability.post('/', authMiddleware, async (c) => {
 unavailability.delete('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
   if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
-  await run(c.env.DB, 'DELETE FROM doctor_unavailability WHERE id = ?', [id]);
+  const result = await run(c.env.DB, 'DELETE FROM doctor_unavailability WHERE id = ?', [id]);
+  if (result.meta.changes === 0) {
+    return c.json({ success: false, error: 'NOT_FOUND', message: 'Unavailability record not found' }, 404);
+  }
   return c.json({ success: true, data: { id } });
 });
 

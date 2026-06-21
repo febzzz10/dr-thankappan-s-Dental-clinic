@@ -131,6 +131,7 @@ slots.post('/generate', authMiddleware, async (c) => {
 // Admin: update a single slot
 slots.patch('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
+  if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
   const body = await c.req.json();
   const { status, procedure_type } = body;
 
@@ -165,6 +166,7 @@ slots.patch('/:id', authMiddleware, async (c) => {
 // Admin: delete a slot
 slots.delete('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
+  if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
   const slot = await get<any>(c.env.DB, 'SELECT id, status FROM slots WHERE id = ?', [id]);
 
   if (!slot) {
