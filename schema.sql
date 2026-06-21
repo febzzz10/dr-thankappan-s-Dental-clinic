@@ -1,72 +1,93 @@
 -- ================================================================
--- USERS — Admin accounts only (no patient accounts in v1)
+-- ADMINS (replaces users)
 -- ================================================================
-CREATE TABLE IF NOT EXISTS users (
-  id          INTEGER PRIMARY KEY AUTOINCREMENT,
-  name        TEXT    NOT NULL,
-  email       TEXT    NOT NULL UNIQUE,
-  password    TEXT    NOT NULL,
-  role        TEXT    NOT NULL DEFAULT 'admin'
-                      CHECK(role IN ('admin', 'superadmin')),
-  is_active   INTEGER NOT NULL DEFAULT 1
-                      CHECK(is_active IN (0, 1)),
-  created_at  TEXT    NOT NULL DEFAULT (datetime('now')),
-  updated_at  TEXT    NOT NULL DEFAULT (datetime('now'))
+CREATE TABLE IF NOT EXISTS admins (
+  id            INTEGER PRIMARY KEY AUTOINCREMENT,
+  name          TEXT    NOT NULL,
+  email         TEXT    NOT NULL UNIQUE,
+  password_hash TEXT    NOT NULL,
+  role          TEXT    NOT NULL DEFAULT 'admin'
+                CHECK(role IN ('admin','superadmin')),
+  is_active     INTEGER NOT NULL DEFAULT 1,
+  created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TRIGGER IF NOT EXISTS admins_updated_at
+AFTER UPDATE ON admins
+WHEN OLD.updated_at IS DISTINCT FROM NEW.updated_at
+BEGIN
+  UPDATE admins SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
 -- ================================================================
--- APPOINTMENTS — Core business table
+-- APPOINTMENTS
 -- ================================================================
 CREATE TABLE IF NOT EXISTS appointments (
-  id               INTEGER PRIMARY KEY AUTOINCREMENT,
-  booking_ref      TEXT    NOT NULL UNIQUE,
-  patient_name     TEXT    NOT NULL,
-  phone            TEXT    NOT NULL,
-  email            TEXT,
-  treatment        TEXT    NOT NULL,
-  appointment_date TEXT    NOT NULL,
-  appointment_time TEXT    NOT NULL,
-  slot_id          INTEGER REFERENCES slots(id) ON DELETE SET NULL,
-  notes            TEXT,
-  status           TEXT    NOT NULL DEFAULT 'pending'
-                   CHECK(status IN (
-                     'pending','confirmed','rejected','completed','cancelled'
-                   )),
-  whatsapp_sent    INTEGER NOT NULL DEFAULT 0
-                   CHECK(whatsapp_sent IN (0, 1)),
-  admin_notes      TEXT,
-  created_at       TEXT    NOT NULL DEFAULT (datetime('now')),
-  updated_at       TEXT    NOT NULL DEFAULT (datetime('now'))
+  id                      INTEGER PRIMARY KEY AUTOINCREMENT,
+  booking_ref             TEXT    NOT NULL UNIQUE,
+  patient_name            TEXT    NOT NULL,
+  phone                   TEXT    NOT NULL,
+  email                   TEXT,
+  service_id              INTEGER REFERENCES services(id),
+  treatment_name_snapshot TEXT,
+  doctor_id              INTEGER NOT NULL REFERENCES doctors(id),
+  appointment_date        TEXT    NOT NULL,
+  appointment_time        TEXT    NOT NULL,
+  slot_id                 INTEGER REFERENCES slots(id),
+  notes                   TEXT,
+  status                  TEXT    NOT NULL DEFAULT 'PENDING'
+                          CHECK(status IN ('PENDING','CONFIRMED','REJECTED','COMPLETED','CANCELLED','NO_SHOW')),
+  whatsapp_sent           INTEGER NOT NULL DEFAULT 0,
+  admin_notes             TEXT,
+  cancellation_reason     TEXT,
+  created_at              TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at              TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
-CREATE INDEX IF NOT EXISTS idx_appt_date   ON appointments(appointment_date);
-CREATE INDEX IF NOT EXISTS idx_appt_status ON appointments(status);
-CREATE INDEX IF NOT EXISTS idx_appt_phone  ON appointments(phone);
-CREATE INDEX IF NOT EXISTS idx_appt_ref    ON appointments(booking_ref);
+CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
+CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(appointment_date);
+CREATE INDEX IF NOT EXISTS idx_appointments_doctor ON appointments(doctor_id);
+CREATE INDEX IF NOT EXISTS idx_appointments_ref ON appointments(booking_ref);
+
+CREATE TRIGGER IF NOT EXISTS appointments_updated_at
+AFTER UPDATE ON appointments
+WHEN OLD.updated_at IS DISTINCT FROM NEW.updated_at
+BEGIN
+  UPDATE appointments SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
 
 -- ================================================================
--- SLOTS — Weekly time slot schedule
+-- SLOTS (date-specific, replaces day_of_week template)
 -- ================================================================
 CREATE TABLE IF NOT EXISTS slots (
-  id           INTEGER PRIMARY KEY AUTOINCREMENT,
-  day_of_week  TEXT    NOT NULL
-               CHECK(day_of_week IN (
-                 'monday','tuesday','wednesday',
-                 'thursday','friday','saturday','sunday'
-               )),
-  start_time   TEXT    NOT NULL,
-  end_time     TEXT    NOT NULL,
-  label        TEXT,
-  is_active    INTEGER NOT NULL DEFAULT 1
-               CHECK(is_active IN (0, 1)),
-  created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
-  CONSTRAINT chk_slot_time CHECK(end_time > start_time)
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  date           TEXT    NOT NULL,
+  start_time     TEXT    NOT NULL,
+  end_time       TEXT    NOT NULL,
+  slot_label     TEXT,
+  status         TEXT    NOT NULL DEFAULT 'available'
+                 CHECK(status IN ('available','booked','blocked')),
+  doctor_id      INTEGER NOT NULL REFERENCES doctors(id),
+  procedure_type TEXT,
+  created_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+  CONSTRAINT chk_slot_time CHECK(end_time > start_time),
+  UNIQUE(date, start_time, doctor_id)
 );
 
-CREATE INDEX IF NOT EXISTS idx_slots_day ON slots(day_of_week, is_active);
+CREATE INDEX IF NOT EXISTS idx_slots_date ON slots(date, status);
+CREATE INDEX IF NOT EXISTS idx_slots_doctor ON slots(doctor_id, date);
+
+CREATE TRIGGER IF NOT EXISTS slots_updated_at
+AFTER UPDATE ON slots
+WHEN OLD.updated_at IS DISTINCT FROM NEW.updated_at
+BEGIN
+  UPDATE slots SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
 
 -- ================================================================
--- HOLIDAYS — Specific dates clinic is closed
+-- HOLIDAYS
 -- ================================================================
 CREATE TABLE IF NOT EXISTS holidays (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -76,7 +97,7 @@ CREATE TABLE IF NOT EXISTS holidays (
 );
 
 -- ================================================================
--- SERVICES — Dental treatments offered
+-- SERVICES (soft-delete via deleted_at)
 -- ================================================================
 CREATE TABLE IF NOT EXISTS services (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -90,12 +111,20 @@ CREATE TABLE IF NOT EXISTS services (
   is_active    INTEGER NOT NULL DEFAULT 1
                CHECK(is_active IN (0, 1)),
   sort_order   INTEGER NOT NULL DEFAULT 0,
+  deleted_at   TEXT,
   created_at   TEXT    NOT NULL DEFAULT (datetime('now')),
   updated_at   TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TRIGGER IF NOT EXISTS services_updated_at
+AFTER UPDATE ON services
+WHEN OLD.updated_at IS DISTINCT FROM NEW.updated_at
+BEGIN
+  UPDATE services SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
 -- ================================================================
--- DOCTORS — Clinic staff profiles
+-- DOCTORS (soft-delete via deleted_at)
 -- ================================================================
 CREATE TABLE IF NOT EXISTS doctors (
   id              INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -110,12 +139,35 @@ CREATE TABLE IF NOT EXISTS doctors (
   is_active       INTEGER NOT NULL DEFAULT 1
                   CHECK(is_active IN (0, 1)),
   sort_order      INTEGER NOT NULL DEFAULT 0,
+  deleted_at      TEXT,
   created_at      TEXT    NOT NULL DEFAULT (datetime('now')),
   updated_at      TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
+CREATE TRIGGER IF NOT EXISTS doctors_updated_at
+AFTER UPDATE ON doctors
+WHEN OLD.updated_at IS DISTINCT FROM NEW.updated_at
+BEGIN
+  UPDATE doctors SET updated_at = datetime('now') WHERE id = NEW.id;
+END;
+
 -- ================================================================
--- TESTIMONIALS — Patient reviews
+-- DOCTOR_UNAVAILABILITY (date range — supports multi-day leave)
+-- ================================================================
+CREATE TABLE IF NOT EXISTS doctor_unavailability (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  doctor_id  INTEGER NOT NULL REFERENCES doctors(id) ON DELETE CASCADE,
+  start_date TEXT    NOT NULL,
+  end_date   TEXT    NOT NULL,
+  reason     TEXT,
+  created_at TEXT    NOT NULL DEFAULT (datetime('now')),
+  CONSTRAINT chk_dates CHECK(end_date >= start_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_doc_unavail ON doctor_unavailability(doctor_id, start_date, end_date);
+
+-- ================================================================
+-- TESTIMONIALS
 -- ================================================================
 CREATE TABLE IF NOT EXISTS testimonials (
   id           INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -128,6 +180,20 @@ CREATE TABLE IF NOT EXISTS testimonials (
   source       TEXT    NOT NULL DEFAULT 'manual'
                CHECK(source IN ('website','google','manual')),
   created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+-- ================================================================
+-- FAQS
+-- ================================================================
+CREATE TABLE IF NOT EXISTS faqs (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  question   TEXT    NOT NULL,
+  answer     TEXT    NOT NULL,
+  category   TEXT    NOT NULL DEFAULT 'general',
+  is_visible INTEGER NOT NULL DEFAULT 1
+             CHECK(is_visible IN (0, 1)),
+  sort_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
 -- ================================================================
@@ -158,20 +224,6 @@ CREATE TABLE IF NOT EXISTS banners (
              CHECK(is_active IN (0, 1)),
   sort_order INTEGER NOT NULL DEFAULT 0,
   expires_at TEXT,
-  created_at TEXT    NOT NULL DEFAULT (datetime('now'))
-);
-
--- ================================================================
--- FAQS — Frequently Asked Questions
--- ================================================================
-CREATE TABLE IF NOT EXISTS faqs (
-  id         INTEGER PRIMARY KEY AUTOINCREMENT,
-  question   TEXT    NOT NULL,
-  answer     TEXT    NOT NULL,
-  category   TEXT    NOT NULL DEFAULT 'general',
-  is_visible INTEGER NOT NULL DEFAULT 1
-             CHECK(is_visible IN (0, 1)),
-  sort_order INTEGER NOT NULL DEFAULT 0,
   created_at TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
