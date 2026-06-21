@@ -1,0 +1,22 @@
+{
+  "name": "dental-api",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-06-21",
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "dental-clinic",
+      "database_id": "3519e5c0-10a1-4a70-9f72-83dc26644b24"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "dental-clinic"
+    }
+  ],
+  "vars": {
+    "NODE_VERSION": "22"
+  }
+}

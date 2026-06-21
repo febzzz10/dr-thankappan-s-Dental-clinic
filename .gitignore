@@ -41,6 +41,7 @@ yarn-error.log*
 
 # cloudflare (dashboard config takes precedence)
 wrangler.jsonc
+!packages/api/wrangler.jsonc
 
 # typescript
 *.tsbuildinfo
