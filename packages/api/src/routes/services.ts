@@ -38,6 +38,7 @@ services.post('/', authMiddleware, async (c) => {
 
 services.patch('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
+  if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
   const body = await c.req.json();
   const allowed = ['slug', 'service_name', 'short_desc', 'description', 'icon', 'image_url', 'price_from', 'is_active', 'sort_order'];
   const updates: string[] = [];
@@ -55,17 +56,25 @@ services.patch('/:id', authMiddleware, async (c) => {
   }
 
   bindings.push(id);
-  await run(c.env.DB, `UPDATE services SET ${updates.join(', ')} WHERE id = ? AND deleted_at IS NULL`, bindings);
+  const result = await run(c.env.DB, `UPDATE services SET ${updates.join(', ')} WHERE id = ? AND deleted_at IS NULL`, bindings);
+
+  if (result.meta.changes === 0) {
+    return c.json({ success: false, error: 'NOT_FOUND', message: 'Service not found or already deleted' }, 404);
+  }
 
   return c.json({ success: true, data: { id } });
 });
 
 services.delete('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
-  await run(c.env.DB,
+  if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
+  const result = await run(c.env.DB,
     "UPDATE services SET deleted_at = datetime('now'), is_active = 0 WHERE id = ? AND deleted_at IS NULL",
     [id]
   );
+  if (result.meta.changes === 0) {
+    return c.json({ success: false, error: 'NOT_FOUND', message: 'Service not found or already deleted' }, 404);
+  }
   return c.json({ success: true, data: { id } });
 });
 
