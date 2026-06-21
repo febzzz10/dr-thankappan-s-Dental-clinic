@@ -1,7 +1,7 @@
 'use client';
 
 import { PiChatCircle } from 'react-icons/pi';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 export function WhatsAppFab() {
   const number = mockData.settings.whatsapp_number;

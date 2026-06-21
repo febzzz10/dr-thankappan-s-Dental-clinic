@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import type { Settings } from '@/types';
 
 export default function AdminSettingsPage() {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Star, Eye, EyeOff, Trash2 } from 'lucide-react';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 export default function AdminContentPage() {
   const [testimonials, setTestimonials] = useState(mockData.testimonials);

@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { PiArrowRight } from 'react-icons/pi';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 const containerVariants = {
   hidden: { opacity: 0 },

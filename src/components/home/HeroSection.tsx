@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { PiCalendarBlank, PiChatCircle, PiShield, PiClock, PiSparkle, PiShieldCheck, PiUsers, PiSmiley } from 'react-icons/pi';
 import { motion } from 'framer-motion';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { generateWhatsAppUrl } from '@/lib/utils';
 
 const containerVariants = {

@@ -3,7 +3,7 @@
 import { PiStar, PiCaretLeft, PiCaretRight, PiQuotes } from 'react-icons/pi';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 export function TestimonialsSection() {
   const testimonials = mockData.testimonials.filter(t => t.is_visible);

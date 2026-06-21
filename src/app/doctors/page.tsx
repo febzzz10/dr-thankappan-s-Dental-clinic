@@ -5,7 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 const cardEase = [0.16, 1, 0.3, 1] as const;
 

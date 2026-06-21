@@ -3,7 +3,7 @@
 import { Star, Quote } from 'lucide-react';
 import { Container, SectionHeader } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 export default function TestimonialsPage() {
   const testimonials = mockData.testimonials.filter(t => t.is_visible);

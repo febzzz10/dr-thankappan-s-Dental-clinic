@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 const pageEase = [0.16, 1, 0.3, 1] as const;
 

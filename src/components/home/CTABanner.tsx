@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { PiCalendarBlank, PiChatCircle } from 'react-icons/pi';
 import { motion } from 'framer-motion';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { generateWhatsAppUrl } from '@/lib/utils';
 
 export function CTABanner() {

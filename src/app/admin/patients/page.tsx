@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { Search, Phone, Calendar } from 'lucide-react';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 export default function AdminPatientsPage() {
   const [search, setSearch] = useState('');

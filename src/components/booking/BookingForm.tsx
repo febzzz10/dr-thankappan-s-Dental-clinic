@@ -6,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiArrowRight, PiCheck } from 'react-icons/pi';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Input';
-import { mockData, getAvailableSlots, generateBookingRef } from '@/lib/api';
+import { mockData, getAvailableSlots, generateBookingRef } from '@/lib/mock-data';
 import type { AvailableSlot } from '@/types';
 import { formatDate, generateWhatsAppUrl } from '@/lib/utils';
 

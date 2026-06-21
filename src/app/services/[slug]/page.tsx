@@ -3,7 +3,7 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { Container } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { ServiceDetailContent } from '@/components/services/ServiceDetailContent';
 
 const iconMap: Record<string, React.ElementType> = {

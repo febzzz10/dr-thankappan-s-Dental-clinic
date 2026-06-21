@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, BadgeCheck } from 'lucide-react';
 import { Container } from '@/components/ui/Section';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { DoctorDetailContent } from '@/components/doctors/DoctorDetailContent';
 
 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];

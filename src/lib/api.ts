@@ -1,5 +1,3 @@
-import type { AvailableSlot } from '@/types';
-
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
 export class ApiError extends Error {
@@ -27,7 +25,7 @@ async function request<T>(
     },
   });
 
-  const json = await res.json();
+  const json: { success: boolean; data?: T; error?: string; message?: string } = await res.json();
 
   if (!res.ok || !json.success) {
     throw new ApiError(
@@ -48,147 +46,278 @@ export const api = {
     request<T>(path, { method: 'PUT', body: JSON.stringify(body) }),
   patch: <T>(path: string, body: unknown) =>
     request<T>(path, { method: 'PATCH', body: JSON.stringify(body) }),
-  delete: <T>(path: string) =>
+  del: <T>(path: string) =>
     request<T>(path, { method: 'DELETE' }),
 };
 
-export async function fetchServer<T>(
-  path: string,
-  revalidate: number | false = 3600
-): Promise<T> {
-  const res = await fetch(`${BASE_URL}${path}`, {
-    next: revalidate === false ? { revalidate: 0 } : { revalidate },
-  });
-  if (!res.ok) throw new Error(`Server fetch failed: ${path} → ${res.status}`);
-  const json = await res.json();
-  if (!json.success) throw new Error(json.message ?? 'API error');
-  return json.data as T;
+// ---- Auth ----
+export interface AdminUser {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
 }
 
-const MOCK_PHONE = '+91 94471 21519';
-const MOCK_WHATSAPP = '919447121519';
-
-export const mockData = {
-  services: [
-    { id: 1, slug: 'dental-cleaning', service_name: 'Dental Cleaning', short_desc: 'Professional scaling and polishing to remove plaque and tartar buildup.', description: 'Complete dental cleaning procedure including scaling, polishing, and fluoride treatment. Recommended every 6 months.', icon: 'Sparkles', image_url: null, price_from: 500, is_active: true, sort_order: 1 },
-    { id: 2, slug: 'root-canal', service_name: 'Root Canal Treatment', short_desc: 'Painless root canal therapy to save infected teeth.', description: 'Advanced root canal treatment using modern techniques. Save your natural tooth and eliminate pain.', icon: 'Syringe', image_url: null, price_from: 3000, is_active: true, sort_order: 2 },
-    { id: 3, slug: 'dental-implants', service_name: 'Dental Implants', short_desc: 'Permanent tooth replacement with titanium implants.', description: 'State-of-the-art dental implant surgery for missing teeth. Natural-looking and long-lasting results.', icon: 'Award', image_url: null, price_from: 15000, is_active: true, sort_order: 3 },
-    { id: 4, slug: 'braces-aligners', service_name: 'Braces & Aligners', short_desc: 'Straighten your teeth with braces or invisible aligners.', description: 'Comprehensive orthodontic treatment including metal braces, ceramic braces, and clear aligners.', icon: 'Smile', image_url: null, price_from: 25000, is_active: true, sort_order: 4 },
-    { id: 5, slug: 'teeth-whitening', service_name: 'Teeth Whitening', short_desc: 'Professional teeth whitening for a brighter smile.', description: 'Safe and effective teeth whitening treatment. Get visibly brighter teeth in a single session.', icon: 'Sun', image_url: null, price_from: 3000, is_active: true, sort_order: 5 },
-    { id: 6, slug: 'cosmetic-dentistry', service_name: 'Cosmetic Dentistry', short_desc: 'Enhance your smile with veneers, bonding, and more.', description: 'Complete smile makeover services including veneers, composite bonding, and gum contouring.', icon: 'Heart', image_url: null, price_from: 8000, is_active: true, sort_order: 6 },
-    { id: 7, slug: 'pediatric-dentistry', service_name: 'Pediatric Dentistry', short_desc: 'Gentle dental care for children of all ages.', description: 'Child-friendly dental environment with specialized pediatric care. Building healthy habits from an early age.', icon: 'Baby', image_url: null, price_from: 400, is_active: true, sort_order: 7 },
-    { id: 8, slug: 'gum-treatment', service_name: 'Gum Disease Treatment', short_desc: 'Treatment for gingivitis and periodontitis.', description: 'Comprehensive gum disease diagnosis and treatment including scaling, root planing, and laser therapy.', icon: 'Shield', image_url: null, price_from: 1500, is_active: true, sort_order: 8 },
-  ],
-  doctors: [
-    { id: 1, slug: 'dr-nishna-thankappan', doctor_name: 'Dr. Nishna Thankappan', qualification: 'Pediatric Dentist', specialization: 'Pediatric Dentistry', experience_yrs: 8, bio: 'Dr. Nishna Thankappan is a caring pediatric dentist dedicated to providing gentle and compassionate dental care for children.', image_url: null, availability: '{"mon":true,"tue":true,"wed":true,"thu":true,"fri":true,"sat":true,"sun":false}', is_active: true, sort_order: 1 },
-    { id: 2, slug: 'dr-noel-joshi', doctor_name: 'Dr. Noel Joshi', qualification: 'Endodontist', specialization: 'Root Canal & Endodontics', experience_yrs: 9, bio: 'Dr. Noel Joshi is a skilled endodontist specializing in root canal treatments and dental pain management. He is committed to providing pain-free and effective care.', image_url: null, availability: '{"mon":true,"tue":true,"wed":true,"thu":true,"fri":true,"sat":false,"sun":false}', is_active: true, sort_order: 2 },
-    { id: 3, slug: 'dr-anila-britta', doctor_name: 'Dr. Anila Britta', qualification: 'Oral Surgeon', specialization: 'Oral Surgery & Implants', experience_yrs: 10, bio: 'Dr. Anila Britta is an experienced oral surgeon specializing in dental implants, extractions, and reconstructive jaw surgery.', image_url: null, availability: '{"mon":true,"tue":true,"wed":false,"thu":true,"fri":true,"sat":true,"sun":false}', is_active: true, sort_order: 3 },
-    { id: 4, slug: 'dr-arya-sreedhar', doctor_name: 'Dr. Arya Sreedhar', qualification: 'Periodontist', specialization: 'Gum Care & Periodontics', experience_yrs: 7, bio: 'Dr. Arya Sreedhar is a skilled periodontist specializing in gum disease treatment, scaling, and periodontal surgery.', image_url: null, availability: '{"mon":true,"tue":true,"wed":true,"thu":true,"fri":true,"sat":false,"sun":false}', is_active: true, sort_order: 4 },
-  ],
-  testimonials: [
-    { id: 1, patient_name: 'Ananya Gupta', rating: 5, review: 'Best dental clinic in town! Dr. Priya was extremely gentle during my root canal. I barely felt any pain. Highly recommend!', treatment: 'Root Canal Treatment', is_visible: true, source: 'website', created_at: '2025-12-01' },
-    { id: 2, patient_name: 'Rahul Verma', rating: 5, review: 'Got my braces done here. The team was very supportive throughout the 18-month treatment. My smile has completely transformed!', treatment: 'Braces', is_visible: true, source: 'google', created_at: '2025-11-15' },
-    { id: 3, patient_name: 'Meera Iyer', rating: 4, review: 'Very professional clinic with modern equipment. My dental cleaning was thorough and painless. The staff is courteous.', treatment: 'Dental Cleaning', is_visible: true, source: 'website', created_at: '2025-10-20' },
-    { id: 4, patient_name: 'Suresh Kumar', rating: 5, review: 'I got a dental implant done here and it feels just like my natural tooth. Amazing work by Dr. Vikram!', treatment: 'Dental Implant', is_visible: true, source: 'google', created_at: '2025-09-10' },
-    { id: 5, patient_name: 'Priyanka Singh', rating: 5, review: 'Took my 5-year-old daughter for a checkup. Dr. Sneha was wonderful with her. She now looks forward to dentist visits!', treatment: 'Pediatric Checkup', is_visible: true, source: 'website', created_at: '2025-08-05' },
-  ],
-  faqs: [
-    { id: 1, question: 'How often should I visit the dentist?', answer: 'We recommend visiting the dentist every 6 months for a regular checkup and cleaning. However, some patients may need more frequent visits based on their oral health condition.', category: 'General', is_visible: true, sort_order: 1 },
-    { id: 2, question: 'Does dental treatment hurt?', answer: 'We use modern techniques and local anesthesia to ensure your comfort during any procedure. Most patients report minimal to no discomfort. We also offer sedation options for anxious patients.', category: 'General', is_visible: true, sort_order: 2 },
-    { id: 3, question: 'What payment options are available?', answer: 'We accept cash, credit/debit cards, UPI payments, and most health insurance plans. Please contact our front desk for detailed information about insurance coverage.', category: 'Pricing', is_visible: true, sort_order: 3 },
-    { id: 4, question: 'How long does a root canal take?', answer: 'A typical root canal treatment takes 1-2 appointments, each lasting about 60-90 minutes. Complex cases may require additional visits.', category: 'Procedures', is_visible: true, sort_order: 4 },
-    { id: 5, question: 'At what age should my child first visit the dentist?', answer: 'We recommend that children visit the dentist by their first birthday or within 6 months of their first tooth appearing. Early visits help establish good oral habits.', category: 'Pediatric', is_visible: true, sort_order: 5 },
-    { id: 6, question: 'How do I book an appointment?', answer: 'You can book online through our website, call us directly, or send a message on WhatsApp. Online booking is available 24/7 and takes less than 60 seconds.', category: 'General', is_visible: true, sort_order: 6 },
-    { id: 7, question: 'What is the cost of a dental cleaning?', answer: 'Our professional dental cleaning (scaling and polishing) starts at ₹500. The exact cost depends on the amount of buildup and any additional treatments required.', category: 'Pricing', is_visible: true, sort_order: 7 },
-    { id: 8, question: 'Are dental implants painful?', answer: 'The implant procedure is performed under local anesthesia, so you won\'t feel pain during the surgery. Post-procedure discomfort is manageable with prescribed medication.', category: 'Procedures', is_visible: true, sort_order: 8 },
-  ],
-  settings: {
-    clinic_name: "Dr.Thankappan's Dental Clinic",
-    clinic_phone: MOCK_PHONE,
-    clinic_email: 'drthankappandentalclinic@gmail.com',
-    clinic_address: 'M J Zakaria Sait Rd, Panayapilly East, Kappalandimukku, Mattancherry, Kochi, Kerala 682002',
-    whatsapp_number: MOCK_WHATSAPP,
-    google_maps_link: 'https://maps.google.com/?q=12.9716,77.5946',
-    booking_enabled: '1',
-    slot_advance_days: '30',
-    lunch_start: '13:00',
-    lunch_end: '14:00',
-    instagram_url: 'https://instagram.com/smilecare_dental',
-    facebook_url: 'https://facebook.com/smilecaredental',
-    procedure_durations: {
-      'Dental Cleaning': 30,
-      'Root Canal': 60,
-      'Dental Filling': 45,
-      'Extraction': 30,
-      'Scaling': 30,
-      'Whitening': 45,
-      'Crown': 60,
-      'Ortho Consultation': 30,
-    },
-  },
-  slots: [
-    { id: 1, day_of_week: 'monday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 2, day_of_week: 'monday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 3, day_of_week: 'monday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 4, day_of_week: 'monday' as const, start_time: '10:30', end_time: '11:00', label: 'Morning', is_active: true },
-    { id: 5, day_of_week: 'monday' as const, start_time: '11:00', end_time: '11:30', label: 'Morning', is_active: true },
-    { id: 6, day_of_week: 'monday' as const, start_time: '14:00', end_time: '14:30', label: 'Afternoon', is_active: true },
-    { id: 7, day_of_week: 'monday' as const, start_time: '14:30', end_time: '15:00', label: 'Afternoon', is_active: true },
-    { id: 8, day_of_week: 'monday' as const, start_time: '15:00', end_time: '15:30', label: 'Afternoon', is_active: true },
-    { id: 9, day_of_week: 'monday' as const, start_time: '16:00', end_time: '16:30', label: 'Afternoon', is_active: true },
-    { id: 10, day_of_week: 'monday' as const, start_time: '16:30', end_time: '17:00', label: 'Afternoon', is_active: true },
-    { id: 11, day_of_week: 'tuesday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 12, day_of_week: 'tuesday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 13, day_of_week: 'tuesday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 14, day_of_week: 'tuesday' as const, start_time: '14:00', end_time: '14:30', label: 'Afternoon', is_active: true },
-    { id: 15, day_of_week: 'tuesday' as const, start_time: '14:30', end_time: '15:00', label: 'Afternoon', is_active: true },
-    { id: 16, day_of_week: 'tuesday' as const, start_time: '15:00', end_time: '15:30', label: 'Afternoon', is_active: true },
-    { id: 17, day_of_week: 'wednesday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 18, day_of_week: 'wednesday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 19, day_of_week: 'wednesday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 20, day_of_week: 'wednesday' as const, start_time: '14:00', end_time: '14:30', label: 'Afternoon', is_active: true },
-    { id: 21, day_of_week: 'wednesday' as const, start_time: '14:30', end_time: '15:00', label: 'Afternoon', is_active: true },
-    { id: 22, day_of_week: 'thursday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 23, day_of_week: 'thursday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 24, day_of_week: 'thursday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 25, day_of_week: 'thursday' as const, start_time: '14:00', end_time: '14:30', label: 'Afternoon', is_active: true },
-    { id: 26, day_of_week: 'thursday' as const, start_time: '14:30', end_time: '15:00', label: 'Afternoon', is_active: true },
-    { id: 27, day_of_week: 'friday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 28, day_of_week: 'friday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 29, day_of_week: 'friday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 30, day_of_week: 'friday' as const, start_time: '14:00', end_time: '14:30', label: 'Afternoon', is_active: true },
-    { id: 31, day_of_week: 'friday' as const, start_time: '14:30', end_time: '15:00', label: 'Afternoon', is_active: true },
-    { id: 32, day_of_week: 'saturday' as const, start_time: '09:00', end_time: '09:30', label: 'Morning', is_active: true },
-    { id: 33, day_of_week: 'saturday' as const, start_time: '09:30', end_time: '10:00', label: 'Morning', is_active: true },
-    { id: 34, day_of_week: 'saturday' as const, start_time: '10:00', end_time: '10:30', label: 'Morning', is_active: true },
-    { id: 35, day_of_week: 'saturday' as const, start_time: '10:30', end_time: '11:00', label: 'Morning', is_active: true },
-    { id: 36, day_of_week: 'saturday' as const, start_time: '11:00', end_time: '11:30', label: 'Morning', is_active: true },
-  ],
-  appointments: [
-    { id: 1, booking_ref: 'DC-2026-00001', patient_name: 'Ananya Gupta', phone: '+91 94471 21519', email: 'ananya@email.com', treatment: 'Root Canal Treatment', appointment_date: new Date(Date.now() + 86400000).toISOString().slice(0, 10), appointment_time: '09:00', slot_id: 1, notes: 'First visit, mild tooth pain', status: 'pending' as const, whatsapp_sent: false, admin_notes: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: 2, booking_ref: 'DC-2026-00002', patient_name: 'Rahul Verma', phone: '+91 87654 32109', email: null, treatment: 'Dental Cleaning', appointment_date: new Date(Date.now() + 86400000 * 2).toISOString().slice(0, 10), appointment_time: '14:00', slot_id: 6, notes: null, status: 'confirmed' as const, whatsapp_sent: true, admin_notes: null, created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-    { id: 3, booking_ref: 'DC-2026-00003', patient_name: 'Meera Iyer', phone: '+91 76543 21098', email: 'meera@email.com', treatment: 'Teeth Whitening', appointment_date: new Date().toISOString().slice(0, 10), appointment_time: '10:00', slot_id: 3, notes: null, status: 'completed' as const, whatsapp_sent: true, admin_notes: 'Patient satisfied', created_at: new Date().toISOString(), updated_at: new Date().toISOString() },
-  ],
-};
-
-export function getAvailableSlots(date: string): AvailableSlot[] {
-  const dayNames = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
-  const dayOfWeek = dayNames[new Date(date + 'T00:00:00').getDay()];
-  const daySlots = mockData.slots.filter(s => s.day_of_week === dayOfWeek && s.is_active);
-  const bookedSlotIds = mockData.appointments
-    .filter(a => a.appointment_date === date && (a.status === 'pending' || a.status === 'confirmed'))
-    .map(a => a.slot_id);
-  return daySlots.map(s => ({
-    id: s.id,
-    time: s.start_time,
-    end_time: s.end_time,
-    label: s.label,
-    available: !bookedSlotIds.includes(s.id),
-  }));
+export async function login(email: string, password: string): Promise<AdminUser> {
+  return api.post<AdminUser>('/api/auth/login', { email, password });
 }
 
-export function generateBookingRef(): string {
-  const year = new Date().getFullYear();
-  const seq = String(mockData.appointments.length + 1).padStart(5, '0');
-  return `DC-${year}-${seq}`;
+export async function logout(): Promise<void> {
+  await api.post('/api/auth/logout', {});
+}
+
+export async function getMe(): Promise<AdminUser> {
+  return api.get<AdminUser>('/api/auth/me');
+}
+
+// ---- Appointments ----
+export interface Appointment {
+  id: number;
+  booking_ref: string;
+  patient_name: string;
+  phone: string;
+  email: string | null;
+  service_id: number | null;
+  treatment_name_snapshot: string | null;
+  doctor_id: number | null;
+  doctor_name?: string;
+  service_name?: string;
+  appointment_date: string;
+  appointment_time: string;
+  status: string;
+  notes: string | null;
+  admin_notes: string | null;
+  created_at: string;
+}
+
+export interface AppointmentLookup {
+  booking_ref: string;
+  patient_name: string;
+  status: string;
+  appointment_date: string;
+  appointment_time: string;
+  treatment: string | null;
+}
+
+export async function getAppointments(params?: { page?: number; status?: string; date?: string }) {
+  const q = new URLSearchParams();
+  if (params?.page) q.set('page', String(params.page));
+  if (params?.status) q.set('status', params.status);
+  if (params?.date) q.set('date', params.date);
+  const qs = q.toString();
+  return api.get<{ appointments: Appointment[]; total: number; page: number; totalPages: number }>(
+    `/api/appointments${qs ? `?${qs}` : ''}`
+  );
+}
+
+export async function lookupAppointment(bookingRef: string): Promise<AppointmentLookup> {
+  return api.get<AppointmentLookup>(`/api/appointments/lookup?booking_ref=${encodeURIComponent(bookingRef)}`);
+}
+
+export async function createAppointment(data: {
+  patient_name: string;
+  phone: string;
+  email?: string;
+  service_id?: number;
+  doctor_id?: number;
+  appointment_date: string;
+  appointment_time: string;
+  slot_id: number;
+  notes?: string;
+}): Promise<{ booking_ref: string; message: string }> {
+  return api.post('/api/appointments', data);
+}
+
+export async function updateAppointmentStatus(id: number, data: { status?: string; admin_notes?: string }) {
+  return api.patch(`/api/appointments/${id}`, data);
+}
+
+// ---- Slots ----
+export interface Slot {
+  id: number;
+  date: string;
+  start_time: string;
+  end_time: string;
+  slot_label: string | null;
+  status: 'available' | 'booked' | 'blocked';
+  doctor_id: number | null;
+  procedure_type: string | null;
+}
+
+export async function getSlots(from: string, to: string, doctorId?: number): Promise<Slot[]> {
+  const q = new URLSearchParams({ from, to });
+  if (doctorId) q.set('doctor_id', String(doctorId));
+  return api.get<Slot[]>(`/api/slots?${q.toString()}`);
+}
+
+export async function generateSlots(data: {
+  start_date: string;
+  end_date: string;
+  work_start: string;
+  work_end: string;
+  duration_min: number;
+  break_start?: string;
+  break_end?: string;
+  days_of_week: string[];
+  doctor_id: number;
+}): Promise<{ generated: number; dates_generated: string[]; skipped: string[] }> {
+  return api.post('/api/slots/generate', data);
+}
+
+export async function updateSlot(id: number, data: { status?: string; procedure_type?: string }) {
+  return api.patch(`/api/slots/${id}`, data);
+}
+
+export async function deleteSlot(id: number) {
+  return api.del(`/api/slots/${id}`);
+}
+
+// ---- Services ----
+export interface Service {
+  id: number;
+  slug: string;
+  service_name: string;
+  short_desc: string;
+  description: string | null;
+  icon: string | null;
+  image_url: string | null;
+  price_from: number | null;
+  is_active: number;
+  sort_order: number;
+}
+
+export async function getServices(): Promise<Service[]> {
+  return api.get<Service[]>('/api/services');
+}
+
+export async function getService(slug: string): Promise<Service> {
+  return api.get<Service>(`/api/services/${slug}`);
+}
+
+export async function createService(data: Partial<Service>): Promise<{ id: number }> {
+  return api.post('/api/services', data);
+}
+
+export async function updateService(id: number, data: Partial<Service>) {
+  return api.patch(`/api/services/${id}`, data);
+}
+
+export async function deleteService(id: number) {
+  return api.del(`/api/services/${id}`);
+}
+
+// ---- Doctors ----
+export interface Doctor {
+  id: number;
+  slug: string;
+  doctor_name: string;
+  qualification: string;
+  specialization: string;
+  experience_yrs: number | null;
+  bio: string | null;
+  image_url: string | null;
+  is_active: number;
+  sort_order: number;
+}
+
+export async function getDoctors(): Promise<Doctor[]> {
+  return api.get<Doctor[]>('/api/doctors');
+}
+
+export async function getDoctor(slug: string): Promise<Doctor> {
+  return api.get<Doctor>(`/api/doctors/${slug}`);
+}
+
+export async function createDoctor(data: Partial<Doctor>): Promise<{ id: number }> {
+  return api.post('/api/doctors', data);
+}
+
+export async function updateDoctor(id: number, data: Partial<Doctor>) {
+  return api.patch(`/api/doctors/${id}`, data);
+}
+
+export async function deleteDoctor(id: number) {
+  return api.del(`/api/doctors/${id}`);
+}
+
+// ---- Settings ----
+export interface Settings {
+  [key: string]: string;
+}
+
+export async function getSettings(): Promise<Settings> {
+  return api.get<Settings>('/api/settings');
+}
+
+export async function updateSettings(data: Settings) {
+  return api.patch('/api/settings', data);
+}
+
+// ---- Testimonials ----
+export interface Testimonial {
+  id: number;
+  patient_name: string;
+  rating: number;
+  review: string;
+  treatment: string | null;
+  is_visible: number;
+  source: string;
+  created_at: string;
+}
+
+export async function getTestimonials(): Promise<Testimonial[]> {
+  return api.get<Testimonial[]>('/api/testimonials');
+}
+
+export async function createTestimonial(data: Partial<Testimonial>): Promise<{ id: number }> {
+  return api.post('/api/testimonials', data);
+}
+
+export async function deleteTestimonial(id: number) {
+  return api.del(`/api/testimonials/${id}`);
+}
+
+// ---- FAQs ----
+export interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+  category: string;
+  is_visible: number;
+  sort_order: number;
+}
+
+export async function getFAQs(): Promise<FAQ[]> {
+  return api.get<FAQ[]>('/api/faqs');
+}
+
+export async function createFAQ(data: Partial<FAQ>): Promise<{ id: number }> {
+  return api.post('/api/faqs', data);
+}
+
+export async function updateFAQ(id: number, data: Partial<FAQ>) {
+  return api.patch(`/api/faqs/${id}`, data);
+}
+
+export async function deleteFAQ(id: number) {
+  return api.del(`/api/faqs/${id}`);
+}
+
+// ---- Upload ----
+export async function getPresignedUrl(content_type: string, file_name: string) {
+  return api.post<{ upload_url: string; public_url: string; key: string }>('/api/upload/presigned', { content_type, file_name });
+}
+
+// ---- Doctor Unavailability ----
+export async function getUnavailability(doctorId?: number) {
+  const q = doctorId ? `?doctor_id=${doctorId}` : '';
+  return api.get<Record<string, unknown>[]>(`/api/doctor-unavailability${q}`);
+}
+
+export async function addUnavailability(data: { doctor_id: number; date: string; reason?: string }) {
+  return api.post('/api/doctor-unavailability', data);
+}
+
+export async function removeUnavailability(id: number) {
+  return api.del(`/api/doctor-unavailability/${id}`);
 }

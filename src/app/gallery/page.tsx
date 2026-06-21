@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 
 const iconMap: Record<string, React.ElementType> = {
   Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield,

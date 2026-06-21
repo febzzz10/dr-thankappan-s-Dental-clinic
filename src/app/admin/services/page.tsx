@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import type { Service } from '@/types';
 
 interface ServiceForm {

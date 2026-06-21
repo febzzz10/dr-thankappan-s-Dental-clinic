@@ -6,7 +6,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { generateWhatsAppUrl } from '@/lib/utils';
 
 const pageEase = [0.16, 1, 0.3, 1] as const;

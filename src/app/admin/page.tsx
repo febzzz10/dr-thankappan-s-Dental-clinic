@@ -1,7 +1,7 @@
 'use client';
 
 import { CalendarCheck, Clock, Users, TrendingUp } from 'lucide-react';
-import { mockData } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 
