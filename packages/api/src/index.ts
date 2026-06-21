@@ -28,6 +28,24 @@ app.onError((err, c) => {
   return c.json({ success: false, error: 'INTERNAL', message: err.message || 'An unexpected error occurred' }, 500);
 });
 
+app.get('/', (c) => c.json({ success: true, data: {
+  name: 'Dental Clinic API',
+  version: '0.1.0',
+  endpoints: {
+    health: '/health',
+    auth: '/auth',
+    services: '/services',
+    doctors: '/doctors',
+    slots: '/slots',
+    appointments: '/appointments',
+    unavailability: '/doctor-unavailability',
+    settings: '/settings',
+    testimonials: '/testimonials',
+    faqs: '/faqs',
+    upload: '/upload',
+  },
+} }));
+
 app.get('/health', (c) => c.json({ success: true, data: { status: 'ok' } }));
 
 app.route('/auth', authRoutes);
