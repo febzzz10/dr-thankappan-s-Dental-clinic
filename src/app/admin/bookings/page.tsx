@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Search, MessageCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
-import { getAppointments, getSettings } from '@/lib/api';
+import { getAppointments, getSettings, updateAppointmentStatus } from '@/lib/api';
 import type { Appointment } from '@/lib/api';
 import { formatDate, formatTime, generateWhatsAppUrl, buildConfirmationMessage } from '@/lib/utils';
 
@@ -37,7 +37,15 @@ export default function AdminBookingsPage() {
       a.phone.includes(search)
   );
 
-  const handleWhatsApp = (appt: Appointment) => {
+  const handleWhatsApp = async (appt: Appointment) => {
+    try {
+      await updateAppointmentStatus(appt.id, { status: 'CONFIRMED' });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === appt.id ? { ...a, status: 'CONFIRMED' } : a))
+      );
+    } catch {
+      // non-blocking — still try to send WhatsApp
+    }
     const treatment = appt.treatment_name_snapshot ?? appt.service_name ?? 'General';
     const msg = buildConfirmationMessage(
       {

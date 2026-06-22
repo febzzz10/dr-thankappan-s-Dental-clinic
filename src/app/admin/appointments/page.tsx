@@ -75,6 +75,9 @@ export default function AdminAppointmentsPage() {
     if (!appt || !settings) return;
     try {
       await updateAppointmentStatus(id, { status: 'CONFIRMED' });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status: 'CONFIRMED' } : a))
+      );
     } catch {
       // non-blocking — still try to send WhatsApp
     }
