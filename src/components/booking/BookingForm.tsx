@@ -9,7 +9,7 @@ import { Input, Select, Textarea } from '@/components/ui/Input';
 import { mockData } from '@/lib/mock-data';
 import { getSlots, createAppointment } from '@/lib/api';
 import type { AvailableSlot } from '@/types';
-import { formatDate, generateWhatsAppUrl } from '@/lib/utils';
+import { formatDate, formatTime, generateWhatsAppUrl } from '@/lib/utils';
 
 export function BookingForm() {
   const router = useRouter();
@@ -133,7 +133,7 @@ export function BookingForm() {
         `PiPhone: ${form.phone}`,
         `Treatment: *${form.treatment}*`,
         `Date: *${formatDate(form.appointment_date)}*`,
-        `Time: *${form.appointment_time}*`,
+        `Time: *${formatTime(form.appointment_time)}*`,
         ...(form.notes ? [`Notes: ${form.notes}`] : []),
         '',
         'Please confirm this booking.',
@@ -141,7 +141,7 @@ export function BookingForm() {
       const waUrl = generateWhatsAppUrl(waNumber, msg);
 
       window.open(waUrl, '_blank');
-      router.push(`/book/confirmation?ref=${ref}&name=${encodeURIComponent(form.patient_name)}&date=${form.appointment_date}&time=${form.appointment_time}&treatment=${encodeURIComponent(form.treatment)}`);
+      router.push(`/book/confirmation?ref=${ref}&name=${encodeURIComponent(form.patient_name)}&date=${form.appointment_date}&time=${encodeURIComponent(formatTime(form.appointment_time))}&treatment=${encodeURIComponent(form.treatment)}`);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);
@@ -303,7 +303,7 @@ export function BookingForm() {
                         }`}
                       >
                         <PiClock className="mx-auto mb-1 h-3.5 w-3.5" aria-hidden="true" />
-                        {slot.time}
+                        {formatTime(slot.time)}
                       </button>
                     ))}
                   </div>
@@ -347,7 +347,7 @@ export function BookingForm() {
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-slate-600">Time</span>
-                  <span className="font-medium text-slate-900">{form.appointment_time}</span>
+                  <span className="font-medium text-slate-900">{formatTime(form.appointment_time)}</span>
                 </div>
                 {form.notes && (
                   <div className="flex justify-between text-sm">
