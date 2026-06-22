@@ -59,26 +59,27 @@ export function buildConfirmationMessage(booking: {
 }, clinic: { address: string; phone: string; maps_link: string }): string {
   const firstName = booking.patient_name.split(' ')[0];
   return [
-    '✅ *Appointment Confirmed!*',
+    '*Appointment Confirmed*',
     '',
     `Dear ${firstName},`,
     '',
     'Your dental appointment has been confirmed.',
     '',
-    `📋 Booking Ref: *${booking.booking_ref}*`,
-    `📅 Date: *${formatDate(booking.appointment_date)}*`,
-    `⏰ Time: *${formatTime(booking.appointment_time)}*`,
-    `💊 Treatment: *${booking.treatment}*`,
+    `Booking Ref: ${booking.booking_ref}`,
+    `Patient: ${booking.patient_name}`,
+    `Treatment: ${booking.treatment}`,
+    `Date: ${formatDate(booking.appointment_date)}`,
+    `Time: ${formatTime(booking.appointment_time)}`,
     '',
-    '📍 Clinic Address:',
+    'Clinic Address:',
     clinic.address,
     '',
-    `🗺️ Google Maps: ${clinic.maps_link}`,
+    `Google Maps: ${clinic.maps_link}`,
     '',
     'Please arrive 10 minutes early.',
     `For any changes, call: ${clinic.phone}`,
     '',
-    'Thank you for choosing us! 🦷',
+    'Thank you for choosing us.',
   ].join('\n');
 }
 
