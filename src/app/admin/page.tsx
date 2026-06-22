@@ -1,24 +1,86 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { CalendarCheck, Clock, Users, TrendingUp } from 'lucide-react';
-import { mockData } from '@/lib/mock-data';
+import { getAppointments, Appointment } from '@/lib/api';
 import { formatDate, formatTime } from '@/lib/utils';
 import { Badge } from '@/components/ui/Badge';
 
-const today = new Date().toISOString().slice(0, 10);
-const todayAppts = mockData.appointments.filter(a => a.appointment_date === today);
-const pending = mockData.appointments.filter(a => a.status === 'pending');
-const thisWeek = mockData.appointments.filter(a => a.appointment_date >= today);
-const completed = mockData.appointments.filter(a => a.status === 'completed');
-
-const stats = [
-  { icon: CalendarCheck, label: "Today's Appointments", value: todayAppts.length, color: 'bg-teal-500' },
-  { icon: Clock, label: 'Pending Confirmation', value: pending.length, color: 'bg-amber-500' },
-  { icon: TrendingUp, label: "This Week's Total", value: thisWeek.length, color: 'bg-blue-500' },
-  { icon: Users, label: 'Completed Total', value: completed.length, color: 'bg-emerald-500' },
-];
+function badgeVariant(status: string): 'pending' | 'confirmed' | 'rejected' | 'completed' | 'cancelled' | 'default' {
+  const map: Record<string, 'pending' | 'confirmed' | 'rejected' | 'completed' | 'cancelled' | 'default'> = {
+    PENDING: 'pending',
+    CONFIRMED: 'confirmed',
+    REJECTED: 'rejected',
+    COMPLETED: 'completed',
+    CANCELLED: 'cancelled',
+    NO_SHOW: 'default',
+  };
+  return map[status] ?? 'default';
+}
 
 export default function AdminDashboard() {
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [todayAppointments, setTodayAppointments] = useState<Appointment[]>([]);
+  const [upcomingAppointments, setUpcomingAppointments] = useState<Appointment[]>([]);
+  const [todayCount, setTodayCount] = useState(0);
+  const [pendingCount, setPendingCount] = useState(0);
+  const [weekCount, setWeekCount] = useState(0);
+  const [completedCount, setCompletedCount] = useState(0);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const today = new Date().toISOString().slice(0, 10);
+
+        const [todayRes, pendingRes, completedRes, allRes] = await Promise.all([
+          getAppointments({ date: today }),
+          getAppointments({ status: 'pending' }),
+          getAppointments({ status: 'completed' }),
+          getAppointments(),
+        ]);
+
+        const futureAppts = allRes.appointments.filter(a => a.appointment_date >= today);
+
+        setTodayAppointments(todayRes.appointments);
+        setTodayCount(todayRes.total);
+        setPendingCount(pendingRes.total);
+        setWeekCount(futureAppts.length);
+        setCompletedCount(completedRes.total);
+        setUpcomingAppointments(futureAppts.slice(0, 5));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchData();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+        <p className="text-sm text-red-600">{error}</p>
+      </div>
+    );
+  }
+
+  const stats = [
+    { icon: CalendarCheck, label: "Today's Appointments", value: todayCount, color: 'bg-teal-500' },
+    { icon: Clock, label: 'Pending Confirmation', value: pendingCount, color: 'bg-amber-500' },
+    { icon: TrendingUp, label: "This Week's Total", value: weekCount, color: 'bg-blue-500' },
+    { icon: Users, label: 'Completed Total', value: completedCount, color: 'bg-emerald-500' },
+  ];
+
   return (
     <div className="space-y-8">
       <div>
@@ -39,7 +101,7 @@ export default function AdminDashboard() {
                   <p className="mt-1 font-display text-3xl font-bold text-slate-900">{stat.value}</p>
                 </div>
                 <div className={`flex h-12 w-12 items-center justify-center rounded-xl ${stat.color} bg-opacity-10`}>
-                  <Icon className={`h-6 w-6 text-white`} aria-hidden="true" />
+                  <Icon className="h-6 w-6 text-white" aria-hidden="true" />
                 </div>
               </div>
             </div>
@@ -62,21 +124,21 @@ export default function AdminDashboard() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
-                {todayAppts.length === 0 ? (
+                {todayAppointments.length === 0 ? (
                   <tr>
                     <td colSpan={5} className="px-4 py-8 text-center text-sm text-slate-400">
                       No appointments for today.
                     </td>
                   </tr>
                 ) : (
-                  todayAppts.map((appt) => (
+                  todayAppointments.map((appt) => (
                     <tr key={appt.id} className="hover:bg-slate-50">
                       <td className="px-4 py-3 font-medium text-slate-900">{formatTime(appt.appointment_time)}</td>
                       <td className="px-4 py-3 text-slate-700">{appt.patient_name}</td>
-                      <td className="px-4 py-3 text-slate-500">{appt.treatment}</td>
+                      <td className="px-4 py-3 text-slate-500">{appt.treatment_name_snapshot ?? appt.service_name ?? '—'}</td>
                       <td className="px-4 py-3 text-slate-500">{appt.phone}</td>
                       <td className="px-4 py-3">
-                        <Badge variant={appt.status}>{appt.status}</Badge>
+                        <Badge variant={badgeVariant(appt.status)}>{appt.status.replace(/_/g, ' ')}</Badge>
                       </td>
                     </tr>
                   ))
@@ -90,7 +152,7 @@ export default function AdminDashboard() {
       <div>
         <h2 className="mb-4 font-display text-lg font-bold text-slate-900">Upcoming Appointments</h2>
         <div className="space-y-3">
-          {thisWeek.slice(0, 5).map((appt) => (
+          {upcomingAppointments.map((appt) => (
             <div key={appt.id} className="flex items-center justify-between rounded-xl border border-slate-100 bg-white p-4 shadow-sm">
               <div className="flex items-center gap-4">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-teal-50 text-sm font-bold text-teal-600">
@@ -103,7 +165,7 @@ export default function AdminDashboard() {
                   </p>
                 </div>
               </div>
-              <Badge variant={appt.status}>{appt.status}</Badge>
+              <Badge variant={badgeVariant(appt.status)}>{appt.status}</Badge>
             </div>
           ))}
         </div>

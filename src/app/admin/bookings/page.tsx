@@ -1,31 +1,53 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, MessageCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/Badge';
-import { mockData } from '@/lib/mock-data';
+import { getAppointments, getSettings } from '@/lib/api';
+import type { Appointment } from '@/lib/api';
 import { formatDate, formatTime, generateWhatsAppUrl, buildConfirmationMessage } from '@/lib/utils';
 
 export default function AdminBookingsPage() {
   const [search, setSearch] = useState('');
-  const settings = mockData.settings;
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
 
-  const filtered = mockData.appointments.filter(
+  useEffect(() => {
+    async function load() {
+      try {
+        const [apptRes, settingsRes] = await Promise.all([
+          getAppointments(),
+          getSettings(),
+        ]);
+        setAppointments(apptRes.appointments);
+        setSettings(settingsRes);
+      } catch {
+        // fallback to empty
+      } finally {
+        setLoading(false);
+      }
+    }
+    load();
+  }, []);
+
+  const filtered = appointments.filter(
     (a) =>
       a.patient_name.toLowerCase().includes(search.toLowerCase()) ||
       a.phone.includes(search)
   );
 
-  const handleWhatsApp = (appt: typeof mockData.appointments[0]) => {
+  const handleWhatsApp = (appt: Appointment) => {
+    const treatment = appt.treatment_name_snapshot ?? appt.service_name ?? 'General';
     const msg = buildConfirmationMessage(
       {
         booking_ref: appt.booking_ref,
         patient_name: appt.patient_name,
-        treatment: appt.treatment,
+        treatment,
         appointment_date: appt.appointment_date,
         appointment_time: appt.appointment_time,
       },
-      { address: settings.clinic_address, phone: settings.clinic_phone, maps_link: settings.google_maps_link }
+      { address: settings.clinic_address ?? '', phone: settings.clinic_phone ?? '', maps_link: settings.google_maps_link ?? '' }
     );
     const waUrl = generateWhatsAppUrl(appt.phone, msg);
     window.open(waUrl, '_blank');
@@ -52,36 +74,43 @@ export default function AdminBookingsPage() {
       </div>
 
       <div className="space-y-3">
-        {filtered.map((appt) => (
-          <div key={appt.id} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-sm font-bold text-teal-600">
-                  {appt.patient_name.charAt(0)}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{appt.patient_name}</p>
-                  <p className="text-xs text-slate-500">{appt.phone} · {appt.treatment}</p>
-                  <p className="text-xs text-slate-400">
-                    Ref: {appt.booking_ref} · {formatDate(appt.appointment_date)} at {formatTime(appt.appointment_time)}
-                  </p>
+        {loading ? (
+          <p className="py-8 text-center text-sm text-slate-400">Loading bookings...</p>
+        ) : (
+          filtered.map((appt) => {
+            const treatment = appt.treatment_name_snapshot ?? appt.service_name ?? 'General';
+            return (
+              <div key={appt.id} className="rounded-2xl border border-slate-100 bg-white p-4 shadow-sm">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-3">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-50 text-sm font-bold text-teal-600">
+                      {appt.patient_name.charAt(0)}
+                    </div>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-900">{appt.patient_name}</p>
+                      <p className="text-xs text-slate-500">{appt.phone} · {treatment}</p>
+                      <p className="text-xs text-slate-400">
+                        Ref: {appt.booking_ref} · {formatDate(appt.appointment_date)} at {formatTime(appt.appointment_time)}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge variant={appt.status.toLowerCase() as 'pending' | 'confirmed' | 'rejected' | 'completed' | 'cancelled' | 'default'}>{appt.status.replace(/_/g, ' ')}</Badge>
+                    <button
+                      onClick={() => handleWhatsApp(appt)}
+                      className="rounded-lg p-2 text-green-500 hover:bg-green-50 transition-colors"
+                      title="Send WhatsApp"
+                      aria-label="Contact via WhatsApp"
+                    >
+                      <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                    </button>
+                  </div>
                 </div>
               </div>
-              <div className="flex items-center gap-2">
-                <Badge variant={appt.status}>{appt.status}</Badge>
-                <button
-                  onClick={() => handleWhatsApp(appt)}
-                  className="rounded-lg p-2 text-green-500 hover:bg-green-50 transition-colors"
-                  title="Send WhatsApp"
-                  aria-label="Contact via WhatsApp"
-                >
-                  <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                </button>
-              </div>
-            </div>
-          </div>
-        ))}
-        {filtered.length === 0 && (
+            );
+          })
+        )}
+        {!loading && filtered.length === 0 && (
           <p className="py-8 text-center text-sm text-slate-400">No bookings found.</p>
         )}
       </div>
