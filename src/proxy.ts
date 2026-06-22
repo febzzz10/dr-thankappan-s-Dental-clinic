@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
