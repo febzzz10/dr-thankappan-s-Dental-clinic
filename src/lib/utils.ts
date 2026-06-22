@@ -83,6 +83,34 @@ export function buildConfirmationMessage(booking: {
   ].join('\n');
 }
 
+export function buildRejectionMessage(booking: {
+  booking_ref: string;
+  patient_name: string;
+  treatment: string;
+  appointment_date: string;
+  appointment_time: string;
+}, clinic: { phone: string }): string {
+  const firstName = booking.patient_name.split(' ')[0];
+  return [
+    '*Appointment Rejected*',
+    '',
+    `Dear ${firstName},`,
+    '',
+    'We regret to inform you that your dental appointment has been rejected.',
+    '',
+    `Booking Ref: ${booking.booking_ref}`,
+    `Patient: ${booking.patient_name}`,
+    `Treatment: ${booking.treatment}`,
+    `Date: ${formatDate(booking.appointment_date)}`,
+    `Time: ${formatTime(booking.appointment_time)}`,
+    '',
+    'Please contact us for further assistance or to reschedule.',
+    `Phone: ${clinic.phone}`,
+    '',
+    'We apologize for the inconvenience.',
+  ].join('\n');
+}
+
 export function toSlug(text: string): string {
   return text
     .toLowerCase()

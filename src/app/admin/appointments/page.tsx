@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getAppointments, updateAppointmentStatus, getSettings } from '@/lib/api';
 import type { Appointment } from '@/lib/api';
-import { formatDate, formatTime, generateWhatsAppUrl, buildConfirmationMessage } from '@/lib/utils';
+import { formatDate, formatTime, generateWhatsAppUrl, buildConfirmationMessage, buildRejectionMessage } from '@/lib/utils';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All Status' },
@@ -101,15 +101,30 @@ export default function AdminAppointmentsPage() {
   };
 
   const handleReject = async (id: number) => {
-    if (!confirm('Reject this appointment?')) return;
+    const appt = appointments.find(a => a.id === id);
+    if (!appt || !settings) return;
+    if (!confirm('Reject this appointment and notify the patient via WhatsApp?')) return;
     try {
       await updateAppointmentStatus(id, { status: 'REJECTED' });
       setAppointments((prev) =>
         prev.map((a) => (a.id === id ? { ...a, status: 'REJECTED' } : a))
       );
     } catch {
-      // ignore
+      // non-blocking — still try to send WhatsApp
     }
+    const treatment = appt.treatment_name_snapshot ?? appt.service_name ?? 'General';
+    const msg = buildRejectionMessage(
+      {
+        booking_ref: appt.booking_ref,
+        patient_name: appt.patient_name,
+        treatment,
+        appointment_date: appt.appointment_date,
+        appointment_time: appt.appointment_time,
+      },
+      { phone: settings.clinic_phone ?? '' }
+    );
+    const waUrl = generateWhatsAppUrl(appt.phone, msg);
+    window.open(waUrl, '_blank');
   };
 
   if (loading && appointments.length === 0) {
