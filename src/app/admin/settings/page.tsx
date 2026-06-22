@@ -25,7 +25,7 @@ export default function AdminSettingsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-display text-2xl font-bold text-slate-900">Settings</h1>
-          <p className="mt-1 text-sm text-slate-500">Clinic-wide configuration</p>
+          <p className="mt-1 text-sm text-slate-500">Admin configuration</p>
         </div>
         <Button onClick={handleSave}>
           <Save className="h-4 w-4" aria-hidden="true" />
@@ -41,14 +41,14 @@ export default function AdminSettingsPage() {
 
       <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
         <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-display text-lg font-bold text-slate-900">Clinic Information</h2>
+          <h2 className="font-display text-lg font-bold text-slate-900">Admin Information</h2>
         </div>
         <div className="space-y-5 p-6">
           {([
-            { key: 'clinic_name', label: 'Clinic Name', type: 'text' },
+            { key: 'clinic_name', label: 'Admin Name', type: 'text' },
             { key: 'clinic_phone', label: 'Phone Number', type: 'text' },
             { key: 'clinic_email', label: 'Email Address', type: 'email' },
-            { key: 'clinic_address', label: 'Clinic Address', type: 'textarea' },
+            { key: 'clinic_address', label: 'Admin Address', type: 'textarea' },
           ] as const).map((field) => (
             <div key={field.key}>
               <label htmlFor={field.key} className="block text-sm font-medium text-slate-700">{field.label}</label>
