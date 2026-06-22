@@ -100,9 +100,10 @@ export interface AppointmentLookup {
   treatment: string | null;
 }
 
-export async function getAppointments(params?: { page?: number; status?: string; date?: string }) {
+export async function getAppointments(params?: { page?: number; status?: string; date?: string; limit?: number }) {
   const q = new URLSearchParams();
   if (params?.page) q.set('page', String(params.page));
+  if (params?.limit) q.set('limit', String(params.limit));
   if (params?.status) q.set('status', params.status);
   if (params?.date) q.set('date', params.date);
   const qs = q.toString();
