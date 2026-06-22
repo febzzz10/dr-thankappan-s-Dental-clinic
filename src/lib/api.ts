@@ -121,6 +121,7 @@ export async function createAppointment(data: {
   phone: string;
   email?: string;
   service_id?: number;
+  treatment_name?: string;
   doctor_id?: number;
   appointment_date: string;
   appointment_time: string;

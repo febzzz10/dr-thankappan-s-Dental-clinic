@@ -5,12 +5,13 @@ INSERT OR IGNORE INTO admins (name, email, password_hash, role) VALUES
 -- Seed settings
 INSERT OR IGNORE INTO settings (key, value, label) VALUES
   ('clinic_name', 'Dr. Thankappan''s Dental Clinic', 'Clinic Name'),
-  ('clinic_phone', '+91-1234567890', 'Contact Phone'),
-  ('clinic_email', 'info@dentalclinic.com', 'Contact Email'),
-  ('clinic_address', '123, MG Road, Kochi, Kerala', 'Address'),
+  ('clinic_phone', '+91 94471 21519', 'Contact Phone'),
+  ('clinic_email', 'drthankappandentalclinic@gmail.com', 'Contact Email'),
+  ('clinic_address', 'M J Zakaria Sait Rd, Panayapilly East, Kappalandimukku, Mattancherry, Kochi, Kerala 682002', 'Address'),
   ('booking_enabled', 'true', 'Enable Online Booking'),
-  ('whatsapp_number', '+919999999999', 'WhatsApp Number'),
-  ('consultation_fee', '500', 'Consultation Fee');
+  ('whatsapp_number', '919447121519', 'WhatsApp Number'),
+  ('consultation_fee', '500', 'Consultation Fee'),
+  ('google_maps_link', 'https://maps.google.com/?q=12.9716,77.5946', 'Google Maps Link');
 
 -- Seed sample services
 INSERT OR IGNORE INTO services (slug, service_name, short_desc, description, icon, is_active, sort_order) VALUES

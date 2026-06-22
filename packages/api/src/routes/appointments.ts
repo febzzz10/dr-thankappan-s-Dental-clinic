@@ -16,6 +16,7 @@ const createSchema = z.object({
   phone: z.string().min(7).max(20),
   email: z.string().email().optional().or(z.literal('')),
   service_id: z.number().int().positive().optional(),
+  treatment_name: z.string().max(200).optional(),
   doctor_id: z.number().int().positive(),
   appointment_date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   appointment_time: z.string().regex(/^\d{2}:\d{2}$/),
@@ -64,7 +65,7 @@ appointments.post('/', async (c) => {
     return c.json({ success: false, error: 'VALIDATION', message: parsed.error.issues[0].message }, 400);
   }
 
-  const { patient_name, phone, email, service_id, doctor_id, appointment_date, appointment_time, slot_id, notes } = parsed.data;
+  const { patient_name, phone, email, service_id, treatment_name, doctor_id, appointment_date, appointment_time, slot_id, notes } = parsed.data;
 
   // Check settings: booking_enabled
   const bookingSetting = await get<any>(c.env.DB,
@@ -74,9 +75,11 @@ appointments.post('/', async (c) => {
     return c.json({ success: false, error: 'BOOKING_DISABLED', message: 'Online booking is currently disabled' }, 403);
   }
 
-  // Capture service name at booking time
+  // Capture treatment name at booking time
   let treatmentNameSnapshot: string | null = null;
-  if (service_id) {
+  if (treatment_name) {
+    treatmentNameSnapshot = treatment_name;
+  } else if (service_id) {
     const svc = await get<any>(c.env.DB, 'SELECT service_name FROM services WHERE id = ?', [service_id]);
     if (svc) treatmentNameSnapshot = svc.service_name;
   }

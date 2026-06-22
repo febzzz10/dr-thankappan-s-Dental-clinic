@@ -112,14 +112,11 @@ export function BookingForm() {
     }
 
     try {
-      const service = mockData.services.find(
-        (s) => s.service_name === form.treatment
-      );
       const result = await createAppointment({
         patient_name: form.patient_name,
         phone: form.phone,
         email: form.email || undefined,
-        service_id: service?.id,
+        treatment_name: form.treatment,
         doctor_id: 1,
         appointment_date: form.appointment_date,
         appointment_time: form.appointment_time,
