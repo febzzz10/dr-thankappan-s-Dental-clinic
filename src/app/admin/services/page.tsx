@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { mockData } from '@/lib/mock-data';
-import type { Service } from '@/types';
+import { getServices, createService, updateService, deleteService } from '@/lib/api';
+import type { Service } from '@/lib/api';
 
 interface ServiceForm {
   service_name: string;
@@ -17,21 +17,46 @@ interface ServiceForm {
 const emptyForm: ServiceForm = { service_name: '', short_desc: '', slug: '', is_active: true };
 
 export default function AdminServicesPage() {
-  const [services, setServices] = useState<Service[]>(mockData.services);
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ServiceForm>(emptyForm);
 
   const editingService = editingId ? services.find((s) => s.id === editingId) : null;
 
-  const toggleActive = (id: number) => {
-    setServices((prev) =>
-      prev.map((s) => (s.id === id ? { ...s, is_active: !s.is_active } : s))
-    );
+  const fetchServices = async () => {
+    setLoading(true);
+    try {
+      const data = await getServices(true);
+      setServices(data);
+    } catch {
+      console.error('Failed to fetch services');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const deleteService = (id: number) => {
-    setServices((prev) => prev.filter((s) => s.id !== id));
+  useEffect(() => {
+    fetchServices();
+  }, []);
+
+  const toggleActive = async (id: number, current: number) => {
+    try {
+      await updateService(id, { is_active: current ? 0 : 1 });
+      await fetchServices();
+    } catch {
+      console.error('Failed to toggle service status');
+    }
+  };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteService(id);
+      await fetchServices();
+    } catch {
+      console.error('Failed to delete service');
+    }
   };
 
   const openAdd = () => {
@@ -46,27 +71,36 @@ export default function AdminServicesPage() {
       service_name: service.service_name,
       short_desc: service.short_desc,
       slug: service.slug,
-      is_active: service.is_active,
+      is_active: service.is_active === 1,
     });
     setShowModal(true);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (editingId) {
-      setServices((prev) =>
-        prev.map((s) => (s.id === editingId ? { ...s, ...form } : s))
-      );
+      try {
+        await updateService(editingId, {
+          service_name: form.service_name,
+          short_desc: form.short_desc,
+          slug: form.slug,
+          is_active: form.is_active ? 1 : 0,
+        });
+        await fetchServices();
+      } catch {
+        console.error('Failed to update service');
+      }
     } else {
-      const newService = {
-        id: Math.max(0, ...services.map((s) => s.id)) + 1,
-        ...form,
-        icon: null,
-        image_url: null,
-        description: null,
-        price_from: null,
-        sort_order: services.length + 1,
-      } as Service;
-      setServices((prev) => [...prev, newService]);
+      try {
+        await createService({
+          service_name: form.service_name,
+          short_desc: form.short_desc,
+          slug: form.slug,
+          is_active: form.is_active ? 1 : 0,
+        });
+        await fetchServices();
+      } catch {
+        console.error('Failed to create service');
+      }
     }
     setShowModal(false);
   };
@@ -86,44 +120,50 @@ export default function AdminServicesPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
-        {services.map((service) => (
-          <div key={service.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div className="flex items-start justify-between">
-              <div>
-                <h3 className="text-sm font-semibold text-slate-900">{service.service_name}</h3>
-                <p className="text-xs text-slate-400">{service.slug}</p>
+      {loading ? (
+        <div className="flex items-center justify-center py-12">
+          <p className="text-sm text-slate-500">Loading services...</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
+          {services.map((service) => (
+            <div key={service.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex items-start justify-between">
+                <div>
+                  <h3 className="text-sm font-semibold text-slate-900">{service.service_name}</h3>
+                  <p className="text-xs text-slate-400">{service.slug}</p>
+                </div>
+                <Badge variant={service.is_active ? 'confirmed' : 'cancelled'}>
+                  {service.is_active ? 'Active' : 'Inactive'}
+                </Badge>
               </div>
-              <Badge variant={service.is_active ? 'confirmed' : 'cancelled'}>
-                {service.is_active ? 'Active' : 'Inactive'}
-              </Badge>
+              <p className="mt-3 text-xs text-slate-500 line-clamp-2">{service.short_desc}</p>
+              <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                <button
+                  onClick={() => toggleActive(service.id, service.is_active)}
+                  className="text-xs text-slate-500 hover:text-teal-600"
+                >
+                  {service.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button
+                  onClick={() => openEdit(service)}
+                  className="text-xs text-slate-500 hover:text-blue-600"
+                >
+                  <Pencil className="h-3.5 w-3.5 inline mr-1" />
+                  Edit
+                </button>
+                <button
+                  onClick={() => { if (confirm('Are you sure?')) handleDelete(service.id); }}
+                  className="text-xs text-slate-500 hover:text-red-600"
+                >
+                  <Trash2 className="h-3.5 w-3.5 inline mr-1" />
+                  Delete
+                </button>
+              </div>
             </div>
-            <p className="mt-3 text-xs text-slate-500 line-clamp-2">{service.short_desc}</p>
-            <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-              <button
-                onClick={() => toggleActive(service.id)}
-                className="text-xs text-slate-500 hover:text-teal-600"
-              >
-                {service.is_active ? 'Deactivate' : 'Activate'}
-              </button>
-              <button
-                onClick={() => openEdit(service)}
-                className="text-xs text-slate-500 hover:text-blue-600"
-              >
-                <Pencil className="h-3.5 w-3.5 inline mr-1" />
-                Edit
-              </button>
-              <button
-                onClick={() => { if (confirm('Are you sure?')) deleteService(service.id); }}
-                className="text-xs text-slate-500 hover:text-red-600"
-              >
-                <Trash2 className="h-3.5 w-3.5 inline mr-1" />
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Add/Edit Service Modal */}
       {showModal && (

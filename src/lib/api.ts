@@ -213,8 +213,8 @@ export interface Service {
   sort_order: number;
 }
 
-export async function getServices(): Promise<Service[]> {
-  return api.get<Service[]>('/api/services');
+export async function getServices(all?: boolean): Promise<Service[]> {
+  return api.get<Service[]>(`/api/services${all ? '?all=true' : ''}`);
 }
 
 export async function getService(slug: string): Promise<Service> {

@@ -2,14 +2,14 @@ import Link from 'next/link';
 import { Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/mock-data';
+import { getServices } from '@/lib/api';
 
 const iconMap: Record<string, React.ElementType> = {
   Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield,
 };
 
-export default function GalleryPage() {
-  const services = mockData.services;
+export default async function GalleryPage() {
+  const services = await getServices();
 
   return (
     <div className="min-h-dvh bg-white">

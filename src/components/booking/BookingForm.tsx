@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiArrowRight, PiCheck } from 'react-icons/pi';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Input';
-import { mockData } from '@/lib/mock-data';
-import { getSlots, createAppointment } from '@/lib/api';
+import { getSlots, createAppointment, getServices, getSettings } from '@/lib/api';
+import type { Service } from '@/lib/api';
 import type { AvailableSlot } from '@/types';
 import { formatDate, formatTime, generateWhatsAppUrl } from '@/lib/utils';
 
@@ -16,6 +16,8 @@ export function BookingForm() {
   const searchParams = useSearchParams();
   const preselectedTreatment = searchParams.get('treatment');
 
+  const [services, setServices] = useState<Service[]>([]);
+  const [clinicSettings, setClinicSettings] = useState<Record<string, string>>({});
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,14 +29,24 @@ export function BookingForm() {
     patient_name: '',
     phone: '+91 ',
     email: '',
-    treatment: preselectedTreatment
-      ? mockData.services.find(s => s.slug === preselectedTreatment)?.service_name ?? ''
-      : '',
+    treatment: '',
     appointment_date: '',
     appointment_time: '',
     slot_id: 0,
     notes: '',
   });
+
+  useEffect(() => {
+    getServices().then(setServices).catch(() => {});
+    getSettings().then(setClinicSettings).catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (preselectedTreatment && services.length > 0) {
+      const match = services.find((s) => s.slug === preselectedTreatment);
+      if (match) updateField('treatment', match.service_name);
+    }
+  }, [preselectedTreatment, services]);
 
   useEffect(() => {
     const filled = form.patient_name || form.treatment || form.appointment_date;
@@ -48,7 +60,6 @@ export function BookingForm() {
   }, [form.patient_name, form.treatment, form.appointment_date]);
 
   const [dateSlots, setDateSlots] = useState<AvailableSlot[]>([]);
-  const settings = mockData.settings;
 
   const updateField = (field: string, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -124,7 +135,7 @@ export function BookingForm() {
         notes: form.notes || undefined,
       });
       const ref = result.booking_ref;
-      const waNumber = settings.whatsapp_number;
+      const waNumber = clinicSettings.whatsapp_number ?? '';
       const msg = [
         '*New Appointment Booking*',
         '',
@@ -239,7 +250,7 @@ export function BookingForm() {
                   className="mt-1"
                 >
                   <option value="">Select a treatment</option>
-                  {mockData.services.map((s) => (
+                  {services.map((s) => (
                     <option key={s.id} value={s.service_name}>
                       {s.service_name}
                     </option>

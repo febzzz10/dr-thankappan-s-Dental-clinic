@@ -1,10 +1,12 @@
 'use client';
 
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 import { PiArrowRight } from 'react-icons/pi';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
-import { mockData } from '@/lib/mock-data';
+import { getServices } from '@/lib/api';
+import type { Service } from '@/lib/api';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,7 +28,11 @@ const cardVariants = {
 };
 
 export function ServicesPreview() {
-  const services = mockData.services.slice(0, 6);
+  const [services, setServices] = useState<Service[]>([]);
+
+  useEffect(() => {
+    getServices().then((res) => setServices(res.slice(0, 6))).catch(() => {});
+  }, []);
 
   return (
     <section className="bg-white py-24">

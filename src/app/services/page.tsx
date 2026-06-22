@@ -1,11 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/mock-data';
+import { getServices } from '@/lib/api';
+import type { Service } from '@/lib/api';
 
 const cardEase = [0.16, 1, 0.3, 1] as const;
 
@@ -27,7 +29,32 @@ const cardVariants = {
 };
 
 export default function ServicesPage() {
-  const services = mockData.services;
+  const [services, setServices] = useState<Service[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    getServices()
+      .then(setServices)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load services'))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-white">
+        <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-200 border-t-teal-600" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-white">
+        <p className="text-red-500">{error}</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-white">

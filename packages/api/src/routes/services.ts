@@ -5,9 +5,11 @@ import { authMiddleware } from '../middleware/auth';
 const services = new Hono<{ Bindings: Env }>();
 
 services.get('/', async (c) => {
-  const rows = await all<any>(c.env.DB,
-    'SELECT * FROM services WHERE is_active = 1 AND deleted_at IS NULL ORDER BY sort_order'
-  );
+  const allFlag = c.req.query('all');
+  let sql = 'SELECT * FROM services WHERE deleted_at IS NULL';
+  if (allFlag !== 'true') sql += ' AND is_active = 1';
+  sql += ' ORDER BY sort_order';
+  const rows = await all<any>(c.env.DB, sql);
   return c.json({ success: true, data: rows });
 });
 

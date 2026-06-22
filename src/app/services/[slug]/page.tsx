@@ -3,23 +3,31 @@ import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { Container } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
-import { mockData } from '@/lib/mock-data';
+import { getService, getServices } from '@/lib/api';
+import type { Service } from '@/lib/api';
 import { ServiceDetailContent } from '@/components/services/ServiceDetailContent';
 
 const iconMap: Record<string, React.ElementType> = {
   Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield,
 };
 
-export function generateStaticParams() {
-  return mockData.services.map((s) => ({ slug: s.slug }));
-}
+export default async function ServiceDetailPage({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}) {
+  const { slug } = await params;
 
-export default function ServiceDetailPage({ params }: { params: { slug: string } }) {
-  const service = mockData.services.find((s) => s.slug === params.slug);
-  if (!service) notFound();
+  let service: Service;
+  try {
+    service = await getService(slug);
+  } catch {
+    notFound();
+  }
 
   const Icon = iconMap[service.icon ?? 'Sparkles'] ?? Sparkles;
-  const related = mockData.services
+  const allServices = await getServices();
+  const related = allServices
     .filter((s) => s.id !== service.id)
     .slice(0, 2);
 
