@@ -31,11 +31,15 @@ export default function AdminBookingsPage() {
     load();
   }, []);
 
-  const filtered = appointments.filter(
-    (a) =>
-      a.patient_name.toLowerCase().includes(search.toLowerCase()) ||
-      a.phone.includes(search)
-  );
+  const filtered = appointments.filter((a) => {
+    if (!search) return true;
+    const q = search.toLowerCase();
+    return (
+      (a.patient_name?.toLowerCase() ?? '').includes(q) ||
+      (a.phone ?? '').includes(q) ||
+      (a.booking_ref?.toLowerCase() ?? '').includes(q)
+    );
+  });
 
   const handleWhatsApp = async (appt: Appointment) => {
     try {

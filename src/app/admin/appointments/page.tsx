@@ -67,7 +67,11 @@ export default function AdminAppointmentsPage() {
   const filtered = appointments.filter((a) => {
     if (!search) return true;
     const q = search.toLowerCase();
-    return a.patient_name.toLowerCase().includes(q) || a.phone.includes(q);
+    return (
+      (a.patient_name?.toLowerCase() ?? '').includes(q) ||
+      (a.phone ?? '').includes(q) ||
+      (a.booking_ref?.toLowerCase() ?? '').includes(q)
+    );
   });
 
   const handleConfirm = async (id: number) => {
