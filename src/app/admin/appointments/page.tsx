@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback, startTransition } from 'react';
-import { Search, MoreHorizontal, MessageCircle } from 'lucide-react';
+import { Search, MoreHorizontal, MessageCircle, XCircle } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getAppointments, updateAppointmentStatus, getSettings } from '@/lib/api';
@@ -98,6 +98,18 @@ export default function AdminAppointmentsPage() {
     );
     const waUrl = generateWhatsAppUrl(appt.phone, msg);
     window.open(waUrl, '_blank');
+  };
+
+  const handleReject = async (id: number) => {
+    if (!confirm('Reject this appointment?')) return;
+    try {
+      await updateAppointmentStatus(id, { status: 'REJECTED' });
+      setAppointments((prev) =>
+        prev.map((a) => (a.id === id ? { ...a, status: 'REJECTED' } : a))
+      );
+    } catch {
+      // ignore
+    }
   };
 
   if (loading && appointments.length === 0) {
@@ -221,6 +233,16 @@ export default function AdminAppointmentsPage() {
                             <MessageCircle className="h-4 w-4" aria-hidden="true" />
                           </button>
                         )}
+                        {appt.status === 'PENDING' && (
+                          <button
+                            onClick={() => handleReject(appt.id)}
+                            className="rounded-lg p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                            title="Reject appointment"
+                            aria-label="Reject appointment"
+                          >
+                            <XCircle className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -248,7 +270,15 @@ export default function AdminAppointmentsPage() {
                 <div className="flex justify-between text-sm"><span className="text-slate-500">Status</span><Badge variant={badgeVariant(appt.status)}>{appt.status}</Badge></div>
                 {appt.notes && <div className="flex justify-between text-sm"><span className="text-slate-500">Notes</span><span className="font-medium text-slate-900">{appt.notes}</span></div>}
               </div>
-              <div className="mt-6 flex justify-end">
+              <div className="mt-6 flex justify-end gap-2">
+                {appt.status === 'PENDING' && (
+                  <Button
+                    variant="outline"
+                    onClick={() => { handleReject(appt.id); setSelectedAppt(null); }}
+                  >
+                    Reject
+                  </Button>
+                )}
                 <Button variant="ghost" onClick={() => setSelectedAppt(null)}>Close</Button>
               </div>
             </div>
