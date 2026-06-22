@@ -1,12 +1,13 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   LayoutDashboard, CalendarCheck, Users, Clock, Stethoscope,
-  UserCog, Settings, FileText, ChevronLeft,
+  UserCog, Settings, FileText, ChevronLeft, LogOut,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logout } from '@/lib/api';
 
 const sidebarLinks = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard },
@@ -22,6 +23,17 @@ const sidebarLinks = [
 
 export function AdminSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // proceed regardless
+    }
+    document.cookie = 'auth_token=; path=/; max-age=0';
+    router.push('/admin/login');
+  };
 
   return (
     <aside className="hidden w-64 shrink-0 border-r border-slate-200 bg-white lg:block">
@@ -58,7 +70,7 @@ export function AdminSidebar() {
           })}
         </nav>
 
-        <div className="border-t border-slate-100 p-4">
+        <div className="border-t border-slate-100 p-4 space-y-1">
           <Link
             href="/"
             className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-50 hover:text-slate-700"
@@ -66,6 +78,13 @@ export function AdminSidebar() {
             <ChevronLeft className="h-4 w-4" aria-hidden="true" />
             Back to Website
           </Link>
+          <button
+            onClick={handleLogout}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            <LogOut className="h-4 w-4" aria-hidden="true" />
+            Logout
+          </button>
         </div>
       </div>
     </aside>

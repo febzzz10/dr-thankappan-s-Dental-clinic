@@ -48,6 +48,21 @@ app.get('/', (c) => c.json({ success: true, data: {
 
 app.get('/health', (c) => c.json({ success: true, data: { status: 'ok' } }));
 
+// Mount under /api prefix for frontend compatibility
+const api = new Hono<{ Bindings: Env }>();
+api.route('/auth', authRoutes);
+api.route('/services', servicesRoutes);
+api.route('/doctors', doctorsRoutes);
+api.route('/slots', slotsRoutes);
+api.route('/appointments', appointmentsRoutes);
+api.route('/doctor-unavailability', unavailabilityRoutes);
+api.route('/settings', settingsRoutes);
+api.route('/testimonials', testimonialsRoutes);
+api.route('/faqs', faqsRoutes);
+api.route('/upload', uploadRoutes);
+app.route('/api', api);
+
+// Also mount directly for Worker API consumers
 app.route('/auth', authRoutes);
 app.route('/services', servicesRoutes);
 app.route('/doctors', doctorsRoutes);

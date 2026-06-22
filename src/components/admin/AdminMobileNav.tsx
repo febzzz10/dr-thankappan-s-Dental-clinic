@@ -1,9 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { Calendar, Clock, Users, FileText } from 'lucide-react';
+import { usePathname, useRouter } from 'next/navigation';
+import { Calendar, Clock, Users, FileText, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { logout } from '@/lib/api';
 
 const navItems = [
   { href: '/admin', label: 'Dashboard', icon: Users },
@@ -14,6 +15,17 @@ const navItems = [
 
 export function AdminMobileNav() {
   const pathname = usePathname();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch {
+      // proceed regardless
+    }
+    document.cookie = 'auth_token=; path=/; max-age=0';
+    router.push('/admin/login');
+  };
 
   return (
     <nav className="flex border-b border-slate-200 bg-white px-4 lg:hidden">
@@ -36,6 +48,13 @@ export function AdminMobileNav() {
           </Link>
         );
       })}
+      <button
+        onClick={handleLogout}
+        className="ml-auto flex items-center gap-2 border-b-2 border-transparent px-4 py-3 text-xs font-medium text-red-600 transition-colors hover:text-red-700 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:outline-none"
+        aria-label="Logout"
+      >
+        <LogOut className="h-4 w-4" aria-hidden="true" />
+      </button>
     </nav>
   );
 }

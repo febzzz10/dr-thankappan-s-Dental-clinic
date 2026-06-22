@@ -28,6 +28,59 @@ slots.get('/', async (c) => {
   return c.json({ success: true, data: rows });
 });
 
+// Admin: create a single slot
+slots.post('/', authMiddleware, async (c) => {
+  const body = await c.req.json();
+  const { date, start_time, end_time, slot_label, status, doctor_id, procedure_type } = body;
+
+  if (!date || !start_time || !end_time || !doctor_id) {
+    return c.json({ success: false, error: 'VALIDATION', message: 'date, start_time, end_time, doctor_id required' }, 400);
+  }
+
+  const result = await run(c.env.DB,
+    'INSERT INTO slots (date, start_time, end_time, slot_label, status, doctor_id, procedure_type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+    [date, start_time, end_time, slot_label ?? null, status ?? 'available', doctor_id, procedure_type ?? null]
+  );
+
+  return c.json({ success: true, data: { id: result.meta.last_row_id } });
+});
+
+// Admin: batch create slots (for local generation sync)
+slots.post('/batch', authMiddleware, async (c) => {
+  const body = await c.req.json();
+  const { slots: slotsToInsert } = body;
+
+  if (!slotsToInsert || !Array.isArray(slotsToInsert) || slotsToInsert.length === 0) {
+    return c.json({ success: false, error: 'VALIDATION', message: 'slots array required' }, 400);
+  }
+
+  const statements: { sql: string; bindings: unknown[] }[] = [];
+  let created = 0;
+
+  for (const s of slotsToInsert) {
+    if (!s.date || !s.start_time || !s.end_time || !s.doctor_id) continue;
+
+    // Don't create duplicates
+    const existing = await get<{ cnt: number }>(c.env.DB,
+      'SELECT COUNT(*) as cnt FROM slots WHERE date = ? AND start_time = ? AND doctor_id = ?',
+      [s.date, s.start_time, s.doctor_id]
+    );
+    if (existing && existing.cnt > 0) continue;
+
+    statements.push({
+      sql: 'INSERT INTO slots (date, start_time, end_time, slot_label, status, doctor_id, procedure_type) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      bindings: [s.date, s.start_time, s.end_time, s.slot_label ?? null, s.status ?? 'available', s.doctor_id, s.procedure_type ?? null],
+    });
+    created++;
+  }
+
+  if (statements.length > 0) {
+    await batch(c.env.DB, statements);
+  }
+
+  return c.json({ success: true, data: { created } });
+});
+
 // Admin: generate slots for a date range
 slots.post('/generate', authMiddleware, async (c) => {
   const body = await c.req.json();
@@ -133,7 +186,7 @@ slots.patch('/:id', authMiddleware, async (c) => {
   const id = parseInt(c.req.param('id'), 10);
   if (isNaN(id)) return c.json({ success: false, error: 'VALIDATION', message: 'Invalid id' }, 400);
   const body = await c.req.json();
-  const { status, procedure_type } = body;
+  const { status, procedure_type, start_time, end_time } = body;
 
   const slot = await get<any>(c.env.DB, 'SELECT id, status FROM slots WHERE id = ?', [id]);
   if (!slot) {
@@ -152,6 +205,8 @@ slots.patch('/:id', authMiddleware, async (c) => {
   const bindings: unknown[] = [];
   if (status) { updates.push('status = ?'); bindings.push(status); }
   if (procedure_type !== undefined) { updates.push('procedure_type = ?'); bindings.push(procedure_type); }
+  if (start_time) { updates.push('start_time = ?'); bindings.push(start_time); }
+  if (end_time) { updates.push('end_time = ?'); bindings.push(end_time); }
 
   if (updates.length === 0) {
     return c.json({ success: false, error: 'VALIDATION', message: 'No fields to update' }, 400);

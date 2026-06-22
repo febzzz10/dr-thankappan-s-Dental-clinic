@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-export function middleware(request: NextRequest) {
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+
+export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
@@ -10,6 +12,20 @@ export function middleware(request: NextRequest) {
       const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('from', pathname);
       return NextResponse.redirect(loginUrl);
+    }
+
+    try {
+      const res = await fetch(`${API_URL}/auth/me`, {
+        headers: { Cookie: `auth_token=${token}` },
+      });
+      const json: { success?: boolean } = await res.json();
+      if (!json.success) {
+        const response = NextResponse.redirect(new URL('/admin/login', request.url));
+        response.cookies.delete('auth_token');
+        return response;
+      }
+    } catch {
+      // Worker unreachable — allow access in degraded mode
     }
   }
 

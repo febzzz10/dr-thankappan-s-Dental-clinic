@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
+import { login } from '@/lib/api';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -18,15 +19,20 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError('');
 
-    setTimeout(() => {
-      if (email === 'admin@smilecare.com' && password.length >= 6) {
-        document.cookie = 'auth_token=demo; path=/; max-age=86400; SameSite=Strict';
-        router.push('/admin');
+    try {
+      const user = await login(email, password);
+      if (user.token) {
+        document.cookie = `auth_token=${user.token}; path=/; max-age=86400; SameSite=Lax; Secure`;
+      }
+      router.push('/admin');
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        setError(err.message);
       } else {
         setError('Invalid email or password');
-        setLoading(false);
       }
-    }, 1000);
+      setLoading(false);
+    }
   };
 
   return (
@@ -52,7 +58,7 @@ export default function AdminLoginPage() {
               autoComplete="email"
               spellCheck={false}
               className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              placeholder="admin@smilecare.com…"
+              placeholder="admin@dentalclinic.com"
             />
           </div>
           <div>
@@ -64,7 +70,7 @@ export default function AdminLoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                minLength={6}
+                minLength={1}
                 className="block w-full rounded-xl border border-slate-200 px-4 py-2.5 pr-10 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
                 placeholder="Enter your password…"
                 autoComplete="current-password"
@@ -92,7 +98,7 @@ export default function AdminLoginPage() {
           </Button>
 
           <p className="text-center text-xs text-slate-400">
-            Demo: admin@smilecare.com / any password
+            Credentials: admin@dentalclinic.com / admin123
           </p>
         </form>
       </div>

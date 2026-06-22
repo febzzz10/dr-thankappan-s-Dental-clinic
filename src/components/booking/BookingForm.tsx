@@ -6,7 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiArrowRight, PiCheck } from 'react-icons/pi';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Input';
-import { mockData, getAvailableSlots, generateBookingRef } from '@/lib/mock-data';
+import { mockData, generateBookingRef } from '@/lib/mock-data';
+import { getSlots } from '@/lib/api';
 import type { AvailableSlot } from '@/types';
 import { formatDate, generateWhatsAppUrl } from '@/lib/utils';
 
@@ -58,12 +59,23 @@ export function BookingForm() {
     });
   };
 
-  const handleDateChange = (date: string) => {
+  const handleDateChange = async (date: string) => {
     updateField('appointment_date', date);
     updateField('slot_id', 0);
     updateField('appointment_time', '');
-    const slots = getAvailableSlots(date);
-    setDateSlots(slots);
+    try {
+      const apiSlots = await getSlots(date, date);
+      const mapped: AvailableSlot[] = apiSlots.map((s) => ({
+        id: s.id,
+        time: s.start_time,
+        end_time: s.end_time,
+        label: s.slot_label,
+        available: s.status === 'available',
+      }));
+      setDateSlots(mapped);
+    } catch {
+      setDateSlots([]);
+    }
   };
 
   const handleSlotSelect = (slot: AvailableSlot) => {

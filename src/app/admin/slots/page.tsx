@@ -93,8 +93,8 @@ export default function AdminSlotsPage() {
   const weekDates = useMemo(() => getWeekDates(formatDate(new Date())), []);
   const weekKey = weekDates.join(',');
 
-  const refresh = useCallback(() => {
-    const loaded = loadSlots();
+  const refresh = useCallback(async () => {
+    const loaded = await loadSlots();
     setAllSlots(loaded);
   }, []);
 
@@ -160,62 +160,60 @@ export default function AdminSlotsPage() {
 
   const summary = useMemo(() => getSummary(allSlots), [allSlots]);
 
-  const handleGenerateSlots = () => {
+  const handleGenerateSlots = async () => {
     saveConfig(genConfig);
     const dates = getWeekDates(formatDate(new Date()));
-    const result = generateSlots(genConfig, dates);
+    const result = await generateSlots(genConfig, dates);
     showToast(`Generated ${result.length} new slots`);
     setShowBulkModal(false);
-    refresh();
+    await refresh();
   };
 
-  const handlePublish = () => {
-    publishSlots(loadSlots());
+  const handlePublish = async () => {
+    await publishSlots();
     showToast('Schedule published successfully');
-    refresh();
+    await refresh();
   };
 
-  const handleDiscardDrafts = () => {
-    const all = loadSlots();
-    saveSlots(all.filter((s) => !s.is_draft));
-    showToast('Draft changes discarded');
-    refresh();
+  const handleDiscardDrafts = async () => {
+    await refresh();
+    showToast('Changes discarded');
   };
 
-  const handleToggle = (slot: SlotItem) => {
+  const handleToggle = async (slot: SlotItem) => {
     if (slot.status === 'booked') return;
     if (slot.status === 'blocked') {
-      unblockDay(slot.date);
+      await unblockDay(slot.date);
       showToast(`Unblocked ${to12h(slot.start_time)}`);
     } else if (!slot.is_active) {
-      updateSlot(slot.id, { is_active: true, status: 'available' });
+      await updateSlot(slot.id, { is_active: true, status: 'available' });
       showToast(`Enabled ${to12h(slot.start_time)}`);
     } else {
-      updateSlot(slot.id, { is_active: false });
+      await updateSlot(slot.id, { is_active: false });
       showToast(`Disabled ${to12h(slot.start_time)}`);
     }
-    refresh();
+    await refresh();
   };
 
-  const handleBlockSlot = (slot: SlotItem) => {
-    updateSlot(slot.id, { status: 'blocked', is_active: false });
+  const handleBlockSlot = async (slot: SlotItem) => {
+    await updateSlot(slot.id, { status: 'blocked', is_active: false });
     showToast(`Blocked ${to12h(slot.start_time)}`);
-    refresh();
+    await refresh();
   };
 
-  const handleSaveEdit = (slot: SlotItem) => {
-    updateSlot(slot.id, { start_time: editStart, end_time: editEnd });
+  const handleSaveEdit = async (slot: SlotItem) => {
+    await updateSlot(slot.id, { start_time: editStart, end_time: editEnd });
     setEditSlotId(null);
     showToast(`Updated to ${to12h(editStart)}`);
-    refresh();
+    await refresh();
   };
 
-  const handleQuickAddSlot = () => {
+  const handleQuickAddSlot = async () => {
     if (!addSlotTime || !addSlotPeriod || !selectedDate) return;
     const h = parseInt(addSlotTime);
     const endH = h + 1;
     const d = new Date(selectedDate + 'T00:00:00');
-    addSlot({
+    await addSlot({
       date: selectedDate,
       day_of_week: d.toLocaleDateString('en-US', { weekday: 'short' }),
       start_time: addSlotTime,
@@ -229,7 +227,7 @@ export default function AdminSlotsPage() {
     setAddSlotPeriod(null);
     setAddSlotTime('');
     showToast(`Added ${to12h(addSlotTime)}`);
-    refresh();
+    await refresh();
   };
 
   const handleDateClick = (date: string) => {
@@ -420,9 +418,9 @@ export default function AdminSlotsPage() {
             <div className="flex items-center gap-2">
               {selectedDaySlots.length > 0 && (
                 <button
-                  onClick={() => {
-                    blockDay(selectedDate);
-                    refresh();
+                  onClick={async () => {
+                    await blockDay(selectedDate);
+                    await refresh();
                     showToast(`Blocked ${fullDate(selectedDate)}`);
                   }}
                   className="rounded-xl border border-slate-200 px-3.5 py-2 text-xs font-medium text-slate-600 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:outline-none"
@@ -563,14 +561,14 @@ export default function AdminSlotsPage() {
                             className={`group relative rounded-xl border px-3.5 py-2.5 transition-all duration-200 ${
                               inactiveStyle || statusColors[slot.status] || 'border-slate-100 bg-white'
                             } ${past ? 'opacity-40' : !inactiveStyle && slot.status !== 'booked' ? 'hover:-translate-y-0.5 hover:shadow-md cursor-pointer' : ''}`}
-                            onClick={() => {
+                            onClick={async () => {
                               if (past || slot.status === 'booked') return;
                               if (slot.status === 'blocked') {
-                                unblockDay(slot.date);
-                                refresh();
+                                await unblockDay(slot.date);
+                                await refresh();
                                 showToast(`Unblocked ${to12h(slot.start_time)}`);
                               } else {
-                                handleToggle(slot);
+                                await handleToggle(slot);
                               }
                             }}
                           >
@@ -791,7 +789,7 @@ export default function AdminSlotsPage() {
             <p className="mt-2 text-sm text-slate-500">This will permanently remove this time slot.</p>
             <div className="mt-5 flex gap-3">
               <Button variant="outline" className="flex-1" onClick={() => setConfirmDelete(null)}>Cancel</Button>
-              <Button className="flex-1" onClick={() => { deleteSlot(confirmDelete); setConfirmDelete(null); showToast('Slot deleted'); refresh(); }} variant="danger">Delete</Button>
+              <Button className="flex-1" onClick={async () => { await deleteSlot(confirmDelete); setConfirmDelete(null); showToast('Slot deleted'); await refresh(); }} variant="danger">Delete</Button>
             </div>
           </div>
         </div>

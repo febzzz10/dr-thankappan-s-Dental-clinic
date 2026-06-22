@@ -1,6 +1,6 @@
 -- Seed admin (password: admin123, bcrypt hash)
 INSERT OR IGNORE INTO admins (name, email, password_hash, role) VALUES
-  ('Admin', 'admin@dentalclinic.com', '$2a$12$LJ3m4ys3Lg3YOCwKkDqOYeQFH0T0iVJLZn0FPwJ5w/m0pBXgZFYDS', 'superadmin');
+  ('Admin', 'admin@dentalclinic.com', '$2a$12$jz.n66bmmTQvPL759BdchOgNq.UeSlFo5V1ciLtz4T0vgXWEnLksS', 'superadmin');
 
 -- Seed settings
 INSERT OR IGNORE INTO settings (key, value, label) VALUES

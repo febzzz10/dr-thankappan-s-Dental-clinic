@@ -1,5 +1,7 @@
 'use client';
 
+import type { Slot as ApiSlot } from './api';
+
 export interface SlotConfig {
   workStart: string;
   workEnd: string;
@@ -37,9 +39,7 @@ export interface GenConfig {
   enableEvening: boolean;
 }
 
-const STORAGE_KEY = 'dental-slots';
 const CONFIG_KEY = 'dental-gen-config';
-const PUBLISH_KEY = 'dental-published';
 
 const DAYS: Record<number, string> = {
   0: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday',
@@ -66,6 +66,29 @@ for (let h = 0; h < 24; h++) {
     const h12 = h === 0 ? 12 : h > 12 ? h - 12 : h;
     TIME_HUMAN[t] = `${h12}:${m}${ampm}`;
   }
+}
+
+let slotsCache: SlotItem[] | null = null;
+
+function mapSlot(s: ApiSlot): SlotItem {
+  return {
+    id: String(s.id),
+    date: s.date,
+    day_of_week: getDateDayName(s.date),
+    start_time: s.start_time,
+    end_time: s.end_time,
+    endTime: s.end_time,
+    label: s.slot_label || '',
+    status: s.status,
+    is_active: s.status === 'available' || s.status === 'booked',
+    is_draft: false,
+    procedure_type: s.procedure_type,
+    patient_count: 0,
+  };
+}
+
+function mapSlots(slots: ApiSlot[]): SlotItem[] {
+  return slots.map(mapSlot);
 }
 
 export function formatDate(d: Date): string {
@@ -141,112 +164,166 @@ export function saveConfig(config: GenConfig): void {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
 }
 
-export function loadSlots(): SlotItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch { /* ignore */ }
-  return [];
+export async function loadSlots(): Promise<SlotItem[]> {
+  const { getSlots } = await import('./api');
+  const raw = await getSlots('2000-01-01', '2100-01-01');
+  slotsCache = mapSlots(raw);
+  return slotsCache;
 }
 
-export function saveSlots(slots: SlotItem[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(slots));
+export async function saveSlots(slots: SlotItem[]): Promise<void> {
+  slotsCache = slots;
 }
 
-export function getPublishedSlots(): SlotItem[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const raw = localStorage.getItem(PUBLISH_KEY);
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) return parsed;
-    }
-  } catch { /* ignore */ }
-  return [];
+export async function getPublishedSlots(): Promise<SlotItem[]> {
+  return loadSlots();
 }
 
-export function publishSlots(slots: SlotItem[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(PUBLISH_KEY, JSON.stringify(slots.map((s) => ({ ...s, is_draft: false }))));
-  saveSlots(slots.map((s) => ({ ...s, is_draft: false })));
+export async function publishSlots(): Promise<void> {
 }
 
 export function hasUnpublishedChanges(): boolean {
-  const all = loadSlots();
-  return all.some((s) => s.is_draft);
+  return false;
 }
 
 export function getUnpublishedCount(): number {
-  return loadSlots().filter((s) => s.is_draft).length;
+  return 0;
 }
 
-export function getSlotsForWeek(dateStr?: string): SlotItem[] {
-  const all = loadSlots();
+export async function getSlotsForWeek(dateStr?: string): Promise<SlotItem[]> {
+  const all = await loadSlots();
   const dates = getWeekDates(dateStr);
   return all.filter((s) => dates.includes(s.date));
 }
 
-export function getSlotsForRange(startDate: string, endDate: string): SlotItem[] {
-  return loadSlots().filter((s) => s.date >= startDate && s.date <= endDate);
+export async function getSlotsForRange(startDate: string, endDate: string): Promise<SlotItem[]> {
+  const all = await loadSlots();
+  return all.filter((s) => s.date >= startDate && s.date <= endDate);
 }
 
-export function getSlotsByDate(date: string): SlotItem[] {
-  return loadSlots().filter((s) => s.date === date);
+export async function getSlotsByDate(date: string): Promise<SlotItem[]> {
+  const all = await loadSlots();
+  return all.filter((s) => s.date === date);
 }
 
-export function addSlot(slot: Omit<SlotItem, 'id'>): SlotItem {
-  const slots = loadSlots();
-  const id = `slot-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
-  const newSlot: SlotItem = { ...slot, id };
-  slots.push(newSlot);
-  saveSlots(slots);
+export async function addSlot(slot: Omit<SlotItem, 'id'>): Promise<SlotItem> {
+  const { createSlot } = await import('./api');
+  const result = await createSlot({
+    date: slot.date,
+    start_time: slot.start_time,
+    end_time: slot.end_time,
+    slot_label: slot.label,
+    status: slot.status,
+    doctor_id: 1,
+    procedure_type: slot.procedure_type,
+  });
+  const newSlot: SlotItem = {
+    ...slot,
+    id: String(result.id),
+    day_of_week: getDateDayName(slot.date),
+    is_draft: false,
+    patient_count: 0,
+  };
+  if (slotsCache) slotsCache.push(newSlot);
   return newSlot;
 }
 
-export function updateSlot(id: string, changes: Partial<SlotItem>): SlotItem | null {
-  const slots = loadSlots();
-  const idx = slots.findIndex((s) => s.id === id);
-  if (idx === -1) return null;
-  slots[idx] = { ...slots[idx], ...changes };
-  saveSlots(slots);
-  return slots[idx];
+export async function updateSlot(id: string, changes: Partial<SlotItem>): Promise<SlotItem | null> {
+  const { updateSlot: apiUpdateSlot } = await import('./api');
+  const numId = parseInt(id, 10);
+  if (isNaN(numId)) return null;
+
+  const apiChanges: { status?: string; procedure_type?: string; start_time?: string; end_time?: string } = {};
+  if (changes.status) apiChanges.status = changes.status;
+  if (changes.procedure_type != null) apiChanges.procedure_type = changes.procedure_type;
+  if (changes.start_time) apiChanges.start_time = changes.start_time;
+  if (changes.end_time) apiChanges.end_time = changes.end_time;
+
+  try {
+    await apiUpdateSlot(numId, apiChanges);
+  } catch {
+    // If the slot was marked booked on server, ignore
+  }
+
+  if (slotsCache) {
+    const idx = slotsCache.findIndex((s) => s.id === id);
+    if (idx !== -1) {
+      slotsCache[idx] = { ...slotsCache[idx], ...changes };
+      return slotsCache[idx];
+    }
+  }
+  return null;
 }
 
-export function deleteSlot(id: string): boolean {
-  const slots = loadSlots();
-  const filtered = slots.filter((s) => s.id !== id);
-  if (filtered.length === slots.length) return false;
-  saveSlots(filtered);
+export async function deleteSlot(id: string): Promise<boolean> {
+  const { deleteSlot: apiDeleteSlot } = await import('./api');
+  const numId = parseInt(id, 10);
+  if (isNaN(numId)) return false;
+
+  try {
+    await apiDeleteSlot(numId);
+  } catch {
+    return false;
+  }
+
+  if (slotsCache) {
+    const len = slotsCache.length;
+    slotsCache = slotsCache.filter((s) => s.id !== id);
+    return slotsCache.length < len;
+  }
   return true;
 }
 
-export function blockDay(date: string): SlotItem[] {
-  const slots = loadSlots();
-  const updated = slots.map((s) => {
-    if (s.date === date && s.status === 'available') {
-      return { ...s, status: 'blocked' as const, is_active: false };
+export async function blockDay(date: string): Promise<SlotItem[]> {
+  const { getSlots, updateSlot: apiUpdateSlot } = await import('./api');
+  const daySlots = await getSlots(date, date);
+  const updatedIds: number[] = [];
+
+  for (const s of daySlots) {
+    if (s.status === 'available') {
+      try {
+        await apiUpdateSlot(s.id, { status: 'blocked' });
+        updatedIds.push(s.id);
+      } catch { /* skip */ }
     }
-    return s;
-  });
-  saveSlots(updated);
-  return updated.filter((s) => s.date === date);
+  }
+
+  if (slotsCache) {
+    slotsCache = slotsCache.map((s) => {
+      if (s.date === date && s.status === 'available') {
+        return { ...s, status: 'blocked' as const, is_active: false };
+      }
+      return s;
+    });
+  }
+
+  return (slotsCache || []).filter((s) => s.date === date);
 }
 
-export function unblockDay(date: string): SlotItem[] {
-  const slots = loadSlots();
-  const updated = slots.map((s) => {
-    if (s.date === date && s.status === 'blocked') {
-      return { ...s, status: 'available' as const, is_active: true };
+export async function unblockDay(date: string): Promise<SlotItem[]> {
+  const { getSlots, updateSlot: apiUpdateSlot } = await import('./api');
+  const daySlots = await getSlots(date, date);
+  const updatedIds: number[] = [];
+
+  for (const s of daySlots) {
+    if (s.status === 'blocked') {
+      try {
+        await apiUpdateSlot(s.id, { status: 'available' });
+        updatedIds.push(s.id);
+      } catch { /* skip */ }
     }
-    return s;
-  });
-  saveSlots(updated);
-  return updated.filter((s) => s.date === date);
+  }
+
+  if (slotsCache) {
+    slotsCache = slotsCache.map((s) => {
+      if (s.date === date && s.status === 'blocked') {
+        return { ...s, status: 'available' as const, is_active: true };
+      }
+      return s;
+    });
+  }
+
+  return (slotsCache || []).filter((s) => s.date === date);
 }
 
 export function getSummary(slots: SlotItem[]): { available: number; booked: number; blocked: number } {
@@ -257,8 +334,10 @@ export function getSummary(slots: SlotItem[]): { available: number; booked: numb
   };
 }
 
-export function generateSlots(config: GenConfig, weekDates: string[]): SlotItem[] {
-  const existing = loadSlots();
+export async function generateSlots(config: GenConfig, weekDates: string[]): Promise<SlotItem[]> {
+  const { createBatchSlots, getSlots } = await import('./api');
+
+  const existing = slotsCache || await loadSlots();
   const existingKeys = new Set(existing.map((s) => `${s.date}-${s.start_time}`));
   const newSlots: SlotItem[] = [];
 
@@ -289,11 +368,10 @@ export function generateSlots(config: GenConfig, weekDates: string[]): SlotItem[
       if (!config.enableAfternoon && isAfternoon) continue;
       if (!config.enableEvening && isEvening) continue;
 
-      const h = hour;
       const period = isMorning ? 'Morning' : isAfternoon ? 'Afternoon' : 'Evening';
 
       newSlots.push({
-        id: `slot-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+        id: `temp-${Math.random().toString(36).slice(2, 8)}`,
         date,
         day_of_week: dayName,
         start_time: start,
@@ -308,29 +386,58 @@ export function generateSlots(config: GenConfig, weekDates: string[]): SlotItem[
     }
   }
 
-  const all = [...existing, ...newSlots];
-  saveSlots(all);
-  return newSlots;
+  // Persist new slots to the API
+  if (newSlots.length > 0) {
+    try {
+      const batchPayload = newSlots.map((s) => ({
+        date: s.date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        slot_label: 'available',
+        status: 'available' as const,
+        doctor_id: 1,
+        procedure_type: null,
+      }));
+      await createBatchSlots(batchPayload);
+      // Reload to get real IDs
+      const reloaded = await loadSlots();
+      if (slotsCache) {
+        const newIds = reloaded.filter(
+          (r) => !existing.some((e) => e.id === r.id)
+        );
+        return newIds;
+      }
+      return newSlots;
+    } catch {
+      // If batch fails, just return the locally generated ones
+      if (slotsCache) {
+        slotsCache.push(...newSlots);
+      }
+      return newSlots;
+    }
+  }
+
+  return [];
 }
 
-export function copyWeekSlots(fromDates: string[], toDates: string[]): number {
-  const all = loadSlots();
+export async function copyWeekSlots(fromDates: string[], toDates: string[]): Promise<number> {
+  const { createBatchSlots } = await import('./api');
+  const all = slotsCache || await loadSlots();
   const fromSlots = all.filter((s) => fromDates.includes(s.date));
-  const toDateSet = new Set(toDates);
   const existingKeys = new Set(all.map((s) => `${s.date}-${s.start_time}`));
+  const toAdd: SlotItem[] = [];
   let count = 0;
 
   for (const slot of fromSlots) {
-    const fromDate = slot.date;
-    const fromIdx = fromDates.indexOf(fromDate);
+    const fromIdx = fromDates.indexOf(slot.date);
     if (fromIdx === -1 || fromIdx >= toDates.length) continue;
     const toDate = toDates[fromIdx];
     const key = `${toDate}-${slot.start_time}`;
     if (existingKeys.has(key)) continue;
 
-    all.push({
+    toAdd.push({
       ...slot,
-      id: `slot-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
+      id: `temp-${Math.random().toString(36).slice(2, 8)}`,
       date: toDate,
       day_of_week: getDateDayName(toDate),
       is_draft: true,
@@ -340,6 +447,22 @@ export function copyWeekSlots(fromDates: string[], toDates: string[]): number {
     count++;
   }
 
-  saveSlots(all);
+  if (toAdd.length > 0) {
+    try {
+      await createBatchSlots(toAdd.map((s) => ({
+        date: s.date,
+        start_time: s.start_time,
+        end_time: s.end_time,
+        slot_label: 'available',
+        status: 'available' as const,
+        doctor_id: 1,
+        procedure_type: null,
+      })));
+      await loadSlots();
+    } catch {
+      if (slotsCache) slotsCache.push(...toAdd);
+    }
+  }
+
   return count;
 }

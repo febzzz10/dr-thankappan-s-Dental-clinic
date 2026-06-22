@@ -74,7 +74,7 @@ auth.post('/login', async (c) => {
     role: admin.role,
   });
 
-  setCookie(c, 'token', token, {
+  setCookie(c, 'auth_token', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'Strict',
@@ -82,11 +82,11 @@ auth.post('/login', async (c) => {
     maxAge: 86400,
   });
 
-  return c.json({ success: true, data: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
+  return c.json({ success: true, data: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, token } });
 });
 
 auth.post('/logout', (c) => {
-  deleteCookie(c, 'token', { path: '/' });
+  deleteCookie(c, 'auth_token', { path: '/' });
   return c.json({ success: true, data: null });
 });
 

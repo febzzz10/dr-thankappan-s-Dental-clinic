@@ -56,6 +56,7 @@ export interface AdminUser {
   name: string;
   email: string;
   role: string;
+  token?: string;
 }
 
 export async function login(email: string, password: string): Promise<AdminUser> {
@@ -164,7 +165,31 @@ export async function generateSlots(data: {
   return api.post('/api/slots/generate', data);
 }
 
-export async function updateSlot(id: number, data: { status?: string; procedure_type?: string }) {
+export async function createSlot(data: {
+  date: string;
+  start_time: string;
+  end_time: string;
+  slot_label?: string;
+  status?: string;
+  doctor_id: number;
+  procedure_type?: string | null;
+}): Promise<{ id: number }> {
+  return api.post('/api/slots', data);
+}
+
+export async function createBatchSlots(slots: {
+  date: string;
+  start_time: string;
+  end_time: string;
+  slot_label?: string;
+  status?: string;
+  doctor_id: number;
+  procedure_type?: string | null;
+}[]): Promise<{ created: number }> {
+  return api.post('/api/slots/batch', { slots });
+}
+
+export async function updateSlot(id: number, data: { status?: string; procedure_type?: string; start_time?: string; end_time?: string }) {
   return api.patch(`/api/slots/${id}`, data);
 }
 

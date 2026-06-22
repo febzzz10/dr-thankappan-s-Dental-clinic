@@ -16,6 +16,12 @@
       "bucket_name": "dental-clinic"
     }
   ],
+  "kv_namespaces": [
+    {
+      "binding": "KV_RATE_LIMIT",
+      "id": "69b9e2e7c7c945da84e7b313d62fceec"
+    }
+  ],
   "vars": {
     "NODE_VERSION": "22"
   }
