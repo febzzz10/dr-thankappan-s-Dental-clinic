@@ -77,7 +77,7 @@ auth.post('/login', async (c) => {
   setCookie(c, 'auth_token', token, {
     httpOnly: true,
     secure: true,
-    sameSite: 'Strict',
+    sameSite: 'None',
     path: '/',
     maxAge: 86400,
   });
