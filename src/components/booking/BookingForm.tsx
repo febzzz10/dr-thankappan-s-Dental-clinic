@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiArrowRight, PiCheck } from 'react-icons/pi';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Input';
-import { mockData, generateBookingRef } from '@/lib/mock-data';
-import { getSlots } from '@/lib/api';
+import { mockData } from '@/lib/mock-data';
+import { getSlots, createAppointment } from '@/lib/api';
 import type { AvailableSlot } from '@/types';
 import { formatDate, generateWhatsAppUrl } from '@/lib/utils';
 
@@ -112,7 +112,21 @@ export function BookingForm() {
     }
 
     try {
-      const ref = generateBookingRef();
+      const service = mockData.services.find(
+        (s) => s.service_name === form.treatment
+      );
+      const result = await createAppointment({
+        patient_name: form.patient_name,
+        phone: form.phone,
+        email: form.email || undefined,
+        service_id: service?.id,
+        doctor_id: 1,
+        appointment_date: form.appointment_date,
+        appointment_time: form.appointment_time,
+        slot_id: form.slot_id,
+        notes: form.notes || undefined,
+      });
+      const ref = result.booking_ref;
       const waNumber = settings.whatsapp_number;
       const msg = [
         '*New Appointment Booking*',
@@ -131,8 +145,12 @@ export function BookingForm() {
 
       window.open(waUrl, '_blank');
       router.push(`/book/confirmation?ref=${ref}&name=${encodeURIComponent(form.patient_name)}&date=${form.appointment_date}&time=${form.appointment_time}&treatment=${encodeURIComponent(form.treatment)}`);
-    } catch {
-      setError('Something went wrong. Please try again or call us directly.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Something went wrong. Please try again or call us directly.');
+      }
     } finally {
       setLoading(false);
     }
