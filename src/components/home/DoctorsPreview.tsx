@@ -1,10 +1,12 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { PiArrowRight } from 'react-icons/pi';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
-import { mockData } from '@/lib/mock-data';
+import { getDoctors } from '@/lib/api';
+import type { Doctor } from '@/lib/api';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -26,7 +28,14 @@ const cardVariants = {
 };
 
 export function DoctorsPreview() {
-  const doctors = mockData.doctors.slice(0, 3);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getDoctors()
+      .then((data) => setDoctors(data.slice(0, 3)))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <section className="bg-white py-24">
@@ -49,55 +58,61 @@ export function DoctorsPreview() {
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.2 }}
-          className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]"
-        >
-          {doctors.map((doctor, i) => (
-            <motion.div
-              key={doctor.id}
-              variants={cardVariants}
-              whileHover={{ y: -4 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Card className="overflow-hidden text-center">
-                <div className="bg-gradient-to-b from-teal-50 to-white p-6">
-                  <motion.div
-                    initial={{ scale: 0 }}
-                    whileInView={{ scale: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ type: "spring", stiffness: 200, damping: 15, delay: i * 0.1 + 0.2 }}
-                    className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
-                  >
-                    <span className="text-4xl font-bold text-teal-600">
-                      {doctor.doctor_name.charAt(0)}
-                    </span>
-                  </motion.div>
-                  <h3 className="font-display text-xl font-bold text-slate-900">
-                    {doctor.doctor_name}
-                  </h3>
-                  <p className="mt-1 text-sm font-medium text-teal-600">
-                    {doctor.qualification}
-                  </p>
-                </div>
-                <div className="p-6 pt-4">
-                  <p className="mb-1 text-sm text-slate-600">{doctor.specialization}</p>
-                  <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
-                  <Link
-                    href={`/doctors/${doctor.slug}`}
-                    className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal-600 transition-[transform,opacity,color] hover:gap-2"
-                  >
-                    View Profile
-                    <PiArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </Card>
-            </motion.div>
-          ))}
-        </motion.div>
+        {loading ? (
+          <div className="py-12 text-center">
+            <p className="text-slate-400">Loading doctors...</p>
+          </div>
+        ) : (
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.2 }}
+            className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,16rem),1fr))]"
+          >
+            {doctors.map((doctor, i) => (
+              <motion.div
+                key={doctor.id}
+                variants={cardVariants}
+                whileHover={{ y: -4 }}
+                whileTap={{ scale: 0.98 }}
+              >
+                <Card className="overflow-hidden text-center">
+                  <div className="bg-gradient-to-b from-teal-50 to-white p-6">
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      whileInView={{ scale: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ type: "spring", stiffness: 200, damping: 15, delay: i * 0.1 + 0.2 }}
+                      className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+                    >
+                      <span className="text-4xl font-bold text-teal-600">
+                        {doctor.doctor_name.charAt(0)}
+                      </span>
+                    </motion.div>
+                    <h3 className="font-display text-xl font-bold text-slate-900">
+                      {doctor.doctor_name}
+                    </h3>
+                    <p className="mt-1 text-sm font-medium text-teal-600">
+                      {doctor.qualification}
+                    </p>
+                  </div>
+                  <div className="p-6 pt-4">
+                    <p className="mb-1 text-sm text-slate-600">{doctor.specialization}</p>
+                    <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
+                    <Link
+                      href={`/doctors/${doctor.slug}`}
+                      className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal-600 transition-[transform,opacity,color] hover:gap-2"
+                    >
+                      View Profile
+                      <PiArrowRight className="h-3.5 w-3.5" />
+                    </Link>
+                  </div>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}

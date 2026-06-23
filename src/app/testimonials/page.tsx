@@ -1,12 +1,21 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { Star, Quote } from 'lucide-react';
 import { Container, SectionHeader } from '@/components/ui/Section';
 import { Card } from '@/components/ui/Card';
-import { mockData } from '@/lib/mock-data';
+import { getTestimonials, Testimonial } from '@/lib/api';
 
 export default function TestimonialsPage() {
-  const testimonials = mockData.testimonials.filter(t => t.is_visible);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getTestimonials()
+      .then((data) => setTestimonials(data.filter((t) => t.is_visible)))
+      .catch(() => setTestimonials([]))
+      .finally(() => setLoading(false));
+  }, []);
 
   return (
     <div className="min-h-dvh bg-white">
@@ -20,7 +29,11 @@ export default function TestimonialsPage() {
       </section>
 
       <Container className="py-16 md:py-24">
-        {testimonials.length === 0 ? (
+        {loading ? (
+          <div className="py-12 text-center">
+            <p className="text-slate-500">Loading testimonials...</p>
+          </div>
+        ) : testimonials.length === 0 ? (
           <div className="py-12 text-center">
             <p className="text-slate-500">No testimonials found.</p>
           </div>

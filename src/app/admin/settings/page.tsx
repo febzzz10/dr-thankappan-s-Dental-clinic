@@ -1,24 +1,40 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Save } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
-import { mockData } from '@/lib/mock-data';
-import type { Settings } from '@/types';
+import { getSettings, updateSettings } from '@/lib/api';
+import type { Settings } from '@/lib/api';
 
 export default function AdminSettingsPage() {
-  const [settings, setSettings] = useState<Settings>(mockData.settings);
+  const [settings, setSettings] = useState<Settings>({});
   const [saved, setSaved] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  const updateField = (key: keyof Settings, value: string) => {
+  useEffect(() => {
+    getSettings()
+      .then(setSettings)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const updateField = (key: string, value: string) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
     setSaved(false);
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
+    await updateSettings(settings);
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -147,73 +163,6 @@ export default function AdminSettingsPage() {
               autoComplete="off"
               className="mt-1 block w-32 rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
             />
-          </div>
-        </div>
-      </div>
-
-      <div className="rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div className="border-b border-slate-100 px-6 py-4">
-          <h2 className="font-display text-lg font-bold text-slate-900">Procedure Durations</h2>
-          <p className="mt-1 text-xs text-slate-400">Slot duration in minutes per procedure type. Used by the slot engine to allocate time.</p>
-        </div>
-        <div className="space-y-4 p-6">
-          {Object.entries(settings.procedure_durations ?? {}).map(([name, mins]) => (
-            <div key={name} className="flex items-center gap-4">
-              <span className="min-w-0 flex-1 text-sm text-slate-700">{name}</span>
-              <input
-                id={`dur-${name}`}
-                type="number"
-                min={5}
-                max={180}
-                value={mins}
-                onChange={(e) => {
-                  const val = parseInt(e.target.value) || 30;
-                  setSettings((prev) => ({
-                    ...prev,
-                    procedure_durations: { ...prev.procedure_durations, [name]: val },
-                  }));
-                  setSaved(false);
-                }}
-                autoComplete="off"
-                className="w-24 rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-              <span className="text-xs text-slate-400">min</span>
-            </div>
-          ))}
-          <div className="flex items-center gap-2 border-t border-slate-100 pt-4">
-            <input
-              id="new-proc-name"
-              type="text"
-              placeholder="New procedure"
-              className="flex-1 rounded-xl border border-slate-200 px-3 py-2 text-sm transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && e.currentTarget.value.trim()) {
-                  const name = e.currentTarget.value.trim();
-                  setSettings((prev) => ({
-                    ...prev,
-                    procedure_durations: { ...prev.procedure_durations, [name]: 30 },
-                  }));
-                  e.currentTarget.value = '';
-                  setSaved(false);
-                }
-              }}
-            />
-            <button
-              onClick={() => {
-                const input = document.getElementById('new-proc-name') as HTMLInputElement;
-                if (input?.value.trim()) {
-                  setSettings((prev) => ({
-                    ...prev,
-                    procedure_durations: { ...prev.procedure_durations, [input.value.trim()]: 30 },
-                  }));
-                  input.value = '';
-                  setSaved(false);
-                }
-              }}
-              className="rounded-xl bg-teal-50 px-3 py-2 text-sm font-medium text-teal-600 hover:bg-teal-100 transition-colors focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:outline-none"
-            >
-              + Add
-            </button>
           </div>
         </div>
       </div>

@@ -1,12 +1,12 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { PiMapPin, PiPhone, PiEnvelope, PiClock, PiChatCircle, PiPaperPlaneTilt, PiCheckCircle } from 'react-icons/pi';
 import { motion, useReducedMotion } from 'framer-motion';
 import { Container } from '@/components/ui/Section';
 import { Button } from '@/components/ui/Button';
 import { Input, Textarea } from '@/components/ui/Input';
-import { mockData } from '@/lib/mock-data';
+import { getSettings } from '@/lib/api';
 import { generateWhatsAppUrl } from '@/lib/utils';
 
 const pageEase = [0.16, 1, 0.3, 1] as const;
@@ -29,19 +29,34 @@ const itemVariants = {
 };
 
 export default function ContactPage() {
-  const settings = mockData.settings;
-  const waUrl = generateWhatsAppUrl(
-    settings.whatsapp_number,
-    'Hi! I\'d like to enquire about dental services.'
-  );
-
+  const [settings, setSettings] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
   const [submitted, setSubmitted] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  useEffect(() => {
+    getSettings()
+      .then(setSettings)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const waUrl = generateWhatsAppUrl(
+    settings.whatsapp_number || '',
+    'Hi! I\'d like to enquire about dental services.'
+  );
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
   };
+
+  if (loading) {
+    return (
+      <div className="flex min-h-dvh items-center justify-center">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-dvh bg-white">

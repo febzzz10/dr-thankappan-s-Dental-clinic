@@ -1,11 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { mockData } from '@/lib/mock-data';
-import type { Doctor } from '@/types';
+import { getDoctors, createDoctor, updateDoctor, deleteDoctor } from '@/lib/api';
+import type { Doctor } from '@/lib/api';
 
 interface DoctorForm {
   doctor_name: string;
@@ -14,28 +14,46 @@ interface DoctorForm {
   specialization: string;
   experience_yrs: number | null;
   image_url: string;
-  is_active: boolean;
+  is_active: number;
 }
 
 const emptyForm: DoctorForm = {
   doctor_name: '', slug: '', qualification: '',
-  specialization: '', experience_yrs: null, image_url: '', is_active: true,
+  specialization: '', experience_yrs: null, image_url: '', is_active: 1,
 };
 
 export default function AdminDoctorsPage() {
-  const [doctors, setDoctors] = useState<Doctor[]>(mockData.doctors);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<DoctorForm>(emptyForm);
 
-  const toggleActive = (id: number) => {
-    setDoctors((prev) =>
-      prev.map((d) => (d.id === id ? { ...d, is_active: !d.is_active } : d))
-    );
+  const fetchDoctors = async () => {
+    try {
+      const data = await getDoctors();
+      setDoctors(data);
+    } catch {
+      // handle error
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const deleteDoctor = (id: number) => {
-    setDoctors((prev) => prev.filter((d) => d.id !== id));
+  useEffect(() => {
+    fetchDoctors();
+  }, []);
+
+  const toggleActive = async (id: number) => {
+    const doctor = doctors.find(d => d.id === id);
+    if (!doctor) return;
+    await updateDoctor(id, { is_active: doctor.is_active === 1 ? 0 : 1 });
+    fetchDoctors();
+  };
+
+  const handleDelete = async (id: number) => {
+    await deleteDoctor(id);
+    fetchDoctors();
   };
 
   const openAdd = () => {
@@ -58,24 +76,22 @@ export default function AdminDoctorsPage() {
     setShowModal(true);
   };
 
-  const handleSave = () => {
-    if (editingId) {
-      setDoctors((prev) =>
-        prev.map((d) => (d.id === editingId ? { ...d, ...form } : d))
-      );
+  const handleSave = async () => {
+    try {
+      const data = {
+        ...form,
+        image_url: form.image_url || null,
+      };
+      if (editingId) {
+        await updateDoctor(editingId, data);
       } else {
-        const { image_url, ...rest } = form;
-        const newDoctor = {
-          id: Math.max(0, ...doctors.map((d) => d.id)) + 1,
-          ...rest,
-          image_url: image_url || null,
-          bio: null,
-          availability: null,
-          sort_order: doctors.length + 1,
-        } as Doctor;
-      setDoctors((prev) => [...prev, newDoctor]);
+        await createDoctor(data);
+      }
+      await fetchDoctors();
+      setShowModal(false);
+    } catch {
+      // handle error
     }
-    setShowModal(false);
   };
 
   const slugFromName = (name: string) =>
@@ -93,49 +109,55 @@ export default function AdminDoctorsPage() {
         </Button>
       </div>
 
-      <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
-        {doctors.map((doctor) => (
-          <div key={doctor.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-            <div className="flex items-center gap-3">
-              {doctor.image_url ? (
-                <img
-                  src={doctor.image_url}
-                  alt={doctor.doctor_name}
-                  className="h-12 w-12 rounded-full object-cover"
-                />
-              ) : (
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-base font-bold text-teal-600">
-                  {doctor.doctor_name.charAt(0)}
+      {loading ? (
+        <div className="py-12 text-center">
+          <p className="text-sm text-slate-400">Loading doctors...</p>
+        </div>
+      ) : (
+        <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
+          {doctors.map((doctor) => (
+            <div key={doctor.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+              <div className="flex items-center gap-3">
+                {doctor.image_url ? (
+                  <img
+                    src={doctor.image_url}
+                    alt={doctor.doctor_name}
+                    className="h-12 w-12 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-base font-bold text-teal-600">
+                    {doctor.doctor_name.charAt(0)}
+                  </div>
+                )}
+                <div className="flex-1">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-slate-900">{doctor.doctor_name}</h3>
+                    <Badge variant={doctor.is_active ? 'confirmed' : 'cancelled'}>
+                      {doctor.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </div>
+                  <p className="text-xs text-slate-500">{doctor.qualification}</p>
                 </div>
-              )}
-              <div className="flex-1">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-slate-900">{doctor.doctor_name}</h3>
-                  <Badge variant={doctor.is_active ? 'confirmed' : 'cancelled'}>
-                    {doctor.is_active ? 'Active' : 'Inactive'}
-                  </Badge>
-                </div>
-                <p className="text-xs text-slate-500">{doctor.qualification}</p>
+              </div>
+              <p className="mt-3 text-xs text-slate-500">{doctor.specialization}</p>
+              <p className="text-xs text-slate-400">{doctor.experience_yrs} years experience</p>
+              <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                <button onClick={() => toggleActive(doctor.id)} className="text-xs text-slate-500 hover:text-teal-600">
+                  {doctor.is_active ? 'Deactivate' : 'Activate'}
+                </button>
+                <button onClick={() => openEdit(doctor)} className="text-xs text-slate-500 hover:text-blue-600">
+                  <Pencil className="h-3.5 w-3.5 inline mr-1" />
+                  Edit
+                </button>
+                <button onClick={() => { if (confirm('Are you sure you want to delete this doctor?')) handleDelete(doctor.id); }} className="text-xs text-slate-500 hover:text-red-600">
+                  <Trash2 className="h-3.5 w-3.5 inline mr-1" />
+                  Delete
+                </button>
               </div>
             </div>
-            <p className="mt-3 text-xs text-slate-500">{doctor.specialization}</p>
-            <p className="text-xs text-slate-400">{doctor.experience_yrs} years experience</p>
-            <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-              <button onClick={() => toggleActive(doctor.id)} className="text-xs text-slate-500 hover:text-teal-600">
-                {doctor.is_active ? 'Deactivate' : 'Activate'}
-              </button>
-              <button onClick={() => openEdit(doctor)} className="text-xs text-slate-500 hover:text-blue-600">
-                <Pencil className="h-3.5 w-3.5 inline mr-1" />
-                Edit
-              </button>
-              <button onClick={() => { if (confirm('Are you sure you want to delete this doctor?')) deleteDoctor(doctor.id); }} className="text-xs text-slate-500 hover:text-red-600">
-                <Trash2 className="h-3.5 w-3.5 inline mr-1" />
-                Delete
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
 
       {/* Add/Edit Doctor Modal */}
       {showModal && (
@@ -233,8 +255,8 @@ export default function AdminDoctorsPage() {
                 <input
                   type="checkbox"
                   id="is_active"
-                  checked={form.is_active}
-                  onChange={(e) => setForm({ ...form, is_active: e.target.checked })}
+                  checked={form.is_active === 1}
+                  onChange={(e) => setForm({ ...form, is_active: e.target.checked ? 1 : 0 })}
                   className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
                 />
                 <label htmlFor="is_active" className="text-sm font-medium text-slate-700">Active</label>

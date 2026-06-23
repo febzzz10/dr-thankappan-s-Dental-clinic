@@ -1,21 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Star, Eye, EyeOff, Trash2 } from 'lucide-react';
-import { mockData } from '@/lib/mock-data';
+import { getTestimonials, createTestimonial, deleteTestimonial, Testimonial } from '@/lib/api';
 
 export default function AdminContentPage() {
-  const [testimonials, setTestimonials] = useState(mockData.testimonials);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
 
-  const toggleVisibility = (id: number) => {
-    setTestimonials((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, is_visible: !t.is_visible } : t))
-    );
+  const fetchTestimonials = () => {
+    getTestimonials()
+      .then(setTestimonials)
+      .catch(() => setTestimonials([]));
   };
 
-  const deleteTestimonial = (id: number) => {
+  useEffect(() => {
+    fetchTestimonials();
+  }, []);
+
+  const handleDelete = (id: number) => {
     if (!confirm('Are you sure?')) return;
-    setTestimonials((prev) => prev.filter((t) => t.id !== id));
+    deleteTestimonial(id)
+      .then(fetchTestimonials)
+      .catch(() => alert('Failed to delete testimonial'));
+  };
+
+  const handleToggleVisibility = async (id: number) => {
+    const t = testimonials.find((t) => t.id === id);
+    if (!t) return;
+    try {
+      await createTestimonial({ ...t, is_visible: t.is_visible ? 0 : 1 });
+      fetchTestimonials();
+    } catch {
+      alert('Failed to update visibility');
+    }
   };
 
   return (
@@ -58,7 +75,7 @@ export default function AdminContentPage() {
                 </div>
                 <div className="flex items-center gap-1">
                   <button
-                    onClick={() => toggleVisibility(t.id)}
+                    onClick={() => handleToggleVisibility(t.id)}
                     className={`rounded-lg p-1.5 transition-colors ${
                       t.is_visible ? 'text-teal-500 hover:bg-teal-50' : 'text-slate-400 hover:bg-slate-100'
                     }`}
@@ -68,7 +85,7 @@ export default function AdminContentPage() {
                     {t.is_visible ? <Eye className="h-4 w-4" aria-hidden="true" /> : <EyeOff className="h-4 w-4" aria-hidden="true" />}
                   </button>
                   <button
-                    onClick={() => deleteTestimonial(t.id)}
+                    onClick={() => handleDelete(t.id)}
                     className="rounded-lg p-1.5 text-slate-400 hover:bg-red-50 hover:text-red-500"
                     title="Delete"
                     aria-label="Delete testimonial"

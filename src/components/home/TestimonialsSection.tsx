@@ -3,11 +3,17 @@
 import { PiStar, PiCaretLeft, PiCaretRight, PiQuotes } from 'react-icons/pi';
 import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { mockData } from '@/lib/mock-data';
+import { getTestimonials, Testimonial } from '@/lib/api';
 
 export function TestimonialsSection() {
-  const testimonials = mockData.testimonials.filter(t => t.is_visible);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [current, setCurrent] = useState(0);
+
+  useEffect(() => {
+    getTestimonials()
+      .then((data) => setTestimonials(data.filter((t) => t.is_visible)))
+      .catch(() => setTestimonials([]));
+  }, []);
 
   const prev = useCallback(() => setCurrent((c) => (c === 0 ? testimonials.length - 1 : c - 1)), [testimonials.length]);
   const next = useCallback(() => setCurrent((c) => (c === testimonials.length - 1 ? 0 : c + 1)), [testimonials.length]);
@@ -16,6 +22,8 @@ export function TestimonialsSection() {
     const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
   }, [next]);
+
+  if (testimonials.length === 0) return null;
 
   const t = testimonials[current];
 

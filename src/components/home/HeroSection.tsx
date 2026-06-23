@@ -1,10 +1,11 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { PiCalendarBlank, PiChatCircle, PiShield, PiClock, PiSparkle, PiShieldCheck, PiUsers, PiSmiley } from 'react-icons/pi';
 import { motion } from 'framer-motion';
-import { mockData } from '@/lib/mock-data';
+import { getSettings } from '@/lib/api';
 import { generateWhatsAppUrl } from '@/lib/utils';
 
 const containerVariants = {
@@ -42,9 +43,16 @@ const cardVariants = {
 };
 
 export function HeroSection() {
-  const settings = mockData.settings;
+  const [whatsappNumber, setWhatsappNumber] = useState('');
+
+  useEffect(() => {
+    getSettings().then((s) => {
+      if (s.whatsapp_number) setWhatsappNumber(s.whatsapp_number);
+    });
+  }, []);
+
   const waUrl = generateWhatsAppUrl(
-    settings.whatsapp_number,
+    whatsappNumber || '0',
     'Hi! I\'d like to book a dental appointment.'
   );
 

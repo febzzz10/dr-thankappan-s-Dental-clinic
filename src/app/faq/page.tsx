@@ -1,18 +1,27 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Container, SectionHeader } from '@/components/ui/Section';
-import { mockData } from '@/lib/mock-data';
+import { getFAQs } from '@/lib/api';
+import type { FAQ } from '@/lib/api';
 
 const pageEase = [0.16, 1, 0.3, 1] as const;
 
 export default function FaqPage() {
+  const [faqs, setFaqs] = useState<FAQ[]>([]);
+  const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<number | null>(null);
   const [search, setSearch] = useState('');
 
-  const filtered = mockData.faqs.filter(
+  useEffect(() => {
+    getFAQs()
+      .then(setFaqs)
+      .finally(() => setLoading(false));
+  }, []);
+
+  const filtered = faqs.filter(
     (faq) =>
       faq.is_visible &&
       (faq.question.toLowerCase().includes(search.toLowerCase()) ||
@@ -68,7 +77,15 @@ export default function FaqPage() {
           viewport={{ once: true }}
           transition={{ duration: 0.5, ease: pageEase }}
         >
-          {filtered.length === 0 ? (
+          {loading ? (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="py-12 text-center"
+            >
+              <p className="text-slate-500">Loading FAQs...</p>
+            </motion.div>
+          ) : filtered.length === 0 ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
