@@ -23,8 +23,6 @@ export default function AdminServicesPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ServiceForm>(emptyForm);
 
-  const editingService = editingId ? services.find((s) => s.id === editingId) : null;
-
   const fetchServices = async () => {
     setLoading(true);
     try {
@@ -38,7 +36,10 @@ export default function AdminServicesPage() {
   };
 
   useEffect(() => {
-    fetchServices();
+    getServices(true)
+      .then(setServices)
+      .catch(() => console.error('Failed to fetch services'))
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {

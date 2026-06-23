@@ -41,11 +41,6 @@ export interface GenConfig {
 
 const CONFIG_KEY = 'dental-gen-config';
 
-const DAYS: Record<number, string> = {
-  0: 'sunday', 1: 'monday', 2: 'tuesday', 3: 'wednesday',
-  4: 'thursday', 5: 'friday', 6: 'saturday',
-};
-
 export const DAY_LABELS: Record<string, string> = {
   monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed',
   thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun',
@@ -335,7 +330,7 @@ export function getSummary(slots: SlotItem[]): { available: number; booked: numb
 }
 
 export async function generateSlots(config: GenConfig, weekDates: string[]): Promise<SlotItem[]> {
-  const { createBatchSlots, getSlots } = await import('./api');
+  const { createBatchSlots } = await import('./api');
 
   const existing = slotsCache || await loadSlots();
   const existingKeys = new Set(existing.map((s) => `${s.date}-${s.start_time}`));

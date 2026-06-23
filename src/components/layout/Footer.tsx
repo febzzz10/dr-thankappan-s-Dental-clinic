@@ -13,7 +13,7 @@ export function Footer() {
             <div className="flex items-center gap-2">
               <Image src="/images/logo.png" alt="" width={36} height={36} className="h-9 w-auto" />
               <span className="font-display text-sm font-bold text-slate-900 sm:text-xl">
-                Dr.Thankappan's Dental Clinic
+                Dr.Thankappan&apos;s Dental Clinic
               </span>
             </div>
             <p className="text-sm leading-relaxed text-slate-600">
@@ -69,7 +69,7 @@ export function Footer() {
         </div>
 
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-slate-200 pt-8 text-sm text-slate-400 sm:flex-row">
-          <p>&copy; {new Date().getFullYear()} Dr.Thankappan's Dental Clinic. All rights reserved.</p>
+          <p>&copy; {new Date().getFullYear()} Dr.Thankappan&apos;s Dental Clinic. All rights reserved.</p>
           <div className="flex gap-4">
             <Link href="/privacy" className="transition-colors hover:text-teal-600 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:outline-none">Privacy Policy</Link>
             <Link href="/terms" className="transition-colors hover:text-teal-600 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:outline-none">Terms of Service</Link>

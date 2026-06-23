@@ -1,9 +1,9 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, startTransition } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiArrowRight, PiCheck } from 'react-icons/pi';
+import { PiCalendarBlank, PiClock, PiUser, PiPhone, PiEnvelope, PiChatText, PiCheck } from 'react-icons/pi';
 import { Button } from '@/components/ui/Button';
 import { Input, Select, Textarea } from '@/components/ui/Input';
 import { getSlots, createAppointment, getServices, getSettings } from '@/lib/api';
@@ -41,10 +41,21 @@ export function BookingForm() {
     getSettings().then(setClinicSettings).catch(() => {});
   }, []);
 
+  const [dateSlots, setDateSlots] = useState<AvailableSlot[]>([]);
+
+  const updateField = (field: string, value: string | number) => {
+    setForm((prev) => ({ ...prev, [field]: value }));
+    setFieldErrors((prev) => {
+      const next = { ...prev };
+      delete next[field];
+      return next;
+    });
+  };
+
   useEffect(() => {
     if (preselectedTreatment && services.length > 0) {
       const match = services.find((s) => s.slug === preselectedTreatment);
-      if (match) updateField('treatment', match.service_name);
+      if (match) startTransition(() => { updateField('treatment', match.service_name); });
     }
   }, [preselectedTreatment, services]);
 
@@ -58,17 +69,6 @@ export function BookingForm() {
     window.addEventListener('beforeunload', handler);
     return () => window.removeEventListener('beforeunload', handler);
   }, [form.patient_name, form.treatment, form.appointment_date]);
-
-  const [dateSlots, setDateSlots] = useState<AvailableSlot[]>([]);
-
-  const updateField = (field: string, value: string | number) => {
-    setForm((prev) => ({ ...prev, [field]: value }));
-    setFieldErrors((prev) => {
-      const next = { ...prev };
-      delete next[field];
-      return next;
-    });
-  };
 
   const handleDateChange = async (date: string) => {
     updateField('appointment_date', date);

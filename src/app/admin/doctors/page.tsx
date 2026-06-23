@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Pencil, Trash2, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
@@ -41,7 +42,10 @@ export default function AdminDoctorsPage() {
   };
 
   useEffect(() => {
-    fetchDoctors();
+    getDoctors()
+      .then(setDoctors)
+      .catch(() => {})
+      .finally(() => setLoading(false));
   }, []);
 
   useEffect(() => {
@@ -146,10 +150,13 @@ export default function AdminDoctorsPage() {
               <div key={doctor.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
                 <div className="flex items-center gap-3">
                   {doctor.image_url ? (
-                    <img
+                    <Image
                       src={doctor.image_url}
                       alt={doctor.doctor_name}
+                      width={48}
+                      height={48}
                       className="h-12 w-12 rounded-full object-cover"
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-base font-bold text-teal-600">
@@ -260,11 +267,14 @@ export default function AdminDoctorsPage() {
                 <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture URL</label>
                 <div className="flex items-center gap-3">
                   {form.image_url ? (
-                    <img
+                    <Image
                       src={form.image_url}
                       alt="Preview"
+                      width={48}
+                      height={48}
                       className="h-12 w-12 rounded-full object-cover shrink-0 border border-slate-200"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      unoptimized
                     />
                   ) : (
                     <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-sm text-slate-300 shrink-0 border border-dashed border-slate-200">

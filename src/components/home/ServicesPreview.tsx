@@ -63,7 +63,7 @@ export function ServicesPreview() {
           viewport={{ once: true, amount: 0.1 }}
           className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
         >
-          {services.map((service, i) => (
+          {services.map((service) => (
                 <motion.div
                   key={service.id}
                   variants={cardVariants}

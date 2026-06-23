@@ -40,7 +40,7 @@ export function StatsSection() {
           viewport={{ once: true, amount: 0.3 }}
           className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,12rem),1fr))]"
         >
-          {stats.map((stat, i) => {
+          {stats.map((stat) => {
             const Icon = stat.icon;
             return (
               <motion.div

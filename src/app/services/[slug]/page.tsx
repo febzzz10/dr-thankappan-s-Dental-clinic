@@ -1,8 +1,5 @@
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Calendar, Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
-import { Container } from '@/components/ui/Section';
-import { Button } from '@/components/ui/Button';
+import { Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { getService, getServices } from '@/lib/api';
 import type { Service } from '@/lib/api';
 import { ServiceDetailContent } from '@/components/services/ServiceDetailContent';

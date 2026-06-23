@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback, startTransition } from 'react';
 import {
   PiPlus, PiCheck, PiXBold, PiTrash,
   PiCaretLeft, PiCaretRight, PiClock, PiNotePencil,
@@ -98,8 +98,8 @@ export default function AdminSlotsPage() {
     setAllSlots(loaded);
   }, []);
 
-  useEffect(() => { refresh(); }, []);
-  useEffect(() => { setGenConfig(loadConfig()); }, []);
+  useEffect(() => { startTransition(() => { refresh(); }); }, []);
+  useEffect(() => { startTransition(() => { setGenConfig(loadConfig()); }); }, []);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -120,6 +120,7 @@ export default function AdminSlotsPage() {
       days.push({ date: dateStr, dayNum: d, slots: daySlots });
     }
     return days;
+    // eslint-disable-next-line react-hooks/preserve-manual-memoization
   }, [calYear, calMonth, totalDays, allSlots]);
 
   const selectedDaySlots = useMemo(

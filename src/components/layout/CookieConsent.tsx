@@ -1,15 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function CookieConsent() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    const stored = localStorage.getItem('cookie-consent');
-    if (!stored) setVisible(true);
-  }, []);
+  const [visible, setVisible] = useState(() =>
+    typeof window !== 'undefined' && !localStorage.getItem('cookie-consent')
+  );
 
   function accept() {
     localStorage.setItem('cookie-consent', 'accepted');

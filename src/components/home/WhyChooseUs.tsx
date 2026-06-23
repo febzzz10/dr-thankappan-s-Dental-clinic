@@ -61,7 +61,7 @@ export function WhyChooseUs() {
           className="mx-auto mb-16 max-w-2xl text-center"
         >
           <span className="inline-block rounded-full bg-white px-4 py-1.5 text-xs font-semibold uppercase tracking-wider text-teal-700">
-            Why Dr.Thankappan's Dental Clinic
+            Why Dr.Thankappan&apos;s Dental Clinic
           </span>
           <h2 className="mt-4 font-display text-fluid-h2 font-bold tracking-tight text-pretty text-slate-900">
             Why Patients Choose Us
@@ -79,7 +79,7 @@ export function WhyChooseUs() {
           viewport={{ once: true, amount: 0.2 }}
           className="grid gap-8 grid-cols-[repeat(auto-fit,minmax(min(100%,15rem),1fr))]"
         >
-          {features.map((feature, i) => {
+          {features.map((feature) => {
             const Icon = feature.icon;
             return (
               <motion.div

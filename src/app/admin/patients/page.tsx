@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { Search, Phone, Calendar } from 'lucide-react';
 import { getAppointments } from '@/lib/api';
-import type { Appointment } from '@/lib/api';
 
 interface PatientEntry {
   patient_name: string;

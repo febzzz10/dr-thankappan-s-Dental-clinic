@@ -45,7 +45,7 @@ export function AboutSection() {
 
         {/* Heading */}
         <h2 className="mt-5 font-display text-xl font-bold tracking-tight text-pretty text-slate-900">
-          Dr.Thankappan's
+          Dr.Thankappan&apos;s
         </h2>
         <h2 className="font-display text-xl font-bold tracking-tight text-pretty text-teal-600">
           Dental Clinic

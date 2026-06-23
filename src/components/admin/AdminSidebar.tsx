@@ -42,7 +42,7 @@ export function AdminSidebar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-600">
             <span className="text-xs font-bold text-white">D</span>
           </div>
-          <span className="font-display text-xs font-bold text-slate-900">Dr.Thankappan's Dental Clinic</span>
+          <span className="font-display text-xs font-bold text-slate-900">Dr.Thankappan&apos;s Dental Clinic</span>
           <span className="rounded-md bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-500">
             Admin
           </span>

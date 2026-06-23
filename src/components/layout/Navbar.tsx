@@ -31,7 +31,7 @@ export function Navbar() {
           <Link href="/" className="flex items-center gap-2.5 pr-4 border-r border-slate-200/50">
             <Image src="/images/logo.png" alt="" width={36} height={36} className="h-8 w-auto" />
             <div className="leading-snug">
-              <p className="font-display text-sm font-bold tracking-tight text-slate-800">Dr.Thankappan's</p>
+              <p className="font-display text-sm font-bold tracking-tight text-slate-800">Dr.Thankappan&apos;s</p>
               <p className="text-[9px] font-bold tracking-widest text-teal-600">DENTAL CLINIC</p>
             </div>
           </Link>

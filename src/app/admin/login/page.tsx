@@ -43,7 +43,7 @@ export default function AdminLoginPage() {
             <span className="text-2xl font-bold text-white">D</span>
           </div>
           <h1 className="font-display text-2xl font-bold text-slate-900">Admin Login</h1>
-          <p className="mt-1 text-sm text-slate-500">Dr.Thankappan's Dental Clinic</p>
+          <p className="mt-1 text-sm text-slate-500">Dr.Thankappan&apos;s Dental Clinic</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm">

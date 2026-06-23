@@ -71,7 +71,7 @@ export function HeroSection() {
         <div className="mx-auto flex h-14 max-w-7xl items-center px-4 sm:px-6">
           <Image src="/images/logo.png" alt="Dr.Thankappan's Dental Clinic" width={40} height={40} className="h-9 w-auto object-contain" priority />
           <div className="ml-2.5 leading-tight">
-            <p className="font-display text-sm font-bold tracking-tight text-slate-800">Dr.Thankappan's</p>
+            <p className="font-display text-sm font-bold tracking-tight text-slate-800">Dr.Thankappan&apos;s</p>
             <p className="text-[10px] font-bold tracking-wider text-teal-600">DENTAL CLINIC</p>
           </div>
         </div>
@@ -113,7 +113,7 @@ export function HeroSection() {
               Trusted by 10,000+ patients
             </motion.div>
             <motion.h1 variants={itemVariants} className="font-display text-fluid-hero font-extrabold tracking-tight text-pretty text-slate-900">
-              Dr.Thankappan's
+              Dr.Thankappan&apos;s
               <br />
               <span className="bg-gradient-to-r from-teal-600 to-teal-400 bg-clip-text text-transparent">
                 Dental Clinic
