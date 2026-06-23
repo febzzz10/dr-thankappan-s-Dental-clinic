@@ -17,6 +17,10 @@ export default function AdminPatientsPage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    import("@aejkatappaja/phantom-ui");
+  }, []);
+
+  useEffect(() => {
     let mounted = true;
     getAppointments({ limit: 100 })
       .then((res) => {
@@ -72,37 +76,54 @@ export default function AdminPatientsPage() {
         />
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" aria-label="Loading" />
-        </div>
-      ) : (
+      <phantom-ui loading={loading}>
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
-          {filtered.map((p) => (
-            <div key={p.phone} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-lg font-bold text-teal-600">
-                  {p.patient_name.charAt(0)}
+          {loading ? (
+            Array.from({ length: 6 }).map((_, i) => (
+              <div key={i} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-lg font-bold text-teal-600">P</div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">Patient Name</p>
+                    <p className="flex items-center gap-1 text-xs text-slate-500">
+                      <Phone className="h-3 w-3" aria-hidden="true" />
+                      000-000-0000
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm font-semibold text-slate-900">{p.patient_name}</p>
-                  <a href={`tel:${p.phone}`} className="flex items-center gap-1 text-xs text-slate-500 hover:text-teal-600">
-                    <Phone className="h-3 w-3" aria-hidden="true" />
-                    {p.phone}
-                  </a>
+                <div className="mt-3 flex items-center gap-1 text-xs text-slate-400">
+                  <Calendar className="h-3 w-3" aria-hidden="true" />
+                  0 visits
                 </div>
               </div>
-              <div className="mt-3 flex items-center gap-1 text-xs text-slate-400">
-                <Calendar className="h-3 w-3" aria-hidden="true" />
-                {p.visit_count} visit{p.visit_count !== 1 ? 's' : ''}
+            ))
+          ) : (
+            filtered.map((p) => (
+              <div key={p.phone} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-lg font-bold text-teal-600">
+                    {p.patient_name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="text-sm font-semibold text-slate-900">{p.patient_name}</p>
+                    <a href={`tel:${p.phone}`} className="flex items-center gap-1 text-xs text-slate-500 hover:text-teal-600">
+                      <Phone className="h-3 w-3" aria-hidden="true" />
+                      {p.phone}
+                    </a>
+                  </div>
+                </div>
+                <div className="mt-3 flex items-center gap-1 text-xs text-slate-400">
+                  <Calendar className="h-3 w-3" aria-hidden="true" />
+                  {p.visit_count} visit{p.visit_count !== 1 ? 's' : ''}
+                </div>
               </div>
-            </div>
-          ))}
-          {filtered.length === 0 && (
+            ))
+          )}
+          {!loading && filtered.length === 0 && (
             <p className="col-span-full py-8 text-center text-sm text-slate-400">No patients found.</p>
           )}
         </div>
-      )}
+      </phantom-ui>
     </div>
   );
 }

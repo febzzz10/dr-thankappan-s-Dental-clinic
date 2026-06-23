@@ -41,6 +41,10 @@ export default function AdminServicesPage() {
     fetchServices();
   }, []);
 
+  useEffect(() => {
+    import('@aejkatappaja/phantom-ui');
+  }, []);
+
   const toggleActive = async (id: number, current: number) => {
     try {
       await updateService(id, { is_active: current ? 0 : 1 });
@@ -120,50 +124,71 @@ export default function AdminServicesPage() {
         </Button>
       </div>
 
-      {loading ? (
-        <div className="flex items-center justify-center py-12">
-          <p className="text-sm text-slate-500">Loading services...</p>
-        </div>
-      ) : (
+      <phantom-ui loading={loading}>
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
-          {services.map((service) => (
-            <div key={service.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="text-sm font-semibold text-slate-900">{service.service_name}</h3>
-                  <p className="text-xs text-slate-400">{service.slug}</p>
+          {loading ? (
+            <>
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div key={i} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                  <div className="flex items-start justify-between">
+                    <div className="space-y-2">
+                      <div className="h-4 w-32 rounded bg-slate-200" />
+                      <div className="h-3 w-20 rounded bg-slate-100" />
+                    </div>
+                    <div className="h-5 w-16 rounded-full bg-slate-200" />
+                  </div>
+                  <div className="mt-3 space-y-1">
+                    <div className="h-3 w-full rounded bg-slate-100" />
+                    <div className="h-3 w-3/4 rounded bg-slate-100" />
+                  </div>
+                  <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                    <div className="h-3 w-16 rounded bg-slate-100" />
+                    <div className="h-3 w-12 rounded bg-slate-100" />
+                    <div className="h-3 w-14 rounded bg-slate-100" />
+                  </div>
                 </div>
-                <Badge variant={service.is_active ? 'confirmed' : 'cancelled'}>
-                  {service.is_active ? 'Active' : 'Inactive'}
-                </Badge>
+              ))}
+            </>
+          ) : (
+            services.map((service) => (
+              <div key={service.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="text-sm font-semibold text-slate-900">{service.service_name}</h3>
+                    <p className="text-xs text-slate-400">{service.slug}</p>
+                  </div>
+                  <Badge variant={service.is_active ? 'confirmed' : 'cancelled'}>
+                    {service.is_active ? 'Active' : 'Inactive'}
+                  </Badge>
+                </div>
+                <p className="mt-3 text-xs text-slate-500 line-clamp-2">{service.short_desc}</p>
+                <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                  <button
+                    onClick={() => toggleActive(service.id, service.is_active)}
+                    className="text-xs text-slate-500 hover:text-teal-600"
+                  >
+                    {service.is_active ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button
+                    onClick={() => openEdit(service)}
+                    className="text-xs text-slate-500 hover:text-blue-600"
+                  >
+                    <Pencil className="h-3.5 w-3.5 inline mr-1" />
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => { if (confirm('Are you sure?')) handleDelete(service.id); }}
+                    className="text-xs text-slate-500 hover:text-red-600"
+                  >
+                    <Trash2 className="h-3.5 w-3.5 inline mr-1" />
+                    Delete
+                  </button>
+                </div>
               </div>
-              <p className="mt-3 text-xs text-slate-500 line-clamp-2">{service.short_desc}</p>
-              <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-                <button
-                  onClick={() => toggleActive(service.id, service.is_active)}
-                  className="text-xs text-slate-500 hover:text-teal-600"
-                >
-                  {service.is_active ? 'Deactivate' : 'Activate'}
-                </button>
-                <button
-                  onClick={() => openEdit(service)}
-                  className="text-xs text-slate-500 hover:text-blue-600"
-                >
-                  <Pencil className="h-3.5 w-3.5 inline mr-1" />
-                  Edit
-                </button>
-                <button
-                  onClick={() => { if (confirm('Are you sure?')) handleDelete(service.id); }}
-                  className="text-xs text-slate-500 hover:text-red-600"
-                >
-                  <Trash2 className="h-3.5 w-3.5 inline mr-1" />
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
-      )}
+      </phantom-ui>
 
       {/* Add/Edit Service Modal */}
       {showModal && (

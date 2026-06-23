@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { PublicLayoutShell } from '@/components/layout/PublicLayoutShell';
+import "@aejkatappaja/phantom-ui/ssr.css";
 
 export const metadata: Metadata = {
   title: {

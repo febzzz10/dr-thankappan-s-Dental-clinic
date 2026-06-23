@@ -43,6 +43,10 @@ export default function AdminAppointmentsPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    import("@aejkatappaja/phantom-ui");
+  }, []);
+
   const fetchData = useCallback(async () => {
     setLoading(true);
     setError('');
@@ -131,35 +135,6 @@ export default function AdminAppointmentsPage() {
     window.open(waUrl, '_blank');
   };
 
-  if (loading && appointments.length === 0) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">Appointments</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage all patient appointments</p>
-        </div>
-        <div className="flex items-center justify-center py-12">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-teal-600 border-t-transparent" aria-label="Loading" />
-        </div>
-      </div>
-    );
-  }
-
-  if (error && appointments.length === 0) {
-    return (
-      <div className="space-y-6">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-slate-900">Appointments</h1>
-          <p className="mt-1 text-sm text-slate-500">Manage all patient appointments</p>
-        </div>
-        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
-          <p className="text-sm text-red-700">{error}</p>
-          <Button variant="outline" className="mt-4" onClick={fetchData}>Retry</Button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -199,78 +174,100 @@ export default function AdminAppointmentsPage() {
         </div>
       </div>
 
-      <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
-            <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500">
-              <tr>
-                <th className="px-4 py-3">Ref</th>
-                <th className="px-4 py-3">Patient</th>
-                <th className="px-4 py-3">Treatment</th>
-                <th className="px-4 py-3">Date</th>
-                <th className="px-4 py-3">Time</th>
-                <th className="px-4 py-3">Phone</th>
-                <th className="px-4 py-3">Status</th>
-                <th className="px-4 py-3">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-100">
-              {filtered.length === 0 ? (
+      {error && (
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-6 text-center">
+          <p className="text-sm text-red-700">{error}</p>
+          <Button variant="outline" className="mt-4" onClick={fetchData}>Retry</Button>
+        </div>
+      )}
+
+      <phantom-ui loading={loading}>
+        <div className="overflow-hidden rounded-2xl border border-slate-100 bg-white shadow-sm">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm">
+              <thead className="bg-slate-50 text-xs font-medium uppercase tracking-wider text-slate-500">
                 <tr>
-                  <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-400">
-                    {loading ? 'Loading...' : 'No appointments found.'}
-                  </td>
+                  <th className="px-4 py-3">Ref</th>
+                  <th className="px-4 py-3">Patient</th>
+                  <th className="px-4 py-3">Treatment</th>
+                  <th className="px-4 py-3">Date</th>
+                  <th className="px-4 py-3">Time</th>
+                  <th className="px-4 py-3">Phone</th>
+                  <th className="px-4 py-3">Status</th>
+                  <th className="px-4 py-3">Actions</th>
                 </tr>
-              ) : (
-                filtered.map((appt) => (
-                  <tr key={appt.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3 font-mono text-xs font-medium text-slate-500">{appt.booking_ref}</td>
-                    <td className="px-4 py-3 font-medium text-slate-900">{appt.patient_name}</td>
-                    <td className="px-4 py-3 text-slate-500">{getTreatment(appt)}</td>
-                    <td className="px-4 py-3 text-slate-700">{formatDate(appt.appointment_date)}</td>
-                    <td className="px-4 py-3 text-slate-700">{formatTime(appt.appointment_time)}</td>
-                    <td className="px-4 py-3 text-slate-500">{appt.phone}</td>
-                    <td className="px-4 py-3">
-                      <Badge variant={badgeVariant(appt.status)}>{appt.status}</Badge>
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-1">
-                        <button
-                          onClick={() => setSelectedAppt(appt.id === selectedAppt ? null : appt.id)}
-                          className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
-                          aria-label="More actions"
-                        >
-                          <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
-                        </button>
-                        {(appt.status === 'CONFIRMED' || appt.status === 'PENDING') && (
-                          <button
-                            onClick={() => handleConfirm(appt.id)}
-                            className="rounded-lg p-1.5 text-green-500 hover:bg-green-50"
-                            title="Send WhatsApp"
-                            aria-label="Contact via WhatsApp"
-                          >
-                            <MessageCircle className="h-4 w-4" aria-hidden="true" />
-                          </button>
-                        )}
-                        {appt.status === 'PENDING' && (
-                          <button
-                            onClick={() => handleReject(appt.id)}
-                            className="rounded-lg p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
-                            title="Reject appointment"
-                            aria-label="Reject appointment"
-                          >
-                            <XCircle className="h-4 w-4" aria-hidden="true" />
-                          </button>
-                        )}
-                      </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {loading ? (
+                  Array.from({ length: 5 }).map((_, i) => (
+                    <tr key={i} className="hover:bg-slate-50">
+                      <td className="px-4 py-3"><span className="text-slate-900">REF-000</span></td>
+                      <td className="px-4 py-3"><span className="text-slate-900">Patient Name</span></td>
+                      <td className="px-4 py-3"><span className="text-slate-500">Treatment</span></td>
+                      <td className="px-4 py-3"><span className="text-slate-700">Date</span></td>
+                      <td className="px-4 py-3"><span className="text-slate-700">Time</span></td>
+                      <td className="px-4 py-3"><span className="text-slate-500">Phone</span></td>
+                      <td className="px-4 py-3"><Badge variant="default">Pending</Badge></td>
+                      <td className="px-4 py-3" />
+                    </tr>
+                  ))
+                ) : filtered.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="px-4 py-8 text-center text-sm text-slate-400">
+                      No appointments found.
                     </td>
                   </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+                ) : (
+                  filtered.map((appt) => (
+                    <tr key={appt.id} className="hover:bg-slate-50">
+                      <td className="px-4 py-3 font-mono text-xs font-medium text-slate-500">{appt.booking_ref}</td>
+                      <td className="px-4 py-3 font-medium text-slate-900">{appt.patient_name}</td>
+                      <td className="px-4 py-3 text-slate-500">{getTreatment(appt)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatDate(appt.appointment_date)}</td>
+                      <td className="px-4 py-3 text-slate-700">{formatTime(appt.appointment_time)}</td>
+                      <td className="px-4 py-3 text-slate-500">{appt.phone}</td>
+                      <td className="px-4 py-3">
+                        <Badge variant={badgeVariant(appt.status)}>{appt.status}</Badge>
+                      </td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setSelectedAppt(appt.id === selectedAppt ? null : appt.id)}
+                            className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600"
+                            aria-label="More actions"
+                          >
+                            <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                          </button>
+                          {(appt.status === 'CONFIRMED' || appt.status === 'PENDING') && (
+                            <button
+                              onClick={() => handleConfirm(appt.id)}
+                              className="rounded-lg p-1.5 text-green-500 hover:bg-green-50"
+                              title="Send WhatsApp"
+                              aria-label="Contact via WhatsApp"
+                            >
+                              <MessageCircle className="h-4 w-4" aria-hidden="true" />
+                            </button>
+                          )}
+                          {appt.status === 'PENDING' && (
+                            <button
+                              onClick={() => handleReject(appt.id)}
+                              className="rounded-lg p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
+                              title="Reject appointment"
+                              aria-label="Reject appointment"
+                            >
+                              <XCircle className="h-4 w-4" aria-hidden="true" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
-      </div>
+      </phantom-ui>
 
       {selectedAppt && (() => {
         const appt = appointments.find(a => a.id === selectedAppt);

@@ -28,10 +28,23 @@ const cardVariants = {
   },
 };
 
+const PLACEHOLDER_SERVICES = Array.from({ length: 6 }, (_, i) => ({
+  id: i,
+  service_name: 'Dental Service Name',
+  short_desc: 'A detailed description of what this dental service entails and how it benefits patients.',
+  slug: '',
+  is_active: 1,
+  sort_order: 0,
+}));
+
 export default function ServicesPage() {
   const [services, setServices] = useState<Service[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    import("@aejkatappaja/phantom-ui");
+  }, []);
 
   useEffect(() => {
     getServices()
@@ -40,85 +53,76 @@ export default function ServicesPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-white">
-        <div className="h-10 w-10 animate-spin rounded-full border-4 border-teal-200 border-t-teal-600" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex min-h-dvh items-center justify-center bg-white">
-        <p className="text-red-500">{error}</p>
-      </div>
-    );
-  }
+  const displayed = loading ? PLACEHOLDER_SERVICES : services;
 
   return (
-    <div className="min-h-dvh bg-white">
-      <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28">
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, ease: cardEase }}
-          >
-            <SectionHeader
-              title="Our Dental Services"
-              subtitle="Comprehensive dental care tailored to your needs. From routine checkups to advanced cosmetic procedures."
-            />
-          </motion.div>
-        </Container>
-      </section>
+    <phantom-ui loading={loading}>
+      <div className="min-h-dvh bg-white">
+        <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28">
+          <Container>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: cardEase }}
+            >
+              <SectionHeader
+                title="Our Dental Services"
+                subtitle="Comprehensive dental care tailored to your needs. From routine checkups to advanced cosmetic procedures."
+              />
+            </motion.div>
+          </Container>
+        </section>
 
-      <Container className="py-16 md:py-24">
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.05 }}
-          className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
-        >
-          {services.map((service) => (
+        <Container className="py-16 md:py-24">
+          {error && (
+            <div className="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-600">{error}</div>
+          )}
+          <motion.div
+            variants={containerVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.05 }}
+            className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
+          >
+            {displayed.map((service) => (
               <motion.div key={service.id} variants={cardVariants} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
                 <Card className="group h-full cursor-default p-6 transition-[transform,opacity] hover:border-teal-200 hover:shadow-lg">
                   <h3 className="mb-2 font-display text-fluid-h4 font-bold text-slate-900">
                     {service.service_name}
                   </h3>
-                    <p className="mb-4 text-fluid-sm text-slate-600">
+                  <p className="mb-4 text-fluid-sm text-slate-600">
                     {service.short_desc}
                   </p>
                 </Card>
               </motion.div>
-          ))}
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2, ease: cardEase }}
-          className="mt-16 rounded-2xl bg-teal-50 p-8 text-center md:p-12"
-        >
-          <h3 className="font-display text-fluid-h3 font-bold text-slate-900">
-            Not Sure Which Treatment You Need?
-          </h3>
-          <p className="mt-2 text-slate-500">
-            Book a consultation and our experts will guide you to the right solution.
-          </p>
-          <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mt-6 inline-block">
-            <Link
-              href="/book"
-              className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-[transform,opacity] hover:bg-teal-700 hover:shadow-md"
-            >
-              Book a Free Consultation
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            ))}
           </motion.div>
-        </motion.div>
-      </Container>
-    </div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5, delay: 0.2, ease: cardEase }}
+            className="mt-16 rounded-2xl bg-teal-50 p-8 text-center md:p-12"
+          >
+            <h3 className="font-display text-fluid-h3 font-bold text-slate-900">
+              Not Sure Which Treatment You Need?
+            </h3>
+            <p className="mt-2 text-slate-500">
+              Book a consultation and our experts will guide you to the right solution.
+            </p>
+            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mt-6 inline-block">
+              <Link
+                href="/book"
+                className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-[transform,opacity] hover:bg-teal-700 hover:shadow-md"
+              >
+                Book a Free Consultation
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </motion.div>
+          </motion.div>
+        </Container>
+      </div>
+    </phantom-ui>
   );
 }

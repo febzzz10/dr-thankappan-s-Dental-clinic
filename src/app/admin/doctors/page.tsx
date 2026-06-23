@@ -44,6 +44,10 @@ export default function AdminDoctorsPage() {
     fetchDoctors();
   }, []);
 
+  useEffect(() => {
+    import('@aejkatappaja/phantom-ui');
+  }, []);
+
   const toggleActive = async (id: number) => {
     const doctor = doctors.find(d => d.id === id);
     if (!doctor) return;
@@ -109,55 +113,79 @@ export default function AdminDoctorsPage() {
         </Button>
       </div>
 
-      {loading ? (
-        <div className="py-12 text-center">
-          <p className="text-sm text-slate-400">Loading doctors...</p>
-        </div>
-      ) : (
+      <phantom-ui loading={loading}>
         <div className="grid gap-4 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
-          {doctors.map((doctor) => (
-            <div key={doctor.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
-              <div className="flex items-center gap-3">
-                {doctor.image_url ? (
-                  <img
-                    src={doctor.image_url}
-                    alt={doctor.doctor_name}
-                    className="h-12 w-12 rounded-full object-cover"
-                  />
-                ) : (
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-base font-bold text-teal-600">
-                    {doctor.doctor_name.charAt(0)}
+          {loading ? (
+            <>
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                  <div className="flex items-center gap-3">
+                    <div className="h-12 w-12 shrink-0 rounded-full bg-slate-200" />
+                    <div className="flex-1 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="h-4 w-28 rounded bg-slate-200" />
+                        <div className="h-5 w-16 rounded-full bg-slate-200" />
+                      </div>
+                      <div className="h-3 w-36 rounded bg-slate-100" />
+                    </div>
                   </div>
-                )}
-                <div className="flex-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-sm font-semibold text-slate-900">{doctor.doctor_name}</h3>
-                    <Badge variant={doctor.is_active ? 'confirmed' : 'cancelled'}>
-                      {doctor.is_active ? 'Active' : 'Inactive'}
-                    </Badge>
+                  <div className="mt-3 space-y-1">
+                    <div className="h-3 w-full rounded bg-slate-100" />
+                    <div className="h-3 w-24 rounded bg-slate-100" />
                   </div>
-                  <p className="text-xs text-slate-500">{doctor.qualification}</p>
+                  <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                    <div className="h-3 w-16 rounded bg-slate-100" />
+                    <div className="h-3 w-12 rounded bg-slate-100" />
+                    <div className="h-3 w-14 rounded bg-slate-100" />
+                  </div>
+                </div>
+              ))}
+            </>
+          ) : (
+            doctors.map((doctor) => (
+              <div key={doctor.id} className="rounded-2xl border border-slate-100 bg-white p-5 shadow-sm">
+                <div className="flex items-center gap-3">
+                  {doctor.image_url ? (
+                    <img
+                      src={doctor.image_url}
+                      alt={doctor.doctor_name}
+                      className="h-12 w-12 rounded-full object-cover"
+                    />
+                  ) : (
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-teal-50 text-base font-bold text-teal-600">
+                      {doctor.doctor_name.charAt(0)}
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-sm font-semibold text-slate-900">{doctor.doctor_name}</h3>
+                      <Badge variant={doctor.is_active ? 'confirmed' : 'cancelled'}>
+                        {doctor.is_active ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-slate-500">{doctor.qualification}</p>
+                  </div>
+                </div>
+                <p className="mt-3 text-xs text-slate-500">{doctor.specialization}</p>
+                <p className="text-xs text-slate-400">{doctor.experience_yrs} years experience</p>
+                <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
+                  <button onClick={() => toggleActive(doctor.id)} className="text-xs text-slate-500 hover:text-teal-600">
+                    {doctor.is_active ? 'Deactivate' : 'Activate'}
+                  </button>
+                  <button onClick={() => openEdit(doctor)} className="text-xs text-slate-500 hover:text-blue-600">
+                    <Pencil className="h-3.5 w-3.5 inline mr-1" />
+                    Edit
+                  </button>
+                  <button onClick={() => { if (confirm('Are you sure you want to delete this doctor?')) handleDelete(doctor.id); }} className="text-xs text-slate-500 hover:text-red-600">
+                    <Trash2 className="h-3.5 w-3.5 inline mr-1" />
+                    Delete
+                  </button>
                 </div>
               </div>
-              <p className="mt-3 text-xs text-slate-500">{doctor.specialization}</p>
-              <p className="text-xs text-slate-400">{doctor.experience_yrs} years experience</p>
-              <div className="mt-3 flex items-center gap-2 border-t border-slate-100 pt-3">
-                <button onClick={() => toggleActive(doctor.id)} className="text-xs text-slate-500 hover:text-teal-600">
-                  {doctor.is_active ? 'Deactivate' : 'Activate'}
-                </button>
-                <button onClick={() => openEdit(doctor)} className="text-xs text-slate-500 hover:text-blue-600">
-                  <Pencil className="h-3.5 w-3.5 inline mr-1" />
-                  Edit
-                </button>
-                <button onClick={() => { if (confirm('Are you sure you want to delete this doctor?')) handleDelete(doctor.id); }} className="text-xs text-slate-500 hover:text-red-600">
-                  <Trash2 className="h-3.5 w-3.5 inline mr-1" />
-                  Delete
-                </button>
-              </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
-      )}
+      </phantom-ui>
 
       {/* Add/Edit Doctor Modal */}
       {showModal && (
