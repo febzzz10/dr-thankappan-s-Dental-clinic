@@ -22,6 +22,7 @@ export default function AdminServicesPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ServiceForm>(emptyForm);
+  const [error, setError] = useState<string | null>(null);
 
   const fetchServices = async () => {
     setLoading(true);
@@ -68,6 +69,7 @@ export default function AdminServicesPage() {
     setEditingId(null);
     setForm(emptyForm);
     setShowModal(true);
+    setError(null);
   };
 
   const openEdit = (service: Service) => {
@@ -79,9 +81,11 @@ export default function AdminServicesPage() {
       is_active: service.is_active === 1,
     });
     setShowModal(true);
+    setError(null);
   };
 
   const handleSave = async () => {
+    setError(null);
     if (editingId) {
       try {
         await updateService(editingId, {
@@ -91,8 +95,9 @@ export default function AdminServicesPage() {
           is_active: form.is_active ? 1 : 0,
         });
         await fetchServices();
-      } catch {
-        console.error('Failed to update service');
+        setShowModal(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to update service');
       }
     } else {
       try {
@@ -103,11 +108,11 @@ export default function AdminServicesPage() {
           is_active: form.is_active ? 1 : 0,
         });
         await fetchServices();
-      } catch {
-        console.error('Failed to create service');
+        setShowModal(false);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to create service');
       }
     }
-    setShowModal(false);
   };
 
   const slugFromName = (name: string) =>
@@ -253,6 +258,11 @@ export default function AdminServicesPage() {
                 <label htmlFor="is_active" className="text-sm font-medium text-slate-700">Active</label>
               </div>
             </div>
+            {error && (
+              <div className="px-6 pb-2">
+                <div className="rounded-xl bg-red-50 p-3 text-sm text-red-700" role="alert">{error}</div>
+              </div>
+            )}
             <div className="flex gap-3 border-t border-slate-100 px-6 py-4">
               <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)}>Cancel</Button>
               <Button className="flex-1" onClick={handleSave} disabled={!form.service_name || !form.slug}>

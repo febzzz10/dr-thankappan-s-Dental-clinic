@@ -114,4 +114,9 @@ Navy + blue CTA, Figtree/Noto Sans — NOT applied to live codebase.
 - **pnpm-lock.yaml fixed** — phantom-ui dependency correctly resolved.
 - **Vercel fresh deploy** — empty commit `d27f78d` to bypass stale build cache. Live at `dr-thankappan-s-dental-clinic.vercel.app`.
 - **Production serves 8 services** from D1 (matching seed data) — confirming Worker API integration works end-to-end.
+
+## Latest Session (Jun 24 2026)
+- **Fixed "adding service through admin panel doesn't work"** — root cause: D1 database was empty (no tables) + all 9 services were soft-deleted (`deleted_at` set). Re-applied schema, restored all services, and set proper descriptions.
+- **Admin services page now shows error messages** instead of silently closing the modal on failure (`src/app/admin/services/page.tsx` — added `error` state + red alert in modal).
+- **D1 now has 9 active services** with `sort_order` matching `id` and proper `short_desc` for all services.
 <!-- END:anchored-summary -->
