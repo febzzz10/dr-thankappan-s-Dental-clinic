@@ -84,9 +84,9 @@ export default function ServicesPage() {
             viewport={{ once: true, amount: 0.05 }}
             className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
           >
-            {displayed.map((service) => (
-              <motion.div key={service.id} variants={cardVariants} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
-                <Card className="group h-full cursor-default p-6 transition-[transform,opacity] hover:border-teal-200 hover:shadow-lg">
+            {displayed.map((service) => {
+              const card = (
+                <Card className="group h-full cursor-pointer p-6 transition-[transform,opacity] hover:border-teal-200 hover:shadow-lg">
                   <h3 className="mb-2 font-display text-fluid-h4 font-bold text-slate-900">
                     {service.service_name}
                   </h3>
@@ -94,8 +94,17 @@ export default function ServicesPage() {
                     {service.short_desc}
                   </p>
                 </Card>
-              </motion.div>
-            ))}
+              );
+              return (
+                <motion.div key={service.id} variants={cardVariants} whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
+                  {service.slug ? (
+                    <Link href={`/services/${service.slug}`}>{card}</Link>
+                  ) : (
+                    card
+                  )}
+                </motion.div>
+              );
+            })}
           </motion.div>
 
           <motion.div
