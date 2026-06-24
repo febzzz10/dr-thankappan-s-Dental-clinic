@@ -116,7 +116,16 @@ Navy + blue CTA, Figtree/Noto Sans — NOT applied to live codebase.
 - **Production serves 8 services** from D1 (matching seed data) — confirming Worker API integration works end-to-end.
 
 ## Latest Session (Jun 24 2026)
-- **Fixed "adding service through admin panel doesn't work"** — root cause: D1 database was empty (no tables) + all 9 services were soft-deleted (`deleted_at` set). Re-applied schema, restored all services, and set proper descriptions.
-- **Admin services page now shows error messages** instead of silently closing the modal on failure (`src/app/admin/services/page.tsx` — added `error` state + red alert in modal).
-- **D1 now has 9 active services** with `sort_order` matching `id` and proper `short_desc` for all services.
+
+### Session 1 (earlier):
+- **D1 was empty** — no tables existed. Re-applied `schema.sql` (24 queries, 12 tables).
+- **All 9 services soft-deleted** — restored via `UPDATE services SET deleted_at = NULL, is_active = 1`. Set `sort_order = id`, updated short_desc.
+- **Admin services page now shows error messages** — added `error` state + red alert in modal instead of silent close (`src/app/admin/services/page.tsx`).
+- **Committed `657c4bd`** — pushed to GitHub (auto-deploy triggered, but deployment was **not promoted to production** — it built but wasn't aliased).
+
+### Session 2 (current):
+- **Bangalore→Kochi fix** — Changed description from "Expert dental care in Bangalore..." to "Your trusted dental clinic in kochi. A Family Tradition of Dental Excellence." in `layout.tsx` metadata. Fixed 3 other Bangalore references in `page.tsx` description, `about/page.tsx`, and `WhyChooseUs.tsx`. Committed as `ef5bc72` (together with D1 fixes).
+- **Production still serving stale cache** — Vercel CDN `X-Vercel-Cache: HIT` serving old HTML with "Bangalore" metadata. The auto-deploy from `657c4bd` was never aliased to production domain. Latest deployment URL (`dr-thankappan-s-dental-clinic-4hab4y3u6.vercel.app`) has correct Kochi text.
+- **Triggered new production deploy** via Vercel API (`POST /v13/deployments` with `target: "production"`). Deployment `dpl_HpzUDhsAesyn5CdBhx1VxowzcaHh` is building.
+- **Root cause of "services not showing on client page"** — Not a code issue. Worker API returns all 9 services correctly (curl-verified). The problem was stale Vercel build cache + deployment not being aliased to production.
 <!-- END:anchored-summary -->
