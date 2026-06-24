@@ -30,9 +30,12 @@ services.post('/', authMiddleware, async (c) => {
     return c.json({ success: false, error: 'VALIDATION', message: 'slug, service_name, short_desc required' }, 400);
   }
 
+  const maxRow = await get<{ m: number }>(c.env.DB, 'SELECT COALESCE(MAX(sort_order), 0) + 1 AS m FROM services WHERE deleted_at IS NULL');
+  const finalSortOrder = sort_order ?? maxRow?.m ?? 1;
+
   const result = await run(c.env.DB,
     'INSERT INTO services (slug, service_name, short_desc, description, icon, image_url, price_from, is_active, sort_order) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-    [slug, service_name, short_desc, description ?? null, icon ?? null, image_url ?? null, price_from ?? null, is_active ?? 1, sort_order ?? 0]
+    [slug, service_name, short_desc, description ?? null, icon ?? null, image_url ?? null, price_from ?? null, is_active ?? 1, finalSortOrder]
   );
 
   return c.json({ success: true, data: { id: result.meta.last_row_id } }, 201);
