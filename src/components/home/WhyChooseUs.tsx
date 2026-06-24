@@ -68,7 +68,7 @@ export function WhyChooseUs() {
           </h2>
           <p className="mt-4 text-fluid-body text-slate-600">
             We combine expertise with compassion to deliver the best dental experience
-            in Bangalore.
+            in Kochi.
           </p>
         </motion.div>
 

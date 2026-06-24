@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     default: "Dr.Thankappan's Dental Clinic — Book Your Appointment Online",
     template: "%s | Dr.Thankappan's Dental Clinic",
   },
-  description: 'Professional dental care in Bangalore. Expert dentists offering cleaning, root canal, braces, implants & more. Book online in 60 seconds.',
+  description: 'Professional dental care in Kochi. Expert dentists offering cleaning, root canal, braces, implants & more. Book online in 60 seconds.',
 };
 
 export default function HomePage() {

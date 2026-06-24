@@ -10,7 +10,7 @@ export const metadata: Metadata = {
     template: "%s | Dr.Thankappan's Dental Clinic",
   },
   description:
-    'Expert dental care in Bangalore. Professional, gentle, and affordable dentistry for the whole family.',
+    'Your trusted dental clinic in kochi. A Family Tradition of Dental Excellence.',
   icons: {
     icon: [
       { url: '/images/logo.svg', type: 'image/svg+xml' },
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Dr.Thankappan's Dental Clinic",
     description:
-      'Expert dental care in Bangalore. Professional, gentle, and affordable dentistry for the whole family.',
+      'Your trusted dental clinic in kochi. A Family Tradition of Dental Excellence.',
     type: 'website',
     locale: 'en_IN',
   },
