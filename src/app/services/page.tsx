@@ -58,7 +58,7 @@ export default function ServicesPage() {
   return (
     <phantom-ui loading={loading}>
       <div className="min-h-dvh bg-white">
-        <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28">
+        <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 pt-20 pb-4 md:pt-28 md:pb-6">
           <Container>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -68,12 +68,13 @@ export default function ServicesPage() {
               <SectionHeader
                 title="Our Dental Services"
                 subtitle="Comprehensive dental care tailored to your needs. From routine checkups to advanced cosmetic procedures."
+                className="mb-4 md:mb-6"
               />
             </motion.div>
           </Container>
         </section>
 
-        <Container className="py-16 md:py-24">
+        <Container className="pt-0 pb-16 md:pt-0 md:pb-24">
           {error && (
             <div className="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-600">{error}</div>
           )}
