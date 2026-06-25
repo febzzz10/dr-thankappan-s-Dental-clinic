@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import { Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield } from 'lucide-react';
 import { Card } from '@/components/ui/Card';
@@ -8,6 +9,21 @@ const iconMap: Record<string, React.ElementType> = {
   Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield,
 };
 
+export const metadata: Metadata = {
+  title: 'Gallery | Dr.Thankappan\'s Dental Clinic Kochi',
+  description:
+    'Browse photos of our dental clinic in Kochi. See our modern facility, treatment rooms, and smiling patients.',
+  openGraph: {
+    title: 'Gallery | Dr.Thankappan\'s Dental Clinic',
+    description:
+      'Take a visual tour of our dental clinic in Kochi.',
+    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/gallery',
+  },
+  alternates: {
+    canonical: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/gallery',
+  },
+};
+
 export default async function GalleryPage() {
   const services = await getServices();
 
@@ -16,6 +32,7 @@ export default async function GalleryPage() {
       <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28">
         <Container>
           <SectionHeader
+            as="h1"
             title="Our Gallery"
             subtitle="Take a virtual tour of our clinic and see our work. Every smile tells a story."
           />

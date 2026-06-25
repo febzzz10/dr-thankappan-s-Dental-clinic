@@ -2,15 +2,36 @@ import type { Metadata, Viewport } from 'next';
 import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { PublicLayoutShell } from '@/components/layout/PublicLayoutShell';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getLocalBusinessSchema } from '@/lib/schemas';
 import "@aejkatappaja/phantom-ui/ssr.css";
 
+const baseUrl = 'https://dr-thankappan-s-dental-clinic-theta.vercel.app';
+
 export const metadata: Metadata = {
+  metadataBase: new URL(baseUrl),
   title: {
     default: "Dr.Thankappan's Dental Clinic",
     template: "%s | Dr.Thankappan's Dental Clinic",
   },
   description:
     'Your trusted dental clinic in kochi. A Family Tradition of Dental Excellence.',
+  applicationName: "Dr.Thankappan's Dental Clinic",
+  referrer: 'origin-when-cross-origin',
+  keywords: [
+    'dental clinic Kochi',
+    'dentist in Kochi',
+    'root canal treatment Kochi',
+    'dental implants Kochi',
+    'teeth whitening Kerala',
+    'braces and aligners',
+    'dental cleaning',
+    'crowns and bridges',
+    'family dentist',
+    'emergency dentist',
+    'painless dental treatment',
+  ],
+  authors: [{ name: "Dr.Thankappan's Dental Clinic" }],
   icons: {
     icon: [
       { url: '/images/logo.svg', type: 'image/svg+xml' },
@@ -19,9 +40,40 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Dr.Thankappan's Dental Clinic",
     description:
-      'Your trusted dental clinic in kochi. A Family Tradition of Dental Excellence.',
+      'Your trusted dental clinic in Kochi, Kerala. Expert dental care since 1997 — root canal, cleaning, implants, braces, and more.',
+    url: baseUrl,
+    siteName: "Dr.Thankappan's Dental Clinic",
     type: 'website',
     locale: 'en_IN',
+    images: [
+      {
+        url: '/images/logo.png',
+        width: 512,
+        height: 512,
+        alt: "Dr.Thankappan's Dental Clinic",
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: "Dr.Thankappan's Dental Clinic",
+    description:
+      'Your trusted dental clinic in Kochi, Kerala. Book your appointment online.',
+    images: ['/images/logo.png'],
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
+  alternates: {
+    canonical: baseUrl,
   },
 };
 
@@ -66,7 +118,10 @@ export default function RootLayout({
         <a href="#main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-teal-600 focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-white focus:shadow-lg">
           Skip to main content
         </a>
-        <PublicLayoutShell>{children}</PublicLayoutShell>
+        <PublicLayoutShell>
+          <JsonLd data={getLocalBusinessSchema()} />
+          {children}
+        </PublicLayoutShell>
       </body>
     </html>
   );

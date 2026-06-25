@@ -1,180 +1,38 @@
-'use client';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getFAQSchema } from '@/lib/schemas';
+import FaqContent from './page.client';
 
-import { useEffect, useState } from 'react';
-import { Search } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Container, SectionHeader } from '@/components/ui/Section';
-import { getFAQs } from '@/lib/api';
-import type { FAQ } from '@/lib/api';
+const faqItems = [
+  { question: 'How do I book a dental appointment?', answer: 'You can book an appointment online through our website in under 60 seconds. Select your preferred treatment, choose an available date and time, enter your details, and submit. The clinic will confirm your appointment via WhatsApp.' },
+  { question: 'What dental services are available?', answer: 'We offer a full range of dental services including root canal treatment, dental cleaning and scaling, crowns and bridges, dental implants, braces and aligners, teeth whitening, and preventive care.' },
+  { question: 'Is root canal treatment painful?', answer: 'No. Modern root canal treatment is performed under local anesthesia and is generally no more uncomfortable than getting a filling. Most patients report little to no pain during the procedure.' },
+  { question: 'How often should I get dental cleaning?', answer: 'We recommend professional dental cleaning every 6 months. Regular cleanings help prevent cavities, gum disease, and maintain overall oral health.' },
+  { question: 'Do you offer braces and aligners?', answer: 'Yes, we offer both traditional braces and clear aligners. Our dental team will assess your teeth and recommend the best option based on your needs and lifestyle.' },
+  { question: 'Can I contact the clinic through WhatsApp?', answer: 'Yes, you can reach us on WhatsApp at +91 94471 21519. We use WhatsApp for appointment confirmations, reminders, and answering your questions.' },
+  { question: 'What are your clinic working hours?', answer: 'We are open Monday to Friday from 9:00 AM to 6:00 PM and Saturday from 9:00 AM to 2:00 PM. The clinic is closed on Sunday.' },
+];
 
-const pageEase = [0.16, 1, 0.3, 1] as const;
+export const metadata: Metadata = {
+  title: 'FAQ — Dental Clinic Questions Answered | Dr.Thankappan\'s',
+  description:
+    'Frequently asked questions about dental treatments, appointments, pricing, and clinic policies at Dr.Thankappan\'s Dental Clinic in Kochi.',
+  openGraph: {
+    title: 'Dental FAQ | Dr.Thankappan\'s Dental Clinic',
+    description:
+      'Get answers to common questions about root canal, teeth cleaning, braces, implants, appointments, and more.',
+    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/faq',
+  },
+  alternates: {
+    canonical: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/faq',
+  },
+};
 
 export default function FaqPage() {
-  const [faqs, setFaqs] = useState<FAQ[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [selectedId, setSelectedId] = useState<number | null>(null);
-  const [search, setSearch] = useState('');
-
-  useEffect(() => {
-    getFAQs()
-      .then(setFaqs)
-      .finally(() => setLoading(false));
-  }, []);
-
-  const filtered = faqs.filter(
-    (faq) =>
-      faq.is_visible &&
-      (faq.question.toLowerCase().includes(search.toLowerCase()) ||
-        faq.answer.toLowerCase().includes(search.toLowerCase()))
-  );
-
-  const selected = filtered.find((faq) => faq.id === selectedId);
-
   return (
-    <div className="min-h-dvh bg-white">
-      <motion.section
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, ease: pageEase }}
-        className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28"
-      >
-        <Container>
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-          >
-            <SectionHeader
-              title="Frequently Asked Questions"
-              subtitle="Find answers to common questions about our services, treatments, and policies."
-            />
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.2 }}
-            className="mx-auto mt-8 max-w-md"
-          >
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-slate-400" aria-hidden="true" />
-              <input
-                type="text"
-                placeholder="Search questions..."
-                aria-label="Search FAQs"
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="block w-full rounded-full border border-slate-200 bg-white px-12 py-3 text-sm text-slate-900 placeholder-slate-400 shadow-sm transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              />
-            </div>
-          </motion.div>
-        </Container>
-      </motion.section>
-
-      <Container className="py-16 md:py-24">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, ease: pageEase }}
-        >
-          {loading ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-12 text-center"
-            >
-              <p className="text-slate-500">Loading FAQs...</p>
-            </motion.div>
-          ) : filtered.length === 0 ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              className="py-12 text-center"
-            >
-              <p className="text-slate-500">No matching questions found.</p>
-            </motion.div>
-          ) : (
-            <div className="mx-auto grid max-w-5xl gap-12 lg:grid-cols-[1fr_1.5fr]">
-              <div className="space-y-1">
-                {filtered.map((faq, i) => {
-                  const isSelected = selectedId === faq.id;
-                  return (
-                    <motion.button
-                      key={faq.id}
-                      initial={{ opacity: 0, x: -16 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: i * 0.04, ease: pageEase }}
-                      onClick={() => setSelectedId(isSelected ? null : faq.id)}
-                      className={`w-full rounded-xl px-4 py-3 text-left text-sm transition-[transform,opacity] ${
-                        isSelected
-                          ? 'bg-teal-50 font-semibold text-teal-900'
-                          : 'text-slate-600 hover:bg-slate-50'
-                      }`}
-                    >
-                      {faq.question}
-                    </motion.button>
-                  );
-                })}
-              </div>
-              <div className="hidden lg:block">
-                <div className="sticky top-24 rounded-2xl border border-slate-100 bg-white p-8 shadow-tinted">
-                  {selected ? (
-                    <motion.div
-                      key={selected.id}
-                      initial={{ opacity: 0, y: 8 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.3, ease: pageEase }}
-                    >
-                      <h3 className="font-display text-xl font-bold text-slate-900">
-                        {selected.question}
-                      </h3>
-                      <p className="mt-4 text-sm leading-relaxed text-slate-600">
-                        {selected.answer}
-                      </p>
-                    </motion.div>
-                  ) : (
-                    <p className="text-sm text-slate-400">
-                      Select a question to view the answer.
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="space-y-3 lg:hidden">
-                {filtered.map((faq, i) => {
-                  const isSelected = selectedId === faq.id;
-                  return (
-                    <motion.div
-                      key={faq.id}
-                      initial={{ opacity: 0, y: 12 }}
-                      whileInView={{ opacity: 1, y: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ duration: 0.3, delay: i * 0.05, ease: pageEase }}
-                    >
-                      <button
-                        onClick={() => setSelectedId(isSelected ? null : faq.id)}
-                        aria-expanded={isSelected}
-                        className="w-full rounded-2xl border border-slate-100 px-5 py-4 text-left transition-shadow hover:shadow-tinted"
-                      >
-                        <span className="pr-2 text-sm font-semibold text-slate-900">
-                          {faq.question}
-                        </span>
-                      </button>
-                      {isSelected && (
-                        <div className="px-5 pb-4 pt-2">
-                          <p className="text-sm leading-relaxed text-slate-600">
-                            {faq.answer}
-                          </p>
-                        </div>
-                      )}
-                    </motion.div>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-        </motion.div>
-      </Container>
-    </div>
+    <>
+      <JsonLd data={getFAQSchema(faqItems)} />
+      <FaqContent />
+    </>
   );
 }

@@ -27,12 +27,15 @@ export function SectionHeader({
   subtitle,
   eyebrow,
   className,
+  as,
 }: {
   title: string;
   subtitle?: string;
   eyebrow?: string;
   className?: string;
+  as?: 'h1' | 'h2';
 }) {
+  const Tag = as === 'h1' ? 'h1' : 'h2';
   return (
     <div className={cn('mx-auto mb-16 max-w-2xl text-center md:mb-20', className)}>
       {eyebrow && (
@@ -40,9 +43,9 @@ export function SectionHeader({
           {eyebrow}
         </span>
       )}
-      <h2 className="font-display text-fluid-h2 font-bold tracking-tight text-slate-900">
+      <Tag className="font-display text-fluid-h2 font-bold tracking-tight text-slate-900">
         {title}
-      </h2>
+      </Tag>
       {subtitle && (
         <p className="mt-5 text-base leading-relaxed text-slate-600 md:text-lg">
           {subtitle}

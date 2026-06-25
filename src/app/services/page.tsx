@@ -1,139 +1,53 @@
-'use client';
+import type { Metadata } from 'next';
+import { JsonLd } from '@/components/seo/JsonLd';
+import { getBreadcrumbSchema, getFAQSchema, getServiceSchema } from '@/lib/schemas';
+import ServicesContent from './page.client';
 
-import { useEffect, useState } from 'react';
-import Link from 'next/link';
-import { ArrowRight } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Card } from '@/components/ui/Card';
-import { Container, SectionHeader } from '@/components/ui/Section';
-import { GradientBackground } from '@/components/ui/gradient-background';
-import { getServices } from '@/lib/api';
-import type { Service } from '@/lib/api';
+const baseUrl = 'https://dr-thankappan-s-dental-clinic-theta.vercel.app';
 
-const cardEase = [0.16, 1, 0.3, 1] as const;
-
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.06 },
+export const metadata: Metadata = {
+  title: 'Dental Services — Root Canal, Cleaning, Implants & Braces in Kochi',
+  description:
+    'Explore all dental services at Dr.Thankappan\'s Dental Clinic in Kochi: root canal treatment, dental cleaning, crowns & bridges, implants, braces & aligners, and teeth whitening.',
+  openGraph: {
+    title: 'Dental Services | Dr.Thankappan\'s Dental Clinic',
+    description:
+      'Root canal, dental cleaning, crowns & bridges, dental implants, braces & aligners, and teeth whitening — all in one trusted Kochi clinic.',
+    url: `${baseUrl}/services`,
+  },
+  alternates: {
+    canonical: `${baseUrl}/services`,
   },
 };
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.45, ease: cardEase },
-  },
-};
+const breadcrumbSchema = getBreadcrumbSchema([
+  { name: 'Home', url: baseUrl },
+  { name: 'Dental Services', url: `${baseUrl}/services` },
+]);
 
-const dentalSoftGradients = [
-  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
-  'linear-gradient(135deg, #e6ffff 0%, #ffffff 45%, #bdeeea 100%)',
-  'linear-gradient(135deg, #c9f7ff 0%, #f9ffff 50%, #d7fff8 100%)',
-  'linear-gradient(135deg, #eaffff 0%, #f7ffff 45%, #b8ebe7 100%)',
-  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
-];
+const serviceListSchema = getServiceSchema([
+  { name: 'Root Canal Treatment', description: 'Painless root canal therapy to save infected teeth.', url: `${baseUrl}/services/root-canal` },
+  { name: 'Dental Cleaning', description: 'Professional scaling and polishing for healthy gums and teeth.', url: `${baseUrl}/services/dental-cleaning` },
+  { name: 'Crowns & Bridges', description: 'Restore damaged or missing teeth with custom crowns and bridges.', url: `${baseUrl}/services/crowns-bridges` },
+  { name: 'Dental Implants', description: 'Permanent tooth replacement with titanium dental implants.', url: `${baseUrl}/services/dental-implants` },
+  { name: 'Braces & Aligners', description: 'Straighten teeth with traditional braces or clear aligners.', url: `${baseUrl}/services/braces-aligners` },
+  { name: 'Teeth Whitening', description: 'Professional teeth whitening for a brighter, more confident smile.', url: `${baseUrl}/services/teeth-whitening` },
+]);
 
-const PLACEHOLDER_SERVICES = Array.from({ length: 6 }, (_, i) => ({
-  id: i,
-  service_name: 'Dental Service Name',
-  short_desc: 'A detailed description of what this dental service entails and how it benefits patients.',
-  slug: '',
-  is_active: 1,
-  sort_order: 0,
-}));
+const faqSchema = getFAQSchema([
+  { question: 'What dental services does Dr.Thankappan\'s clinic offer?', answer: 'We offer root canal treatment, dental cleaning, crowns & bridges, dental implants, braces & aligners, teeth whitening, and general dentistry.' },
+  { question: 'Is root canal treatment painful?', answer: 'No. Root canal treatment is performed under local anesthesia. Patients typically experience minimal discomfort during and after the procedure.' },
+  { question: 'How often should I visit the dentist?', answer: 'We recommend a check-up and professional cleaning every six months for optimal oral health.' },
+  { question: 'Do you offer teeth whitening services?', answer: 'Yes, we offer professional teeth whitening treatments that are safe, effective, and provide noticeable results in a single session.' },
+]);
 
 export default function ServicesPage() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    import("@aejkatappaja/phantom-ui");
-  }, []);
-
-  useEffect(() => {
-    getServices()
-      .then(setServices)
-      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load services'))
-      .finally(() => setLoading(false));
-  }, []);
-
-  const displayed = loading ? PLACEHOLDER_SERVICES : services;
-
   return (
-    <phantom-ui loading={loading}>
-      <GradientBackground gradients={dentalSoftGradients} animationDuration={10} overlay={false} className="min-h-screen">
-        <section className="bg-gradient-to-br from-teal-50/70 via-white to-teal-50/70 pt-20 pb-4 md:pt-28 md:pb-6">
-          <Container>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, ease: cardEase }}
-            >
-              <SectionHeader
-                title="Our Dental Services"
-                subtitle="Comprehensive dental care tailored to your needs. From routine checkups to advanced cosmetic procedures."
-                className="mb-4 md:mb-6"
-              />
-            </motion.div>
-          </Container>
-        </section>
-
-        <Container className="pt-0 pb-16 md:pt-0 md:pb-24">
-          {error && (
-            <div className="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-600">{error}</div>
-          )}
-          <motion.div
-            key={loading ? 'loading' : 'loaded'}
-            variants={containerVariants}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.05 }}
-            className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
-          >
-            {displayed.map((service) => (
-              <motion.div key={service.id} variants={cardVariants} initial="hidden" animate="visible" whileHover={{ y: -4 }} whileTap={{ scale: 0.98 }}>
-                <Card className="group h-full cursor-default p-6 transition-[transform,opacity] hover:border-teal-200 hover:shadow-lg">
-                  <h3 className="mb-2 font-display text-fluid-h4 font-bold text-slate-900">
-                    {service.service_name}
-                  </h3>
-                  <p className="mb-4 text-fluid-sm text-slate-600">
-                    {service.short_desc}
-                  </p>
-                </Card>
-              </motion.div>
-            ))}
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.2, ease: cardEase }}
-            className="mt-16 rounded-2xl bg-teal-50 p-8 text-center md:p-12"
-          >
-            <h3 className="font-display text-fluid-h3 font-bold text-slate-900">
-              Not Sure Which Treatment You Need?
-            </h3>
-            <p className="mt-2 text-slate-500">
-              Book a consultation and our experts will guide you to the right solution.
-            </p>
-            <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} className="mt-6 inline-block">
-              <Link
-                href="/book"
-                className="inline-flex items-center gap-2 rounded-full bg-teal-600 px-8 py-3 text-sm font-semibold text-white shadow-sm transition-[transform,opacity] hover:bg-teal-700 hover:shadow-md"
-              >
-                Book a Free Consultation
-                <ArrowRight className="h-4 w-4" />
-              </Link>
-            </motion.div>
-          </motion.div>
-        </Container>
-      </GradientBackground>
-    </phantom-ui>
+    <>
+      <JsonLd data={breadcrumbSchema} />
+      <JsonLd data={serviceListSchema} />
+      <JsonLd data={faqSchema} />
+      <ServicesContent />
+    </>
   );
 }

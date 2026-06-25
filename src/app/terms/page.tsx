@@ -1,5 +1,10 @@
+import type { Metadata } from 'next';
 import { Container } from '@/components/ui/Section';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Terms of Service | Dr.Thankappan\'s Dental Clinic',
+};
 
 export default function TermsPage() {
   return (
