@@ -57,7 +57,7 @@ export default function AboutPage() {
               Your Smile, Our Story
             </h1>
             <p className="mt-6 text-fluid-body text-pretty text-slate-600">
-              Founded in 2010, Dr.Thankappan&apos;s Dental Clinic has been serving the Kochi community
+              Founded in 1997, Dr.Thankappan&apos;s Dental Clinic has been serving the Kochi community
               with compassion, expertise, and a commitment to excellence.
             </p>
           </div>
