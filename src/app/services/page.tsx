@@ -50,22 +50,6 @@ export default function ServicesPage() {
       <JsonLd data={breadcrumbSchema} />
       <JsonLd data={serviceListSchema} />
       <JsonLd data={faqSchema} />
-      {/* Quick Information - AI-friendly summary */}
-      <section className="bg-teal-50/80 py-12">
-        <Container>
-          <div className="mx-auto max-w-4xl rounded-2xl border border-teal-100 bg-white p-8 shadow-sm">
-            <h2 className="font-display text-xl font-bold text-slate-900">Quick Information</h2>
-            <dl className="mt-6 grid gap-4 text-sm md:grid-cols-2 lg:grid-cols-3">
-              <div><dt className="font-medium text-slate-500">Clinic Name</dt><dd className="mt-0.5 text-slate-900 font-medium">Dr. Thankappan&apos;s Dental Clinic</dd></div>
-              <div><dt className="font-medium text-slate-500">Location</dt><dd className="mt-0.5 text-slate-900 font-medium">Kochi, Kerala</dd></div>
-              <div><dt className="font-medium text-slate-500">Phone</dt><dd className="mt-0.5"><a href="tel:+919447121519" className="font-medium text-teal-600 hover:underline">+91 94471 21519</a></dd></div>
-              <div><dt className="font-medium text-slate-500">Main Services</dt><dd className="mt-0.5 text-slate-900 font-medium">Laser dentistry, teeth whitening, gum depigmentation, smile correction, clear aligners, aesthetic restorations, root canal, implants, braces</dd></div>
-              <div><dt className="font-medium text-slate-500">Booking</dt><dd className="mt-0.5 text-slate-900 font-medium">Online booking with WhatsApp confirmation</dd></div>
-              <div><dt className="font-medium text-slate-500">Working Hours</dt><dd className="mt-0.5 text-slate-900 font-medium">Mon–Sat, 9 AM – 6 PM</dd></div>
-            </dl>
-          </div>
-        </Container>
-      </section>
       <ServicesContent />
     </>
   );

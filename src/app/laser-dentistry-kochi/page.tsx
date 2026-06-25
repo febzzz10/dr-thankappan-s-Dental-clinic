@@ -71,18 +71,6 @@ export default function LaserDentistryPage() {
         </section>
 
         <Container className="py-12 md:py-16">
-          {/* Quick Information */}
-          <div className="mb-12 rounded-2xl border border-slate-100 bg-white p-6 shadow-sm md:p-8">
-            <h2 className="font-display text-lg font-bold text-slate-900">Quick Information</h2>
-            <dl className="mt-4 grid gap-3 text-sm md:grid-cols-2">
-              <div><dt className="font-medium text-slate-500">Clinic Name</dt><dd className="text-slate-900">Dr. Thankappan&apos;s Dental Clinic</dd></div>
-              <div><dt className="font-medium text-slate-500">Location</dt><dd className="text-slate-900">Kochi, Kerala</dd></div>
-              <div><dt className="font-medium text-slate-500">Phone</dt><dd className="text-slate-900"><a href="tel:+919447121519" className="text-teal-600 hover:underline">+91 94471 21519</a></dd></div>
-              <div><dt className="font-medium text-slate-500">Booking</dt><dd className="text-slate-900">Online booking with WhatsApp confirmation</dd></div>
-              <div><dt className="font-medium text-slate-500">Working Hours</dt><dd className="text-slate-900">Mon–Sat, 9 AM – 6 PM</dd></div>
-            </dl>
-          </div>
-
           {/* What is laser dentistry */}
           <section className="mb-12">
             <h2 className="font-display text-fluid-h2 font-bold text-slate-900">What is Laser Dentistry?</h2>
