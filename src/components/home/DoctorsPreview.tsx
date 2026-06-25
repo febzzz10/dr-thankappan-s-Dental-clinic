@@ -38,7 +38,7 @@ export function DoctorsPreview() {
   }, []);
 
   return (
-    <section className="bg-white py-24">
+    <section className="bg-gradient-to-br from-[#d9fbff] via-[#f8ffff] to-[#c7f4f1] py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
