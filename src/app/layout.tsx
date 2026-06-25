@@ -58,7 +58,6 @@ export default function RootLayout({
       className={`${sans.variable} ${display.variable} scroll-smooth`}
     >
       <head>
-        <link rel="preload" href="/images/bgclinic-1920.webp" as="image" fetchPriority="high" />
         <link rel="preload" href="/images/bgmobile.webp" as="image" fetchPriority="high" />
       </head>
       <body className="font-sans antialiased tap-highlight-none" suppressHydrationWarning style={{ touchAction: 'manipulation' }}>
