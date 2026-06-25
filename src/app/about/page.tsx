@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import { Container } from '@/components/ui/Section';
+import { GradientBackground } from '@/components/ui/gradient-background';
 import { Shield, Users, Heart, Award } from 'lucide-react';
 
 const values = [
@@ -9,6 +10,14 @@ const values = [
   { icon: Users, title: 'Patient-Centered', desc: 'Your comfort and satisfaction drive every decision we make. We listen before we treat.' },
   { icon: Heart, title: 'Compassionate Care', desc: 'We understand dental anxiety and go the extra mile to make you feel at ease.' },
   { icon: Award, title: 'Excellence', desc: 'Continuous learning and modern technology ensure you get the best possible care.' },
+];
+
+const dentalSoftGradients = [
+  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
+  'linear-gradient(135deg, #e6ffff 0%, #ffffff 45%, #bdeeea 100%)',
+  'linear-gradient(135deg, #c9f7ff 0%, #f9ffff 50%, #d7fff8 100%)',
+  'linear-gradient(135deg, #eaffff 0%, #f7ffff 45%, #b8ebe7 100%)',
+  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
 ];
 
 const pageEase = [0.16, 1, 0.3, 1] as const;
@@ -32,12 +41,12 @@ const itemVariants = {
 
 export default function AboutPage() {
   return (
-    <div className="min-h-dvh bg-white">
+    <GradientBackground gradients={dentalSoftGradients} animationDuration={10} overlay={false} className="min-h-screen">
       <motion.section
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, ease: pageEase }}
-        className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28"
+        className="bg-gradient-to-br from-teal-50/70 via-white to-teal-50/70 py-20 md:py-28"
       >
         <Container>
           <div className="mx-auto max-w-3xl text-center">
@@ -119,6 +128,6 @@ export default function AboutPage() {
           </div>
         </motion.div>
       </Container>
-    </div>
+    </GradientBackground>
   );
 }

@@ -6,6 +6,7 @@ import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
+import { GradientBackground } from '@/components/ui/gradient-background';
 import { getServices } from '@/lib/api';
 import type { Service } from '@/lib/api';
 
@@ -27,6 +28,14 @@ const cardVariants = {
     transition: { duration: 0.45, ease: cardEase },
   },
 };
+
+const dentalSoftGradients = [
+  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
+  'linear-gradient(135deg, #e6ffff 0%, #ffffff 45%, #bdeeea 100%)',
+  'linear-gradient(135deg, #c9f7ff 0%, #f9ffff 50%, #d7fff8 100%)',
+  'linear-gradient(135deg, #eaffff 0%, #f7ffff 45%, #b8ebe7 100%)',
+  'linear-gradient(135deg, #d9fbff 0%, #f8ffff 45%, #c7f4f1 100%)',
+];
 
 const PLACEHOLDER_SERVICES = Array.from({ length: 6 }, (_, i) => ({
   id: i,
@@ -57,8 +66,8 @@ export default function ServicesPage() {
 
   return (
     <phantom-ui loading={loading}>
-      <div className="min-h-dvh bg-white">
-        <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 pt-20 pb-4 md:pt-28 md:pb-6">
+      <GradientBackground gradients={dentalSoftGradients} animationDuration={10} overlay={false} className="min-h-screen">
+        <section className="bg-gradient-to-br from-teal-50/70 via-white to-teal-50/70 pt-20 pb-4 md:pt-28 md:pb-6">
           <Container>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -124,7 +133,7 @@ export default function ServicesPage() {
             </motion.div>
           </motion.div>
         </Container>
-      </div>
+      </GradientBackground>
     </phantom-ui>
   );
 }
