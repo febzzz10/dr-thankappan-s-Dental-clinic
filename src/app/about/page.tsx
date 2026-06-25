@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion';
 import { Container } from '@/components/ui/Section';
 import { GradientBackground } from '@/components/ui/gradient-background';
+import { ImageAutoSlider } from '@/components/ui/image-auto-slider';
 import { Shield, Users, Heart, Award } from 'lucide-react';
 
 const values = [
@@ -64,7 +65,22 @@ export default function AboutPage() {
         </Container>
       </motion.section>
 
-      <Container className="py-16 md:py-24">
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 text-center">
+          <p className="text-sm font-semibold uppercase tracking-wide text-teal-600">
+            Clinic Gallery
+          </p>
+          <h2 className="mt-3 font-display text-fluid-h2 font-bold text-slate-950">
+            Inside Our Clinic
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-fluid-body text-slate-600">
+            A calm, modern, and hygienic environment designed for your comfort.
+          </p>
+        </div>
+        <ImageAutoSlider />
+      </section>
+
+      <Container className="py-12 md:py-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
