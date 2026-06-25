@@ -7,11 +7,12 @@ import { BookingForm } from '@/components/booking/BookingForm';
 function BookingPageContent() {
   return (
     <div className="min-h-dvh bg-white">
-      <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 py-20 md:py-28">
+      <section className="bg-gradient-to-br from-teal-50 via-white to-teal-50/80 pt-20 pb-4 md:pt-28 md:pb-6">
         <Container>
           <SectionHeader
             title="Book Your Appointment"
             subtitle="Fill in your details below and get your slot confirmed via WhatsApp. No account needed."
+            className="mb-4 md:mb-6"
           />
         </Container>
       </section>
