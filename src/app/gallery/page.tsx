@@ -17,10 +17,10 @@ export const metadata: Metadata = {
     title: 'Gallery | Dr.Thankappan\'s Dental Clinic',
     description:
       'Take a visual tour of our dental clinic in Kochi.',
-    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/gallery',
+    url: 'https://drthankappandental.com/gallery',
   },
   alternates: {
-    canonical: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/gallery',
+    canonical: 'https://drthankappandental.com/gallery',
   },
 };
 

@@ -1,20 +1,23 @@
+const baseUrl = 'https://drthankappandental.com';
+
 export function getLocalBusinessSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Dentist',
-    '@id': 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/#dentist',
+    '@id': `${baseUrl}/#dentist`,
     name: "Dr.Thankappan's Dental Clinic",
     description:
-      'Your trusted dental clinic in Kochi offering root canal, dental cleaning, crowns, bridges, implants, braces, aligners, and teeth whitening.',
-    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app',
+      'Your trusted dental clinic in Kochi offering laser dentistry, teeth whitening, gum depigmentation, gum recontouring, smile correction, clear aligners, aesthetic restorations, root canal treatment, dental cleaning, crowns and bridges, dental implants, braces and aligners, and jaw pain relief.',
+    url: baseUrl,
     telephone: '+91 94471 21519',
     email: 'drthankappandentalclinic@gmail.com',
-    image: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/images/logo.png',
+    image: `${baseUrl}/images/logo.png`,
     address: {
       '@type': 'PostalAddress',
-      streetAddress: 'Kochi',
+      streetAddress: 'M J Zakaria Sait Rd, Panayapilly East, Kappalandimukku, Mattancherry',
       addressLocality: 'Kochi',
       addressRegion: 'Kerala',
+      postalCode: '682002',
       addressCountry: 'IN',
     },
     openingHoursSpecification: [
@@ -24,7 +27,74 @@ export function getLocalBusinessSchema() {
     priceRange: '₹₹',
     medicalSpecialty: 'Dentistry',
     areaServed: { '@type': 'City', name: 'Kochi' },
-    sameAs: [],
+    sameAs: [
+      'https://www.facebook.com/drthankappansdentalclinic',
+      'https://www.instagram.com/drthankappansdentalclinic',
+    ],
+    hasOfferCatalog: {
+      '@type': 'OfferCatalog',
+      name: 'Dental Services',
+      itemListElement: [
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Laser Dentistry' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Teeth Whitening' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gum Depigmentation' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Gum Recontouring' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Smile Correction' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Clear Aligners' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Aesthetic Restorations' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Root Canal Treatment' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dental Cleaning' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Dental Implants' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Braces and Aligners' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Crowns and Bridges' } },
+        { '@type': 'Offer', itemOffered: { '@type': 'Service', name: 'Jaw Pain Relief' } },
+      ],
+    },
+    aggregateRating: {
+      '@type': 'AggregateRating',
+      ratingValue: '4.9',
+      bestRating: '5',
+      ratingCount: '350',
+    },
+  };
+}
+
+export function getWebSiteSchema() {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    '@id': `${baseUrl}/#website`,
+    url: baseUrl,
+    name: "Dr.Thankappan's Dental Clinic",
+    description:
+      'Your trusted dental clinic in Kochi. A Family Tradition of Dental Excellence.',
+    publisher: { '@id': `${baseUrl}/#dentist` },
+    potentialAction: {
+      '@type': 'SearchAction',
+      target: {
+        '@type': 'EntryPoint',
+        urlTemplate: `${baseUrl}/search?q={search_term_string}`,
+      },
+      'query-input': 'required name=search_term_string',
+    },
+  };
+}
+
+export function getMedicalServiceSchema(service: {
+  name: string;
+  description: string;
+  url: string;
+  image?: string;
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'MedicalProcedure',
+    name: service.name,
+    description: service.description,
+    url: service.url,
+    image: service.image || `${baseUrl}/images/logo.png`,
+    relevantSpecialty: { '@type': 'MedicalSpecialty', name: 'Dentistry' },
+    provider: { '@id': `${baseUrl}/#dentist` },
   };
 }
 

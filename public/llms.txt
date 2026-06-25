@@ -1,0 +1,59 @@
+# Dr. Thankappan's Dental Clinic
+
+> Dr. Thankappan's Dental Clinic is a trusted dental clinic in Kochi offering modern dental care, laser-assisted procedures, teeth whitening, smile correction, clear aligners, and comprehensive dental treatments.
+
+## Important Pages
+
+* Home: /
+* Laser Dentistry: /laser-dentistry-kochi
+* Services: /services
+* Doctors: /doctors
+* Book Appointment: /book
+* Contact: /contact
+* About: /about
+* FAQ: /faq
+* Gallery: /gallery
+* Testimonials: /testimonials
+
+## Service Pages
+
+* Root Canal Treatment: /services/root-canal-kochi
+* Dental Cleaning: /services/dental-cleaning-kochi
+* Teeth Whitening: /services/teeth-whitening-kochi
+* Dental Implants: /services/dental-implants-kochi
+* Braces and Aligners: /services/braces-aligners-kochi
+* Crowns and Bridges: /services/crowns-bridges-kochi
+* Gum Depigmentation: /services/gum-depigmentation-kochi
+* Smile Correction: /services/smile-correction-kochi
+* Jaw Pain Relief: /services/jaw-pain-relief-kochi
+
+## Dental Services
+
+* Laser Dentistry
+* Teeth Whitening
+* Gum Depigmentation
+* Gum Recontouring
+* Smile Correction
+* Clear Aligners
+* Aesthetic Restorations
+* Root Canal Treatment
+* Dental Cleaning
+* Dental Implants
+* Braces and Aligners
+* Crowns and Bridges
+* Jaw Pain Relief
+
+## Booking
+
+Patients can book appointments online through the website. Select a treatment, choose a date and time, and submit details. The clinic confirms through WhatsApp.
+
+## Contact
+
+* Phone: +91 94471 21519
+* Email: drthankappandentalclinic@gmail.com
+* Address: Kochi, Kerala (exact address on contact page)
+* Working Hours: Mon–Fri 9:00 AM–6:00 PM, Sat 9:00 AM–2:00 PM, Sun Closed
+
+## More Information
+
+* /llms-full.txt

@@ -1,0 +1,23 @@
+{
+  "name": "Dr. Thankappan's Dental Clinic",
+  "short_name": "Dr.Thankappan's",
+  "description": "Your trusted dental clinic in Kochi, Kerala. Book dental appointments online.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f766e",
+  "icons": [
+    {
+      "src": "/images/logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}

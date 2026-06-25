@@ -9,10 +9,10 @@ export const metadata: Metadata = {
     title: 'Testimonials | Dr.Thankappan\'s Dental Clinic',
     description:
       'See why patients trust Dr.Thankappan\'s Dental Clinic for their dental care in Kochi.',
-    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/testimonials',
+    url: 'https://drthankappandental.com/testimonials',
   },
   alternates: {
-    canonical: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/testimonials',
+    canonical: 'https://drthankappandental.com/testimonials',
   },
 };
 

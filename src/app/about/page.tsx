@@ -3,7 +3,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema } from '@/lib/schemas';
 import AboutContent from './page.client';
 
-const baseUrl = 'https://dr-thankappan-s-dental-clinic-theta.vercel.app';
+const baseUrl = 'https://drthankappandental.com';
 
 export const metadata: Metadata = {
   title: 'About Us | Dr.Thankappan\'s Dental Clinic — Kochi\'s Trusted Dentist Since 1997',

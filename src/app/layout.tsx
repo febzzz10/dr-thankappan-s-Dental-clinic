@@ -3,10 +3,10 @@ import { Playfair_Display, Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import { PublicLayoutShell } from '@/components/layout/PublicLayoutShell';
 import { JsonLd } from '@/components/seo/JsonLd';
-import { getLocalBusinessSchema } from '@/lib/schemas';
+import { getLocalBusinessSchema, getWebSiteSchema } from '@/lib/schemas';
 import "@aejkatappaja/phantom-ui/ssr.css";
 
-const baseUrl = 'https://dr-thankappan-s-dental-clinic-theta.vercel.app';
+const baseUrl = 'https://drthankappandental.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(baseUrl),
@@ -21,17 +21,25 @@ export const metadata: Metadata = {
   keywords: [
     'dental clinic Kochi',
     'dentist in Kochi',
+    'laser dentistry Kochi',
+    'advanced dental clinic Kochi',
     'root canal treatment Kochi',
     'dental implants Kochi',
-    'teeth whitening Kerala',
-    'braces and aligners',
-    'dental cleaning',
-    'crowns and bridges',
-    'family dentist',
-    'emergency dentist',
-    'painless dental treatment',
+    'teeth whitening Kochi',
+    'braces and aligners Kochi',
+    'dental cleaning Kochi',
+    'crowns and bridges Kochi',
+    'smile correction Kochi',
+    'gum depigmentation Kochi',
+    'clear aligners Kochi',
+    'aesthetic dental restorations Kochi',
+    'jaw pain relief Kochi',
+    'family dentist Kochi',
+    'painless dental treatment Kochi',
+    'modern dental clinic Kochi',
   ],
   authors: [{ name: "Dr.Thankappan's Dental Clinic" }],
+  manifest: '/manifest.webmanifest',
   icons: {
     icon: [
       { url: '/images/logo.svg', type: 'image/svg+xml' },
@@ -111,6 +119,8 @@ export default function RootLayout({
     >
       <head>
         <link rel="preload" href="/images/bgmobile.webp" as="image" fetchPriority="high" />
+        <link rel="llms-txt" href="/llms.txt" title="AI-readable summary" />
+        <link rel="humans-txt" href="/humans.txt" />
       </head>
       <body className="font-sans antialiased tap-highlight-none" suppressHydrationWarning style={{ touchAction: 'manipulation' }}>
         <div className="grain-fixed" aria-hidden="true" />
@@ -120,6 +130,7 @@ export default function RootLayout({
         </a>
         <PublicLayoutShell>
           <JsonLd data={getLocalBusinessSchema()} />
+          <JsonLd data={getWebSiteSchema()} />
           {children}
         </PublicLayoutShell>
       </body>

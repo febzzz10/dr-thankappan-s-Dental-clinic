@@ -1,0 +1,21 @@
+/* TEAM */
+
+Website Developer: Febin Baiju
+Email: baijufebin2008@gmail.com
+Role: Web Developer
+
+Client: Dr. Thankappan's Dental Clinic
+Site: Dental clinic website
+
+/* SITE */
+
+Last update: 2026
+Language: English
+Framework: Next.js
+Styling: Tailwind CSS
+Backend: Cloudflare Worker (Hono.js)
+Database: Cloudflare D1
+
+/* THANKS */
+
+Built with care for a modern dental clinic experience.

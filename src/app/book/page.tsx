@@ -22,16 +22,16 @@ export const metadata: Metadata = {
     title: 'Book Appointment | Dr.Thankappan\'s Dental Clinic',
     description:
       'Book your dental appointment online in 60 seconds. Choose your treatment, pick a time, and get confirmed via WhatsApp.',
-    url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/book',
+    url: 'https://drthankappandental.com/book',
   },
   alternates: {
-    canonical: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/book',
+    canonical: 'https://drthankappandental.com/book',
   },
 };
 
 const breadcrumbSchema = getBreadcrumbSchema([
-  { name: 'Home', url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app' },
-  { name: 'Book Appointment', url: 'https://dr-thankappan-s-dental-clinic-theta.vercel.app/book' },
+  { name: 'Home', url: 'https://drthankappandental.com' },
+  { name: 'Book Appointment', url: 'https://drthankappandental.com/book' },
 ]);
 
 function BookingPageContent() {

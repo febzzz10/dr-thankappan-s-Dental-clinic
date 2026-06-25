@@ -6,7 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema } from '@/lib/schemas';
 import { DoctorDetailContent } from '@/components/doctors/DoctorDetailContent';
 
-const baseUrl = 'https://dr-thankappan-s-dental-clinic-theta.vercel.app';
+const baseUrl = 'https://drthankappandental.com';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {

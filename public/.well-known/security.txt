@@ -1,0 +1,3 @@
+Contact: mailto:dr.thankappansdentalclinic@gmail.com
+Preferred-Languages: en, ml
+Canonical: https://drthankappandental.com/.well-known/security.txt
