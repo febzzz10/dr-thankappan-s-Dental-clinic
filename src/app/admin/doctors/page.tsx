@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getDoctors, createDoctor, updateDoctor, deleteDoctor } from '@/lib/api';
 import type { Doctor } from '@/lib/api';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface DoctorForm {
   doctor_name: string;
@@ -29,6 +30,7 @@ export default function AdminDoctorsPage() {
   const [showModal, setShowModal] = useState(false);
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<DoctorForm>(emptyForm);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const fetchDoctors = async () => {
     try {
@@ -183,7 +185,7 @@ export default function AdminDoctorsPage() {
                     <Pencil className="h-3.5 w-3.5 inline mr-1" />
                     Edit
                   </button>
-                  <button onClick={() => { if (confirm('Are you sure you want to delete this doctor?')) handleDelete(doctor.id); }} className="text-xs text-slate-500 hover:text-red-600">
+                  <button onClick={() => setDeleteTarget(doctor.id)} className="text-xs text-slate-500 hover:text-red-600">
                     <Trash2 className="h-3.5 w-3.5 inline mr-1" />
                     Delete
                   </button>
@@ -309,6 +311,19 @@ export default function AdminDoctorsPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete Doctor?"
+        description="This doctor profile will be permanently removed from the website. This action cannot be undone."
+        confirmText="Delete Doctor"
+        variant="danger"
+        onConfirm={() => {
+          if (deleteTarget !== null) handleDelete(deleteTarget);
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

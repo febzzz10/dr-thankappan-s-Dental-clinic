@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
 import { getServices, createService, updateService, deleteService } from '@/lib/api';
 import type { Service } from '@/lib/api';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 interface ServiceForm {
   service_name: string;
@@ -23,6 +24,7 @@ export default function AdminServicesPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ServiceForm>(emptyForm);
   const [error, setError] = useState<string | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const fetchServices = async () => {
     setLoading(true);
@@ -183,7 +185,7 @@ export default function AdminServicesPage() {
                     Edit
                   </button>
                   <button
-                    onClick={() => { if (confirm('Are you sure?')) handleDelete(service.id); }}
+                    onClick={() => setDeleteTarget(service.id)}
                     className="text-xs text-slate-500 hover:text-red-600"
                   >
                     <Trash2 className="h-3.5 w-3.5 inline mr-1" />
@@ -272,6 +274,19 @@ export default function AdminServicesPage() {
           </div>
         </div>
       )}
+
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete Service?"
+        description="This service will be permanently removed from the website. This action cannot be undone."
+        confirmText="Delete Service"
+        variant="danger"
+        onConfirm={() => {
+          if (deleteTarget !== null) handleDelete(deleteTarget);
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

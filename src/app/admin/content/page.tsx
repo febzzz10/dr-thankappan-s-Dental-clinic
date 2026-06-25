@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { Star, Eye, EyeOff, Trash2 } from 'lucide-react';
 import { getTestimonials, createTestimonial, deleteTestimonial, Testimonial } from '@/lib/api';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 export default function AdminContentPage() {
   const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
 
   const fetchTestimonials = () => {
     getTestimonials()
@@ -18,8 +20,12 @@ export default function AdminContentPage() {
   }, []);
 
   const handleDelete = (id: number) => {
-    if (!confirm('Are you sure?')) return;
-    deleteTestimonial(id)
+    setDeleteTarget(id);
+  };
+
+  const confirmDelete = () => {
+    if (deleteTarget === null) return;
+    deleteTestimonial(deleteTarget)
       .then(fetchTestimonials)
       .catch(() => alert('Failed to delete testimonial'));
   };
@@ -105,6 +111,18 @@ export default function AdminContentPage() {
           Banners, FAQs, and other content management coming soon.
         </p>
       </div>
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete Testimonial?"
+        description="This testimonial will be permanently removed from the website. This action cannot be undone."
+        confirmText="Delete Testimonial"
+        variant="danger"
+        onConfirm={() => {
+          confirmDelete();
+          setDeleteTarget(null);
+        }}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   );
 }

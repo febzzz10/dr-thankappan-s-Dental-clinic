@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/Badge';
 import { getAppointments, updateAppointmentStatus, getSettings } from '@/lib/api';
 import type { Appointment } from '@/lib/api';
 import { formatDate, formatTime, generateWhatsAppUrl, buildConfirmationMessage, buildRejectionMessage } from '@/lib/utils';
+import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
 const STATUS_OPTIONS = [
   { value: 'all', label: 'All Status' },
@@ -42,6 +43,7 @@ export default function AdminAppointmentsPage() {
   const [settings, setSettings] = useState<Record<string, string> | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [rejectTarget, setRejectTarget] = useState<number | null>(null);
 
   useEffect(() => {
     import("@aejkatappaja/phantom-ui");
@@ -111,7 +113,6 @@ export default function AdminAppointmentsPage() {
   const handleReject = async (id: number) => {
     const appt = appointments.find(a => a.id === id);
     if (!appt || !settings) return;
-    if (!confirm('Reject this appointment and notify the patient via WhatsApp?')) return;
     try {
       await updateAppointmentStatus(id, { status: 'REJECTED' });
       setAppointments((prev) =>
@@ -250,7 +251,7 @@ export default function AdminAppointmentsPage() {
                           )}
                           {appt.status === 'PENDING' && (
                             <button
-                              onClick={() => handleReject(appt.id)}
+                              onClick={() => setRejectTarget(appt.id)}
                               className="rounded-lg p-1.5 text-red-400 hover:bg-red-50 hover:text-red-600"
                               title="Reject appointment"
                               aria-label="Reject appointment"
@@ -290,7 +291,7 @@ export default function AdminAppointmentsPage() {
                 {appt.status === 'PENDING' && (
                   <Button
                     variant="outline"
-                    onClick={() => { handleReject(appt.id); setSelectedAppt(null); }}
+                    onClick={() => { setRejectTarget(appt.id); setSelectedAppt(null); }}
                   >
                     Reject
                   </Button>
@@ -301,6 +302,21 @@ export default function AdminAppointmentsPage() {
           </div>
         );
       })()}
+
+      <ConfirmDialog
+        open={rejectTarget !== null}
+        title="Reject Appointment?"
+        description="This appointment will be marked as rejected and the patient will be notified via WhatsApp. This action cannot be undone."
+        confirmText="Reject Appointment"
+        variant="danger"
+        onConfirm={() => {
+          if (rejectTarget !== null) handleReject(rejectTarget);
+          setRejectTarget(null);
+        }}
+        onCancel={() => {
+          setRejectTarget(null);
+        }}
+      />
     </div>
   );
 }
