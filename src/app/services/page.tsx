@@ -78,6 +78,7 @@ export default function ServicesPage() {
             <div className="mb-6 rounded-xl bg-red-50 p-4 text-sm text-red-600">{error}</div>
           )}
           <motion.div
+            key={loading ? 'loading' : 'loaded'}
             variants={containerVariants}
             initial="hidden"
             whileInView="visible"
