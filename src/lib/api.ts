@@ -56,7 +56,6 @@ export interface AdminUser {
   name: string;
   email: string;
   role: string;
-  token?: string;
 }
 
 export async function login(email: string, password: string): Promise<AdminUser> {

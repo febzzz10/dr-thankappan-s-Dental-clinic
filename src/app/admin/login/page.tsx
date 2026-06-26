@@ -20,14 +20,8 @@ export default function AdminLoginPage() {
     setError('');
 
     try {
-      const user = await login(email, password);
-      if (user.token) {
-        await fetch('/api/auth/session', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ token: user.token }),
-        });
-      }
+      await login(email, password);
+      document.cookie = 'admin_logged_in=1; path=/; max-age=86400; SameSite=Lax; Secure';
       router.push('/admin');
     } catch (err: unknown) {
       if (err instanceof Error) {

@@ -86,7 +86,7 @@ auth.post('/login', async (c) => {
   deleteCookie(c, 'adminToken', { path: '/' });
   deleteCookie(c, 'token', { path: '/' });
 
-  return c.json({ success: true, data: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, token } });
+  return c.json({ success: true, data: { id: admin.id, name: admin.name, email: admin.email, role: admin.role } });
 });
 
 auth.post('/logout', (c) => {

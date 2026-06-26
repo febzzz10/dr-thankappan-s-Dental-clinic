@@ -31,11 +31,7 @@ export function AdminSidebar() {
     } catch {
       // proceed regardless
     }
-    try {
-      await fetch('/api/auth/session', { method: 'DELETE' });
-    } catch {
-      // proceed regardless
-    }
+    document.cookie = 'admin_logged_in=; path=/; max-age=0';
     router.push('/admin/login');
   };
 
