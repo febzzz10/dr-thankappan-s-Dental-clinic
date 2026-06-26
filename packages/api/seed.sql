@@ -1,6 +1,11 @@
--- Seed admin (password: admin123, bcrypt hash)
-INSERT OR IGNORE INTO admins (name, email, password_hash, role) VALUES
-  ('Admin', 'admin@dentalclinic.com', '$2a$12$jz.n66bmmTQvPL759BdchOgNq.UeSlFo5V1ciLtz4T0vgXWEnLksS', 'superadmin');
+-- DEVELOPMENT ONLY — DO NOT USE IN PRODUCTION.
+-- Default admin credentials are NOT seeded in production.
+-- For production, run: npm run create-admin
+-- That script reads ADMIN_EMAIL and ADMIN_PASSWORD from environment
+-- and hashes the password before inserting.
+-- Delete this entire INSERT block before production deploy.
+-- INSERT OR IGNORE INTO admins (name, email, password_hash, role) VALUES
+--   ('Admin', 'admin@dentalclinic.com', '$2a$12$jz.n66bmmTQvPL759BdchOgNq.UeSlFo5V1ciLtz4T0vgXWEnLksS', 'superadmin');
 
 -- Seed settings
 INSERT OR IGNORE INTO settings (key, value, label) VALUES

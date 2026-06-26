@@ -7,7 +7,7 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
-    const token = request.cookies.get('auth_token')?.value;
+    const token = request.cookies.get('admin_session')?.value ?? request.cookies.get('auth_token')?.value;
     if (!token) {
       const loginUrl = new URL('/admin/login', request.url);
       loginUrl.searchParams.set('from', pathname);
@@ -16,11 +16,12 @@ export async function proxy(request: NextRequest) {
 
     try {
       const res = await fetch(`${API_URL}/auth/me`, {
-        headers: { Cookie: `auth_token=${token}` },
+        headers: { Cookie: `admin_session=${token}` },
       });
       const json: { success?: boolean } = await res.json();
       if (!json.success) {
         const response = NextResponse.redirect(new URL('/admin/login', request.url));
+        response.cookies.delete('admin_session');
         response.cookies.delete('auth_token');
         return response;
       }

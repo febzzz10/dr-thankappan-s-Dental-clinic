@@ -9,7 +9,7 @@ declare module 'hono' {
 }
 
 export const authMiddleware = createMiddleware(async (c, next) => {
-  const token = getCookie(c, 'auth_token');
+  const token = getCookie(c, 'admin_session') ?? getCookie(c, 'auth_token');
   if (!token) {
     return c.json({ success: false, error: 'UNAUTHORIZED', message: 'Not authenticated' }, 401);
   }

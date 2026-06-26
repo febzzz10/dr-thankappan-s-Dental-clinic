@@ -22,7 +22,11 @@ export default function AdminLoginPage() {
     try {
       const user = await login(email, password);
       if (user.token) {
-        document.cookie = `auth_token=${user.token}; path=/; max-age=86400; SameSite=Lax; Secure`;
+        await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ token: user.token }),
+        });
       }
       router.push('/admin');
     } catch (err: unknown) {
@@ -97,9 +101,6 @@ export default function AdminLoginPage() {
             {loading ? 'Signing in…' : 'Sign In'}
           </Button>
 
-          <p className="text-center text-xs text-slate-400">
-            Credentials: admin@dentalclinic.com / admin123
-          </p>
         </form>
       </div>
     </div>

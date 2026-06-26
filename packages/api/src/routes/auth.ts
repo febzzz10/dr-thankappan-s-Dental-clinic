@@ -1,8 +1,8 @@
 import { Hono, Context } from 'hono';
-import { setCookie, deleteCookie, getCookie } from 'hono/cookie';
-import { compare, hash } from 'bcryptjs';
-import { createToken, verifyToken } from '../lib/jwt';
-import { get, run } from '../lib/db';
+import { setCookie, deleteCookie } from 'hono/cookie';
+import { compare } from 'bcryptjs';
+import { createToken } from '../lib/jwt';
+import { get } from '../lib/db';
 import { authMiddleware } from '../middleware/auth';
 
 const auth = new Hono<{ Bindings: Env }>();
@@ -74,19 +74,26 @@ auth.post('/login', async (c) => {
     role: admin.role,
   });
 
-  setCookie(c, 'auth_token', token, {
+  setCookie(c, 'admin_session', token, {
     httpOnly: true,
     secure: true,
     sameSite: 'None',
     path: '/',
     maxAge: 86400,
   });
+  // Clear legacy insecure cookie if present
+  deleteCookie(c, 'auth_token', { path: '/' });
+  deleteCookie(c, 'adminToken', { path: '/' });
+  deleteCookie(c, 'token', { path: '/' });
 
   return c.json({ success: true, data: { id: admin.id, name: admin.name, email: admin.email, role: admin.role, token } });
 });
 
 auth.post('/logout', (c) => {
+  deleteCookie(c, 'admin_session', { path: '/' });
   deleteCookie(c, 'auth_token', { path: '/' });
+  deleteCookie(c, 'adminToken', { path: '/' });
+  deleteCookie(c, 'token', { path: '/' });
   return c.json({ success: true, data: null });
 });
 

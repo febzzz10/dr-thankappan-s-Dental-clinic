@@ -1,9 +1,10 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { AdminSidebar } from '@/components/admin/AdminSidebar';
 import { AdminMobileNav } from '@/components/admin/AdminMobileNav';
+import { getMe } from '@/lib/api';
 
 export default function AdminLayout({
   children,
@@ -12,16 +13,27 @@ export default function AdminLayout({
 }) {
   const router = useRouter();
   const pathname = usePathname();
+  const [checking, setChecking] = useState(true);
 
   useEffect(() => {
-    if (pathname === '/admin/login') return;
-    const token = document.cookie
-      .split('; ')
-      .find((row) => row.startsWith('auth_token='));
-    if (!token) {
-      router.replace('/admin/login?from=' + encodeURIComponent(pathname));
+    if (pathname === '/admin/login') {
+      setChecking(false);
+      return;
     }
+    getMe()
+      .then(() => setChecking(false))
+      .catch(() => {
+        router.replace('/admin/login?from=' + encodeURIComponent(pathname));
+      });
   }, [pathname, router]);
+
+  if (checking && pathname !== '/admin/login') {
+    return (
+      <div className="flex min-h-dvh items-center justify-center bg-slate-50">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-200 border-t-teal-600" />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-dvh bg-slate-50">

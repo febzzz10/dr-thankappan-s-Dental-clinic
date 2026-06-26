@@ -5,7 +5,8 @@
   "scripts": {
     "dev": "wrangler dev",
     "deploy": "wrangler deploy",
-    "types": "wrangler types"
+    "types": "wrangler types",
+    "create-admin": "node scripts/create-admin.mjs"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
