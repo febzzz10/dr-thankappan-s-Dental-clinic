@@ -32,7 +32,7 @@ upload.post('/presigned', authMiddleware, async (c) => {
     allowedMethods: ['PUT'],
     minBound: { contentLength: 1 },
     maxBound: { contentLength: MAX_SIZE },
-    customConditions: [{ content_type }],
+    customConditions: [{ 'Content-Type': content_type }],
   });
 
   return c.json({

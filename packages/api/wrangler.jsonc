@@ -23,6 +23,7 @@
     }
   ],
   "vars": {
-    "NODE_VERSION": "22"
+    "NODE_VERSION": "22",
+    "R2_PUBLIC_URL": ""
   }
 }

@@ -165,8 +165,9 @@ export default function AdminDoctorsPage() {
       }
       await fetchDoctors();
       setShowModal(false);
-    } catch {
-      setError('Failed to save doctor. Check your connection and try again.');
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : 'Unknown error';
+      setError(`Failed to save doctor: ${msg}`);
     } finally {
       setUploading(false);
     }
