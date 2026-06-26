@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { PiArrowRight } from 'react-icons/pi';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
@@ -84,11 +85,15 @@ export function DoctorsPreview() {
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ type: "spring", stiffness: 200, damping: 15, delay: i * 0.1 + 0.2 }}
-                      className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+                      className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200 overflow-hidden"
                     >
-                      <span className="text-4xl font-bold text-teal-600">
-                        {doctor.doctor_name.charAt(0)}
-                      </span>
+                      {doctor.image_url ? (
+                        <Image src={doctor.image_url} alt={doctor.doctor_name} width={112} height={112} className="h-full w-full object-cover" unoptimized />
+                      ) : (
+                        <span className="text-4xl font-bold text-teal-600">
+                          {doctor.doctor_name.charAt(0)}
+                        </span>
+                      )}
                     </motion.div>
                     <h3 className="font-display text-xl font-bold text-slate-900">
                       {doctor.doctor_name}

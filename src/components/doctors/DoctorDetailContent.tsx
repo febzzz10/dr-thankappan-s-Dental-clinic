@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Calendar, BadgeCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Container } from '@/components/ui/Section';
@@ -46,11 +47,15 @@ export function DoctorDetailContent({ doctor }: DoctorDetailContentProps) {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ type: "spring", stiffness: 200, damping: 15, delay: 0.25 }}
-              className="flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+              className="flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200 overflow-hidden"
             >
-              <span className="text-5xl font-bold text-teal-600">
-                {doctor.doctor_name.charAt(0)}
-              </span>
+              {doctor.image_url ? (
+                <Image src={doctor.image_url} alt={doctor.doctor_name} width={128} height={128} className="h-full w-full object-cover" unoptimized />
+              ) : (
+                <span className="text-5xl font-bold text-teal-600">
+                  {doctor.doctor_name.charAt(0)}
+                </span>
+              )}
             </motion.div>
             <div className="text-center md:text-left">
               <h1 className="font-display text-fluid-h1 font-bold tracking-tight text-slate-900">

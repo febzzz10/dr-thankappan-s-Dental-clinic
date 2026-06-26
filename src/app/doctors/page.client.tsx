@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
@@ -109,11 +110,15 @@ function DoctorsContent() {
                           whileInView={{ scale: 1 }}
                           viewport={{ once: true }}
                           transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                          className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+                          className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200 overflow-hidden"
                         >
-                          <span className="text-3xl font-bold text-teal-600">
-                            {doctor.doctor_name.charAt(0)}
-                          </span>
+                          {doctor.image_url ? (
+                            <Image src={doctor.image_url} alt={doctor.doctor_name} width={96} height={96} className="h-full w-full object-cover" unoptimized />
+                          ) : (
+                            <span className="text-3xl font-bold text-teal-600">
+                              {doctor.doctor_name.charAt(0)}
+                            </span>
+                          )}
                         </motion.div>
                         <h3 className="font-display text-fluid-h4 font-bold text-slate-900">
                           {doctor.doctor_name}
@@ -140,11 +145,15 @@ function DoctorsContent() {
                         whileInView={{ scale: 1 }}
                         viewport={{ once: true }}
                         transition={{ type: "spring", stiffness: 200, damping: 15 }}
-                        className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200"
+                        className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-gradient-to-br from-teal-100 to-teal-200 overflow-hidden"
                       >
-                        <span className="text-3xl font-bold text-teal-600">
-                          {doctor.doctor_name.charAt(0)}
-                        </span>
+                        {doctor.image_url ? (
+                          <Image src={doctor.image_url} alt={doctor.doctor_name} width={96} height={96} className="h-full w-full object-cover" unoptimized />
+                        ) : (
+                          <span className="text-3xl font-bold text-teal-600">
+                            {doctor.doctor_name.charAt(0)}
+                          </span>
+                        )}
                       </motion.div>
                       <h3 className="font-display text-fluid-h4 font-bold text-slate-900">
                         {doctor.doctor_name}
