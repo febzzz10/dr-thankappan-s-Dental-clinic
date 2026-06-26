@@ -105,13 +105,6 @@ export function DoctorsPreview() {
                   <div className="p-6 pt-4">
                     <p className="mb-1 text-sm text-slate-600">{doctor.specialization}</p>
                     <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
-                    <Link
-                      href={`/doctors/${doctor.slug}`}
-                      className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal-600 transition-[transform,opacity,color] hover:gap-2"
-                    >
-                      View Profile
-                      <PiArrowRight className="h-3.5 w-3.5" />
-                    </Link>
                   </div>
                 </Card>
               </motion.div>

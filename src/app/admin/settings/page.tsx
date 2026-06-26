@@ -68,7 +68,7 @@ export default function AdminSettingsPage() {
                 {field.type === 'textarea' ? (
                   <textarea
                     id={field.key}
-                    value={settings[field.key]}
+                    value={settings[field.key] ?? ''}
                     onChange={(e) => updateField(field.key, e.target.value)}
                     rows={3}
                     autoComplete="off"
@@ -78,7 +78,7 @@ export default function AdminSettingsPage() {
                   <input
                     id={field.key}
                     type={field.type}
-                    value={settings[field.key]}
+                    value={settings[field.key] ?? ''}
                     onChange={(e) => updateField(field.key, e.target.value)}
                     autoComplete="off"
                     className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -99,7 +99,7 @@ export default function AdminSettingsPage() {
               <input
                 id="whatsapp_number"
                 type="text"
-                value={settings.whatsapp_number}
+                value={settings.whatsapp_number ?? ''}
                 onChange={(e) => updateField('whatsapp_number', e.target.value)}
                 autoComplete="off"
                 className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -114,7 +114,7 @@ export default function AdminSettingsPage() {
               <input
                 id="google_maps_link"
                 type="text"
-                value={settings.google_maps_link}
+                value={settings.google_maps_link ?? ''}
                 onChange={(e) => updateField('google_maps_link', e.target.value)}
                 autoComplete="off"
                 className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -155,7 +155,7 @@ export default function AdminSettingsPage() {
               <input
                 id="slot_advance_days"
                 type="number"
-                value={settings.slot_advance_days}
+                value={settings.slot_advance_days ?? ''}
                 onChange={(e) => updateField('slot_advance_days', e.target.value)}
                 autoComplete="off"
                 className="mt-1 block w-32 rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
@@ -178,7 +178,7 @@ export default function AdminSettingsPage() {
                 <input
                   id={field.key}
                   type="url"
-                  value={settings[field.key]}
+                  value={settings[field.key] ?? ''}
                   onChange={(e) => updateField(field.key, e.target.value)}
                   autoComplete="off"
                   className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"

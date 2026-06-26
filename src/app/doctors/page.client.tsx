@@ -3,7 +3,6 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/Card';
 import { Container, SectionHeader } from '@/components/ui/Section';
@@ -130,10 +129,6 @@ function DoctorsContent() {
                       <div className="p-6 pt-4">
                         <p className="mb-1 text-fluid-sm text-slate-600">{doctor.specialization}</p>
                         <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
-                        <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal-600 transition-all hover:gap-2">
-                          View Profile
-                          <ArrowRight className="h-3.5 w-3.5" />
-                        </span>
                       </div>
                     </Card>
                   </Link>
@@ -165,10 +160,6 @@ function DoctorsContent() {
                     <div className="p-6 pt-4">
                       <p className="mb-1 text-fluid-sm text-slate-600">{doctor.specialization}</p>
                       <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
-                      <span className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-teal-600 transition-all hover:gap-2">
-                        View Profile
-                        <ArrowRight className="h-3.5 w-3.5" />
-                      </span>
                     </div>
                   </Card>
                 )}
