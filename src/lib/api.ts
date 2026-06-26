@@ -331,8 +331,20 @@ export async function deleteFAQ(id: number) {
 }
 
 // ---- Upload ----
-export async function getPresignedUrl(content_type: string, file_name: string) {
-  return api.post<{ upload_url: string; public_url: string; key: string }>('/api/upload/presigned', { content_type, file_name });
+export async function uploadFile(file: File): Promise<{ public_url: string; key: string }> {
+  const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '';
+  const formData = new FormData();
+  formData.append('file', file);
+  const res = await fetch(`${BASE_URL}/api/upload`, {
+    method: 'POST',
+    credentials: 'include',
+    body: formData,
+  });
+  const json = await res.json();
+  if (!res.ok || !json.success) {
+    throw new Error(json.message ?? 'Upload failed');
+  }
+  return json.data;
 }
 
 // ---- Doctor Unavailability ----

@@ -5,7 +5,7 @@ import { useEffect, useState, useRef } from 'react';
 import { Pencil, Trash2, X, Upload, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { getDoctors, createDoctor, updateDoctor, deleteDoctor, getPresignedUrl } from '@/lib/api';
+import { getDoctors, createDoctor, updateDoctor, deleteDoctor, uploadFile } from '@/lib/api';
 import type { Doctor } from '@/lib/api';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
@@ -128,18 +128,7 @@ export default function AdminDoctorsPage() {
 
   const uploadImage = async (): Promise<string | null> => {
     if (!selectedFile) return form.image_url || null;
-
-    const ext = selectedFile.name.split('.').pop() || 'jpg';
-    const fileName = `doctor-${Date.now()}.${ext}`;
-
-    const { upload_url, public_url } = await getPresignedUrl(selectedFile.type, fileName);
-    const res = await fetch(upload_url, {
-      method: 'PUT',
-      body: selectedFile,
-      headers: { 'Content-Type': selectedFile.type },
-    });
-
-    if (!res.ok) throw new Error('Image upload failed');
+    const { public_url } = await uploadFile(selectedFile);
     return public_url;
   };
 
