@@ -1,11 +1,11 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
-import { Pencil, Trash2, X } from 'lucide-react';
+import { useEffect, useState, useRef } from 'react';
+import { Pencil, Trash2, X, Upload, AlertCircle, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/Button';
 import { Badge } from '@/components/ui/Badge';
-import { getDoctors, createDoctor, updateDoctor, deleteDoctor } from '@/lib/api';
+import { getDoctors, createDoctor, updateDoctor, deleteDoctor, getPresignedUrl } from '@/lib/api';
 import type { Doctor } from '@/lib/api';
 import { ConfirmDialog } from '@/components/ui/ConfirmDialog';
 
@@ -15,13 +15,14 @@ interface DoctorForm {
   qualification: string;
   specialization: string;
   experience_yrs: number | null;
+  bio: string;
   image_url: string;
   is_active: number;
 }
 
 const emptyForm: DoctorForm = {
   doctor_name: '', slug: '', qualification: '',
-  specialization: '', experience_yrs: null, image_url: '', is_active: 1,
+  specialization: '', experience_yrs: null, bio: '', image_url: '', is_active: 1,
 };
 
 export default function AdminDoctorsPage() {
@@ -31,13 +32,18 @@ export default function AdminDoctorsPage() {
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<DoctorForm>(emptyForm);
   const [deleteTarget, setDeleteTarget] = useState<number | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState('');
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchDoctors = async () => {
     try {
       const data = await getDoctors();
       setDoctors(data);
     } catch {
-      // handle error
+      setError('Failed to load doctors');
     } finally {
       setLoading(false);
     }
@@ -46,7 +52,7 @@ export default function AdminDoctorsPage() {
   useEffect(() => {
     getDoctors()
       .then(setDoctors)
-      .catch(() => {})
+      .catch(() => setError('Failed to load doctors'))
       .finally(() => setLoading(false));
   }, []);
 
@@ -55,20 +61,31 @@ export default function AdminDoctorsPage() {
   }, []);
 
   const toggleActive = async (id: number) => {
-    const doctor = doctors.find(d => d.id === id);
-    if (!doctor) return;
-    await updateDoctor(id, { is_active: doctor.is_active === 1 ? 0 : 1 });
-    fetchDoctors();
+    try {
+      const doctor = doctors.find(d => d.id === id);
+      if (!doctor) return;
+      await updateDoctor(id, { is_active: doctor.is_active === 1 ? 0 : 1 });
+      fetchDoctors();
+    } catch {
+      setError('Failed to update doctor status');
+    }
   };
 
   const handleDelete = async (id: number) => {
-    await deleteDoctor(id);
-    fetchDoctors();
+    try {
+      await deleteDoctor(id);
+      fetchDoctors();
+    } catch {
+      setError('Failed to delete doctor');
+    }
   };
 
   const openAdd = () => {
     setEditingId(null);
     setForm(emptyForm);
+    setFilePreview(null);
+    setSelectedFile(null);
+    setError('');
     setShowModal(true);
   };
 
@@ -80,17 +97,66 @@ export default function AdminDoctorsPage() {
       qualification: doctor.qualification,
       specialization: doctor.specialization,
       experience_yrs: doctor.experience_yrs,
+      bio: doctor.bio ?? '',
       image_url: doctor.image_url ?? '',
       is_active: doctor.is_active,
     });
+    setFilePreview(null);
+    setSelectedFile(null);
+    setError('');
     setShowModal(true);
   };
 
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      setError('Only JPG, PNG, or WebP images are accepted');
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setError('Image must be under 5 MB');
+      return;
+    }
+
+    setSelectedFile(file);
+    setFilePreview(URL.createObjectURL(file));
+    setError('');
+  };
+
+  const uploadImage = async (): Promise<string | null> => {
+    if (!selectedFile) return form.image_url || null;
+
+    const ext = selectedFile.name.split('.').pop() || 'jpg';
+    const fileName = `doctor-${Date.now()}.${ext}`;
+
+    const { upload_url, public_url } = await getPresignedUrl(selectedFile.type, fileName);
+    const res = await fetch(upload_url, {
+      method: 'PUT',
+      body: selectedFile,
+      headers: { 'Content-Type': selectedFile.type },
+    });
+
+    if (!res.ok) throw new Error('Image upload failed');
+    return public_url;
+  };
+
   const handleSave = async () => {
+    setError('');
+    setUploading(true);
     try {
+      const imageUrl = await uploadImage();
       const data = {
-        ...form,
-        image_url: form.image_url || null,
+        doctor_name: form.doctor_name,
+        slug: form.slug,
+        qualification: form.qualification,
+        specialization: form.specialization,
+        experience_yrs: form.experience_yrs,
+        bio: form.bio || null,
+        image_url: imageUrl,
+        is_active: form.is_active,
       };
       if (editingId) {
         await updateDoctor(editingId, data);
@@ -100,7 +166,9 @@ export default function AdminDoctorsPage() {
       await fetchDoctors();
       setShowModal(false);
     } catch {
-      // handle error
+      setError('Failed to save doctor. Check your connection and try again.');
+    } finally {
+      setUploading(false);
     }
   };
 
@@ -218,6 +286,12 @@ export default function AdminDoctorsPage() {
               </button>
             </div>
             <div className="space-y-4 p-6">
+              {error && (
+                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                  <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
               <div>
                 <label className="block text-sm font-medium text-slate-700 mb-1">Doctor Name</label>
                 <input
@@ -266,29 +340,68 @@ export default function AdminDoctorsPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture URL</label>
-                <div className="flex items-center gap-3">
-                  {form.image_url ? (
+                <label className="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+                <textarea
+                  value={form.bio}
+                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                  rows={3}
+                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none resize-none"
+                  placeholder="Brief description about the doctor..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture</label>
+                <div className="flex items-start gap-4">
+                  {(filePreview || form.image_url) && !selectedFile ? (
                     <Image
                       src={form.image_url}
                       alt="Preview"
-                      width={48}
-                      height={48}
-                      className="h-12 w-12 rounded-full object-cover shrink-0 border border-slate-200"
-                      onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+                      width={64}
+                      height={64}
+                      className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
+                      unoptimized
+                    />
+                  ) : filePreview ? (
+                    <Image
+                      src={filePreview}
+                      alt="Preview"
+                      width={64}
+                      height={64}
+                      className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
                       unoptimized
                     />
                   ) : (
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-slate-50 text-sm text-slate-300 shrink-0 border border-dashed border-slate-200">
-                      <span className="text-[10px] font-medium">URL</span>
+                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-300 shrink-0 border-2 border-dashed border-slate-200">
+                      <Upload className="h-5 w-5" />
                     </div>
                   )}
-                  <input
-                    value={form.image_url}
-                    onChange={(e) => setForm({ ...form, image_url: e.target.value })}
-                    className="flex-1 rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                    placeholder="https://example.com/doctor.jpg"
-                  />
+                  <div className="flex-1">
+                    <input
+                      ref={fileInputRef}
+                      type="file"
+                      accept="image/jpeg,image/png,image/webp"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:shadow-sm"
+                    >
+                      <Upload className="h-4 w-4" />
+                      {selectedFile ? selectedFile.name : 'Choose Image'}
+                    </button>
+                    {selectedFile && (
+                      <button
+                        type="button"
+                        onClick={() => { setSelectedFile(null); setFilePreview(null); }}
+                        className="ml-2 text-xs text-red-500 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    )}
+                    <p className="mt-1.5 text-xs text-slate-400">JPG, PNG, or WebP. Max 5 MB.</p>
+                  </div>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -303,9 +416,13 @@ export default function AdminDoctorsPage() {
               </div>
             </div>
             <div className="flex gap-3 border-t border-slate-100 px-6 py-4">
-              <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)}>Cancel</Button>
-              <Button className="flex-1" onClick={handleSave} disabled={!form.doctor_name || !form.slug}>
-                {editingId ? 'Save Changes' : 'Add Doctor'}
+              <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)} disabled={uploading}>Cancel</Button>
+              <Button className="flex-1" onClick={handleSave} disabled={!form.doctor_name || !form.slug || uploading}>
+                {uploading ? (
+                  <span className="inline-flex items-center gap-2"><Loader2 className="h-4 w-4 animate-spin" /> Uploading...</span>
+                ) : (
+                  editingId ? 'Save Changes' : 'Add Doctor'
+                )}
               </Button>
             </div>
           </div>
