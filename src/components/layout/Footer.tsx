@@ -11,7 +11,7 @@ export function Footer() {
         <div className="grid gap-12 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
           <div className="space-y-4">
             <div className="flex items-center gap-2">
-              <Image src="/images/logo.png" alt="" width={36} height={36} className="h-9 w-auto" />
+              <Image src="/images/logo.png" alt="Dr.Thankappan's Dental Clinic" width={36} height={36} className="h-9 w-auto" />
               <span className="font-display text-sm font-bold text-slate-900 sm:text-xl">
                 Dr.Thankappan&apos;s Dental Clinic
               </span>

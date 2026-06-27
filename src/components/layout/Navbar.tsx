@@ -29,7 +29,7 @@ export function Navbar() {
         <div className="mx-auto flex w-max items-center gap-8 rounded-full border border-white/10 bg-white/80 px-6 py-2 shadow-ambient backdrop-blur-2xl supports-[backdrop-filter]:bg-white/70">
           {/* Logo + name */}
           <Link href="/" className="flex items-center gap-2.5 pr-4 border-r border-slate-200/50">
-            <Image src="/images/logo.png" alt="" width={36} height={36} className="h-8 w-auto" />
+            <Image src="/images/logo.png" alt="Dr.Thankappan's Dental Clinic" width={36} height={36} className="h-8 w-auto" />
             <div className="leading-snug">
               <p className="font-display text-sm font-bold tracking-tight text-slate-800">Dr.Thankappan&apos;s</p>
               <p className="text-[9px] font-bold tracking-widest text-teal-600">DENTAL CLINIC</p>
