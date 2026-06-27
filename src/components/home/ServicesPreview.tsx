@@ -8,14 +8,6 @@ import { Card } from '@/components/ui/Card';
 import { getServices } from '@/lib/api';
 import type { Service } from '@/lib/api';
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { staggerChildren: 0.08 },
-  },
-};
-
 const cardEase = [0.16, 1, 0.3, 1] as const;
 
 const cardVariants = {
@@ -31,7 +23,7 @@ export function ServicesPreview() {
   const [services, setServices] = useState<Service[]>([]);
 
   useEffect(() => {
-    getServices().then((res) => setServices(res.slice(0, 6))).catch(() => {});
+    getServices().then((res) => setServices(res.slice(0, 6))).catch((err) => console.error('ServicesPreview:', err));
   }, []);
 
   return (
@@ -56,31 +48,27 @@ export function ServicesPreview() {
           </p>
         </motion.div>
 
-        <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.1 }}
-          className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]"
-        >
+        <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(min(100%,18rem),1fr))]">
           {services.map((service) => (
-                <motion.div
-                  key={service.id}
-                  variants={cardVariants}
-                  whileHover={{ y: -4 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Card className="group h-full cursor-default p-6 transition-all hover:border-teal-200 hover:shadow-lg">
-                    <h3 className="mb-2 font-display text-fluid-h4 font-bold text-slate-900">
-                      {service.service_name}
-                    </h3>
-                    <p className="mb-4 text-fluid-sm text-slate-600">
-                      {service.short_desc}
-                    </p>
-                  </Card>
-              </motion.div>
+            <motion.div
+              key={service.id}
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: cardEase }}
+              whileHover={{ y: -4 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Card className="group h-full cursor-default p-6 transition-all hover:border-teal-200 hover:shadow-lg">
+                <h3 className="mb-2 font-display text-fluid-h4 font-bold text-slate-900">
+                  {service.service_name}
+                </h3>
+                <p className="mb-4 text-fluid-sm text-slate-600">
+                  {service.short_desc}
+                </p>
+              </Card>
+            </motion.div>
           ))}
-        </motion.div>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, y: 10 }}
