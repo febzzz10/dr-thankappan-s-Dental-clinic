@@ -57,9 +57,8 @@ function AboutContent() {
             <h1 className="mt-4 font-display text-fluid-h1 font-bold tracking-tight text-slate-900">
               Your Smile, Our Story
             </h1>
-            <p className="mt-6 text-fluid-body text-pretty text-slate-600">
-              Founded in 1997, Dr.Thankappan&apos;s Dental Clinic has been serving the Kochi community
-              with compassion, expertise, and a commitment to excellence.
+            <p className="mt-6 text-fluid-body text-pretty text-slate-600 leading-relaxed">
+              A legacy of smiles since 1997. Our journey began in 1997, founded by my father — a simple yet powerful vision to serve the Kochi community with compassionate dental care. Twelve years ago, the clinic was officially passed to the next generation. Today, his daughter, Dr. Nimisha Thankappan, proudly runs the clinic. Dr. Nishna Thankappan, a specialized pediatric dentist and esteemed consultant at the Amrita School of Dentistry, also brings her advanced expertise to our team.
             </p>
           </div>
         </Container>
@@ -137,7 +136,7 @@ function AboutContent() {
           <div className="mx-auto max-w-3xl text-center">
             <h2 className="font-display text-3xl font-bold">Our Facility</h2>
             <p className="mt-4 text-fluid-sm text-slate-300">
-              Our modern clinic features 6 treatment rooms, a dedicated sterilization area, digital
+              Our modern clinic features a wide range of treatment rooms, a dedicated sterilization area, digital
               imaging suite, and a comfortable waiting lounge. We maintain the highest standards of
               cleanliness and infection control.
             </p>

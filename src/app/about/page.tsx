@@ -8,11 +8,11 @@ const baseUrl = 'https://drthankappandental.com';
 export const metadata: Metadata = {
   title: 'About Us | Dr.Thankappan\'s Dental Clinic — Kochi\'s Trusted Dentist Since 1997',
   description:
-    'Learn about Dr.Thankappan\'s Dental Clinic in Kochi. Family-owned since 1997, we provide compassionate, high-quality dental care in a modern, hygienic facility.',
+    'A legacy of smiles since 1997. Dr.Thankappan\'s Dental Clinic was founded by my father and is now proudly run by Dr. Nimisha Thankappan, continuing a family tradition of dental excellence in Kochi.',
   openGraph: {
     title: 'About Our Dental Clinic in Kochi | Dr.Thankappan\'s',
     description:
-      'Founded in 1997, Dr.Thankappan\'s Dental Clinic has been serving Kochi with world-class dental care. Meet our team and tour our facility.',
+      'A legacy of smiles since 1997. Founded by my father and now run by Dr. Nimisha Thankappan, our clinic continues a family tradition of dental excellence in Kochi.',
     url: `${baseUrl}/about`,
   },
   alternates: {
