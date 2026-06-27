@@ -85,13 +85,13 @@ export function HeroSection() {
         >
           {/* Mobile-only hero content */}
           <div className="md:hidden w-full text-left pt-20">
-            <motion.h1 variants={itemVariants} className="font-display text-fluid-hero font-extrabold tracking-tight text-pretty text-slate-900">
+            <motion.h2 variants={itemVariants} className="font-display text-fluid-hero font-extrabold tracking-tight text-pretty text-slate-900">
               Expert Care for
               <br />
               <span className="text-teal-600">a Healthier,</span>
               <br />
               <span className="text-teal-600">Brighter Smile</span>
-            </motion.h1>
+            </motion.h2>
             <motion.div variants={itemVariants} className="mt-4 h-0.5 w-10 rounded-full bg-teal-500" />
             <motion.p variants={itemVariants} className="mt-5 max-w-xl text-fluid-body leading-relaxed text-slate-600">
               A Family Tradition of Dental Excellence.
