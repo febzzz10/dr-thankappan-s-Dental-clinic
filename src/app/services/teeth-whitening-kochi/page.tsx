@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
+import { ThreeDImageCard } from '@/components/ui/3d-image-card';
 
 const baseUrl = 'https://drthankappandental.com';
 
@@ -54,22 +55,30 @@ export default function ServicePage() {
         </section>
 
         <Container className="py-12 md:py-16">
-          <section className="mb-12">
-            <h2 className="font-display text-fluid-h2 font-bold text-slate-900">What is Teeth Whitening?</h2>
-            <p className="mt-4 text-fluid-body text-pretty text-slate-600">
-              Teeth whitening is a cosmetic dental procedure that lightens the color of teeth by removing stains and discoloration. Professional whitening is performed under dental supervision for safe and effective results.
-            </p>
-          </section>
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 items-start mb-12">
+            <div className="space-y-12">
+              <section>
+                <h2 className="font-display text-fluid-h2 font-bold text-slate-900">What is Teeth Whitening?</h2>
+                <p className="mt-4 text-fluid-body text-pretty text-slate-600">
+                  Teeth whitening is a cosmetic dental procedure that lightens the color of teeth by removing stains and discoloration. Professional whitening is performed under dental supervision for safe and effective results.
+                </p>
+              </section>
 
-          <section className="mb-12">
-            <h2 className="font-display text-fluid-h2 font-bold text-slate-900">Benefits</h2>
-            <ul className="mt-4 space-y-3 text-fluid-body text-slate-600">
-              <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Brightens stained or discolored teeth</li>
-              <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Safe and performed under professional supervision</li>
-              <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Noticeable results in a single session</li>
-              <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Boosts confidence and smile appearance</li>
-            </ul>
-          </section>
+              <section>
+                <h2 className="font-display text-fluid-h2 font-bold text-slate-900">Benefits</h2>
+                <ul className="mt-4 space-y-3 text-fluid-body text-slate-600">
+                  <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Brightens stained or discolored teeth</li>
+                  <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Safe and performed under professional supervision</li>
+                  <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Noticeable results in a single session</li>
+                  <li className="flex items-start gap-3"><span className="mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full bg-teal-500" />Boosts confidence and smile appearance</li>
+                </ul>
+              </section>
+            </div>
+
+            <div className="lg:sticky lg:top-28">
+              <ThreeDImageCard imageUrl="/images/sub-image/treatment.webp" alt="Teeth whitening treatment at Dr. Thankappan's Dental Clinic in Kochi" />
+            </div>
+          </div>
 
           <section className="mb-12">
             <h2 className="font-display text-fluid-h2 font-bold text-slate-900">Who Needs This Treatment?</h2>
