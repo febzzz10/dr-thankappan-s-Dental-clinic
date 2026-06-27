@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema, getMedicalServiceSchema } from '@/lib/schemas';
+import { ThreeDImageCard } from '@/components/ui/3d-image-card';
 
 const baseUrl = 'https://drthankappandental.com';
 
@@ -71,21 +72,28 @@ export default function LaserDentistryPage() {
         </section>
 
         <Container className="py-12 md:py-16">
-          {/* What is laser dentistry */}
-          <section className="mb-12">
-            <h2 className="font-display text-fluid-h2 font-bold text-slate-900">What is Laser Dentistry?</h2>
-            <p className="mt-4 text-fluid-body text-pretty text-slate-600">
-              Laser dentistry uses focused light energy to perform various dental procedures with precision. It is a modern approach that may offer increased comfort compared to traditional methods for certain treatments. Laser-assisted procedures can be used for gum reshaping, tissue contouring, depigmentation, and other soft tissue treatments.
-            </p>
-          </section>
+          {/* Two-column layout: text left, image right */}
+          <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 items-start mb-12">
+            <div className="space-y-12">
+              <section>
+                <h2 className="font-display text-fluid-h2 font-bold text-slate-900">What is Laser Dentistry?</h2>
+                <p className="mt-4 text-fluid-body text-pretty text-slate-600">
+                  Laser dentistry uses focused light energy to perform various dental procedures with precision. It is a modern approach that may offer increased comfort compared to traditional methods for certain treatments. Laser-assisted procedures can be used for gum reshaping, tissue contouring, depigmentation, and other soft tissue treatments.
+                </p>
+              </section>
 
-          {/* Laser-assisted painless dental procedures */}
-          <section className="mb-12">
-            <h2 className="font-display text-fluid-h2 font-bold text-slate-900">Laser-Assisted Painless Dental Procedures</h2>
-            <p className="mt-4 text-fluid-body text-pretty text-slate-600">
-              Laser technology allows dentists to perform certain procedures with precision and minimal discomfort. Common laser-assisted treatments include gum recontouring, soft tissue procedures, and gum depigmentation. The dentist will evaluate your condition and recommend the most suitable approach.
-            </p>
-          </section>
+              <section>
+                <h2 className="font-display text-fluid-h2 font-bold text-slate-900">Laser-Assisted Painless Dental Procedures</h2>
+                <p className="mt-4 text-fluid-body text-pretty text-slate-600">
+                  Laser technology allows dentists to perform certain procedures with precision and minimal discomfort. Common laser-assisted treatments include gum recontouring, soft tissue procedures, and gum depigmentation. The dentist will evaluate your condition and recommend the most suitable approach.
+                </p>
+              </section>
+            </div>
+
+            <div className="lg:sticky lg:top-28">
+              <ThreeDImageCard imageUrl="/images/sub-image/laser-treatement.webp" alt="Laser dentistry treatment at Dr. Thankappan's Dental Clinic in Kochi" />
+            </div>
+          </div>
 
           {/* Services grid */}
           <section className="mb-12">
