@@ -56,7 +56,7 @@ export default function AdminLoginPage() {
               autoComplete="email"
               spellCheck={false}
               className="mt-1 block w-full rounded-xl border border-slate-200 px-4 py-2.5 text-sm text-slate-900 transition-colors focus:border-teal-500 focus:outline-none focus:ring-2 focus:ring-teal-500/20"
-              placeholder="admin@dentalclinic.com"
+              placeholder="Enter your email"
             />
           </div>
           <div>
