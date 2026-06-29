@@ -36,22 +36,23 @@ export default function AdminDashboard() {
     async function fetchData() {
       try {
         const today = new Date().toISOString().slice(0, 10);
+        const monthStart = new Date(new Date().getFullYear(), new Date().getMonth(), 1).toISOString().slice(0, 10);
+        const weekStart = new Date(Date.now() - 6 * 86400000).toISOString().slice(0, 10);
 
-        const [todayRes, pendingRes, completedRes, allRes] = await Promise.all([
-          getAppointments({ date: today }),
-          getAppointments({ status: 'pending' }),
-          getAppointments({ status: 'completed' }),
-          getAppointments(),
+        const [todayRes, pendingRes, completedRes, weekRes, upcomingRes] = await Promise.all([
+          getAppointments({ date: today, limit: 50 }),
+          getAppointments({ status: 'PENDING', from: today, limit: 50 }),
+          getAppointments({ status: 'COMPLETED', from: monthStart, limit: 50 }),
+          getAppointments({ from: weekStart, to: today, limit: 100 }),
+          getAppointments({ from: today, limit: 20 }),
         ]);
-
-        const futureAppts = allRes.appointments.filter(a => a.appointment_date >= today);
 
         setTodayAppointments(todayRes.appointments);
         setTodayCount(todayRes.total);
         setPendingCount(pendingRes.total);
-        setWeekCount(futureAppts.length);
+        setWeekCount(weekRes.total);
         setCompletedCount(completedRes.total);
-        setUpcomingAppointments(futureAppts.slice(0, 5));
+        setUpcomingAppointments(upcomingRes.appointments.slice(0, 5));
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load dashboard data');
       } finally {

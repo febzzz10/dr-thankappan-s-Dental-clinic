@@ -20,8 +20,9 @@ export default function AdminBookingsPage() {
   useEffect(() => {
     async function load() {
       try {
+        const today = new Date().toISOString().slice(0, 10);
         const [apptRes, settingsRes] = await Promise.all([
-          getAppointments(),
+          getAppointments({ page: 1, limit: 50, from: today }),
           getSettings(),
         ]);
         setAppointments(apptRes.appointments);

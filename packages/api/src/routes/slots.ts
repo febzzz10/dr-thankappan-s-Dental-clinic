@@ -14,6 +14,13 @@ slots.get('/', async (c) => {
     return c.json({ success: false, error: 'VALIDATION', message: 'from and to query params required (YYYY-MM-DD)' }, 400);
   }
 
+  const fromDate = new Date(from + 'T00:00:00');
+  const toDate = new Date(to + 'T00:00:00');
+  const diffDays = (toDate.getTime() - fromDate.getTime()) / 86400000;
+  if (diffDays > 62) {
+    return c.json({ success: false, error: 'VALIDATION', message: 'Date range cannot exceed 62 days' }, 400);
+  }
+
   let sql = 'SELECT * FROM slots WHERE date >= ? AND date <= ?';
   const bindings: unknown[] = [from, to];
 

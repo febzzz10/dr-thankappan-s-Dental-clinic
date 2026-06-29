@@ -159,9 +159,17 @@ export function saveConfig(config: GenConfig): void {
   localStorage.setItem(CONFIG_KEY, JSON.stringify(config));
 }
 
-export async function loadSlots(): Promise<SlotItem[]> {
+export async function loadSlots(from?: string, to?: string): Promise<SlotItem[]> {
   const { getSlots } = await import('./api');
-  const raw = await getSlots('2000-01-01', '2100-01-01');
+  if (!from) {
+    const d = new Date();
+    from = formatDate(new Date(d.getFullYear(), d.getMonth(), 1));
+  }
+  if (!to) {
+    const d = new Date();
+    to = formatDate(new Date(d.getFullYear(), d.getMonth() + 3, 0));
+  }
+  const raw = await getSlots(from, to);
   slotsCache = mapSlots(raw);
   return slotsCache;
 }

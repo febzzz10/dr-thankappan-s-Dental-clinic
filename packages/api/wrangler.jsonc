@@ -22,6 +22,9 @@
       "id": "69b9e2e7c7c945da84e7b313d62fceec"
     }
   ],
+  "triggers": {
+    "crons": ["0 0 * * 0"]
+  },
   "vars": {
     "NODE_VERSION": "22",
     "R2_PUBLIC_URL": "c8e467b7a05244369d4b3b8494713078"

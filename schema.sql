@@ -49,6 +49,8 @@ CREATE INDEX IF NOT EXISTS idx_appointments_status ON appointments(status);
 CREATE INDEX IF NOT EXISTS idx_appointments_date ON appointments(appointment_date);
 CREATE INDEX IF NOT EXISTS idx_appointments_doctor ON appointments(doctor_id);
 CREATE INDEX IF NOT EXISTS idx_appointments_ref ON appointments(booking_ref);
+CREATE INDEX IF NOT EXISTS idx_appointments_created_at ON appointments(created_at);
+CREATE INDEX IF NOT EXISTS idx_slots_date_status_doctor ON slots(date, status, doctor_id);
 
 CREATE TRIGGER IF NOT EXISTS appointments_updated_at
 AFTER UPDATE ON appointments

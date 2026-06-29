@@ -53,7 +53,7 @@ export default function AdminAppointmentsPage() {
     setLoading(true);
     setError('');
     try {
-      const params: { status?: string } = {};
+      const params: { status?: string; page: number; limit: number } = { page: 1, limit: 50 };
       if (statusFilter !== 'all') params.status = statusFilter;
       const [apptRes, settingsRes] = await Promise.all([
         getAppointments(params),

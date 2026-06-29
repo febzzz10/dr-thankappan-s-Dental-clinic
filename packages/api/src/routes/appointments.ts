@@ -117,6 +117,8 @@ appointments.get('/', authMiddleware, async (c) => {
   const page = parseInt(c.req.query('page') ?? '1', 10);
   const status = c.req.query('status');
   const date = c.req.query('date');
+  const from = c.req.query('from');
+  const to = c.req.query('to');
   const limit = Math.min(parseInt(c.req.query('limit') ?? '20', 10), 100);
   const offset = (page - 1) * limit;
 
@@ -130,6 +132,14 @@ appointments.get('/', authMiddleware, async (c) => {
   if (date) {
     where += ' AND a.appointment_date = ?';
     bindings.push(date);
+  }
+  if (from) {
+    where += ' AND a.appointment_date >= ?';
+    bindings.push(from);
+  }
+  if (to) {
+    where += ' AND a.appointment_date <= ?';
+    bindings.push(to);
   }
 
   const sql = `SELECT a.*, d.doctor_name, s.service_name

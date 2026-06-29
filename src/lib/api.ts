@@ -99,12 +99,14 @@ export interface AppointmentLookup {
   treatment: string | null;
 }
 
-export async function getAppointments(params?: { page?: number; status?: string; date?: string; limit?: number }) {
+export async function getAppointments(params?: { page?: number; status?: string; date?: string; from?: string; to?: string; limit?: number }) {
   const q = new URLSearchParams();
   if (params?.page) q.set('page', String(params.page));
   if (params?.limit) q.set('limit', String(params.limit));
   if (params?.status) q.set('status', params.status);
   if (params?.date) q.set('date', params.date);
+  if (params?.from) q.set('from', params.from);
+  if (params?.to) q.set('to', params.to);
   const qs = q.toString();
   return api.get<{ appointments: Appointment[]; total: number; page: number; totalPages: number }>(
     `/api/appointments${qs ? `?${qs}` : ''}`

@@ -6,10 +6,12 @@ const unavailability = new Hono<{ Bindings: Env }>();
 
 unavailability.get('/', authMiddleware, async (c) => {
   const doctorId = c.req.query('doctor_id');
-  let sql = 'SELECT * FROM doctor_unavailability';
+  const from = c.req.query('from') ?? new Date().toISOString().slice(0, 10);
   const bindings: unknown[] = [];
+  let sql = 'SELECT * FROM doctor_unavailability WHERE end_date >= ?';
+  bindings.push(from);
   if (doctorId) {
-    sql += ' WHERE doctor_id = ?';
+    sql += ' AND doctor_id = ?';
     bindings.push(parseInt(doctorId, 10));
   }
   sql += ' ORDER BY start_date';

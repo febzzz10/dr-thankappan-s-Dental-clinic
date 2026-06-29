@@ -48,6 +48,21 @@ app.get('/', (c) => c.json({ success: true, data: {
 
 app.get('/health', (c) => c.json({ success: true, data: { status: 'ok' } }));
 
+// ── Slot cleanup ──────────────────────────────────────────────────
+
+async function deleteOldSlots(db: D1Database): Promise<number> {
+  const result = await db.prepare(
+    "DELETE FROM slots WHERE date < date('now', '-90 days') AND status IN ('available', 'blocked')"
+  ).run();
+  return result.meta.changes;
+}
+
+// Manual trigger
+app.post('/api/system/cleanup-slots', async (c) => {
+  const deleted = await deleteOldSlots(c.env.DB);
+  return c.json({ success: true, data: { deleted } });
+});
+
 // Mount under /api prefix for frontend compatibility
 const api = new Hono<{ Bindings: Env }>();
 api.route('/auth', authRoutes);
@@ -74,4 +89,10 @@ app.route('/testimonials', testimonialsRoutes);
 app.route('/faqs', faqsRoutes);
 app.route('/upload', uploadRoutes);
 
-export default app;
+export default {
+  fetch: app.fetch,
+  scheduled: async (controller: ScheduledController, env: Env, ctx: ExecutionContext) => {
+    const deleted = await deleteOldSlots(env.DB);
+    console.log(`[CRON] Cleaned up ${deleted} old slots`);
+  },
+};
