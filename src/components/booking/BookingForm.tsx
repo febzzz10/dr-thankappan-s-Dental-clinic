@@ -141,7 +141,7 @@ export function BookingForm() {
         '',
         `Ref: *${ref}*`,
         `Patient: *${form.patient_name}*`,
-        `PiPhone: ${form.phone}`,
+        `Phone: ${form.phone}`,
         `Treatment: *${form.treatment}*`,
         `Date: *${formatDate(form.appointment_date)}*`,
         `Time: *${formatTime(form.appointment_time)}*`,
@@ -343,7 +343,7 @@ export function BookingForm() {
                   <span className="font-medium text-slate-900">{form.patient_name}</span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-slate-600">PiPhone</span>
+                  <span className="text-slate-600">Phone</span>
                   <span className="font-medium text-slate-900">{form.phone}</span>
                 </div>
                 <div className="flex justify-between text-sm">
