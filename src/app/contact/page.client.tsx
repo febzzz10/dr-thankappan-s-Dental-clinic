@@ -205,13 +205,13 @@ function ContactContent() {
         <Container>
           <div className="overflow-hidden rounded-2xl shadow-sm">
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.058146655282!2d76.2673!3d9.9312!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwNTUnNTIuMyJOIDc2wrAxNiwwMi4zIkU!5e0!3m2!1sen!2sin!4v1"
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3827.444346792934!2d76.2580093!3d9.952051899999999!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3b086d9fb895f799%3A0xe3659d763cda8f64!2sDr.%20Thankappan%20Dental%20Clinic!5e1!3m2!1sen!2sin!4v1782752756834!5m2!1sen!2sin"
               width="100%"
               height="350"
               style={{ border: 0 }}
               allowFullScreen
               loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
+              referrerPolicy="strict-origin-when-cross-origin"
               title="Dr.Thankappan's Dental Clinic — Kochi Location"
             />
           </div>
