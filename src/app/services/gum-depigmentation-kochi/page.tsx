@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Gum Depigmentation in Kochi | Dark Gum Treatment',
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Gum Depigmentation in Kochi | Dr. Thankappan\'s Dental Clinic',
     description: 'Gum depigmentation treatment in Kochi for darker gums and improved smile aesthetics.',
-    url: `${baseUrl}/services/gum-depigmentation-kochi`,
+    url: '/services/gum-depigmentation-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/services/gum-depigmentation-kochi`,
+    canonical: '/services/gum-depigmentation-kochi',
   },
 };
 
@@ -26,7 +26,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Gum Depigmentation in Kochi', url: `${baseUrl}/services/gum-depigmentation-kochi` },
+  { name: 'Gum Depigmentation in Kochi', url: '/services/gum-depigmentation-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);

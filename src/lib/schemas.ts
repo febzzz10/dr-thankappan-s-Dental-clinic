@@ -1,4 +1,4 @@
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export function getLocalBusinessSchema() {
   return {

@@ -22,16 +22,16 @@ export const metadata: Metadata = {
     title: 'Book Appointment | Dr.Thankappan\'s Dental Clinic',
     description:
       'Book your dental appointment online in 60 seconds. Choose your treatment, pick a time, and get confirmed via WhatsApp.',
-    url: 'https://drthankappandental.com/book',
+    url: '/book',
   },
   alternates: {
-    canonical: 'https://drthankappandental.com/book',
+    canonical: '/book',
   },
 };
 
 const breadcrumbSchema = getBreadcrumbSchema([
-  { name: 'Home', url: 'https://drthankappandental.com' },
-  { name: 'Book Appointment', url: 'https://drthankappandental.com/book' },
+  { name: 'Home', url: 'https://www.drthankappandentalclinic.com' },
+  { name: 'Book Appointment', url: '/book' },
 ]);
 
 function BookingPageContent() {

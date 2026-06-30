@@ -6,10 +6,8 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getLocalBusinessSchema, getWebSiteSchema } from '@/lib/schemas';
 import "@aejkatappaja/phantom-ui/ssr.css";
 
-const baseUrl = 'https://drthankappandental.com';
-
 export const metadata: Metadata = {
-  metadataBase: new URL(baseUrl),
+  metadataBase: new URL('https://www.drthankappandentalclinic.com'),
   title: {
     default: "Dr.Thankappan's Dental Clinic",
     template: "%s | Dr.Thankappan's Dental Clinic",
@@ -49,7 +47,7 @@ export const metadata: Metadata = {
     title: "Dr.Thankappan's Dental Clinic",
     description:
       'Your trusted dental clinic in Kochi, Kerala. Expert dental care since 1997 — root canal, cleaning, implants, braces, and more.',
-    url: baseUrl,
+    url: 'https://www.drthankappandentalclinic.com',
     siteName: "Dr.Thankappan's Dental Clinic",
     type: 'website',
     locale: 'en_IN',
@@ -81,7 +79,7 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: baseUrl,
+    canonical: '/',
   },
 };
 

@@ -1,0 +1,22 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "destination": "https://www.drthankappandentalclinic.com/:path*",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "drthankappandental.com" }]
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://www.drthankappandentalclinic.com/:path*",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "www.drthankappandental.com" }]
+    },
+    {
+      "source": "/:path*",
+      "destination": "https://www.drthankappandentalclinic.com/:path*",
+      "permanent": true,
+      "has": [{ "type": "host", "value": "drthankappandentalclinic.com" }]
+    }
+  ]
+}

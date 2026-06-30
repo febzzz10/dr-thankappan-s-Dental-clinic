@@ -7,7 +7,7 @@ Maintain consistent NAP across ALL platforms:
 - **Name:** Dr. Thankappan's Dental Clinic
 - **Phone:** +91 94471 21519
 - **Address:** [Add exact clinic address]
-- **Website:** https://drthankappandental.com
+- **Website:** https://www.drthankappandentalclinic.com
 
 ## Priority List
 

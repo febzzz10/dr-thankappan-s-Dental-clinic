@@ -3,7 +3,7 @@ import ContactContent from './page.client';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Contact Us | Dr.Thankappan\'s Dental Clinic in Kochi',
@@ -13,16 +13,16 @@ export const metadata: Metadata = {
     title: 'Contact Dr.Thankappan\'s Dental Clinic | Kochi',
     description:
       'Reach Dr.Thankappan\'s Dental Clinic in Kochi by phone, WhatsApp, email, or visit us in person. We\'re here to help.',
-    url: `${baseUrl}/contact`,
+    url: '/contact',
   },
   alternates: {
-    canonical: `${baseUrl}/contact`,
+    canonical: '/contact',
   },
 };
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Contact Us', url: `${baseUrl}/contact` },
+  { name: 'Contact Us', url: '/contact' },
 ]);
 
 const faqSchema = getFAQSchema([

@@ -3,7 +3,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema } from '@/lib/schemas';
 import AboutContent from './page.client';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'About Us | Dr.Thankappan\'s Dental Clinic — Kochi\'s Trusted Dentist Since 1997',
@@ -13,16 +13,16 @@ export const metadata: Metadata = {
     title: 'About Our Dental Clinic in Kochi | Dr.Thankappan\'s',
     description:
       'A legacy of smiles since 1997. Founded by my father and now run by Dr. Nimisha Thankappan, our clinic continues a family tradition of dental excellence in Kochi.',
-    url: `${baseUrl}/about`,
+    url: '/about',
   },
   alternates: {
-    canonical: `${baseUrl}/about`,
+    canonical: '/about',
   },
 };
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'About Us', url: `${baseUrl}/about` },
+  { name: 'About Us', url: '/about' },
 ]);
 
 export default function AboutPage() {

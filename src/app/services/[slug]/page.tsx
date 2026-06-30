@@ -11,7 +11,7 @@ const iconMap: Record<string, React.ElementType> = {
   Sparkles, Syringe, Award, Smile, Sun, Heart, Baby, Shield,
 };
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         url: `${baseUrl}/services/${slug}`,
       },
       alternates: {
-        canonical: `${baseUrl}/services/${slug}`,
+        canonical: `/services/${slug}`,
       },
     };
   } catch {

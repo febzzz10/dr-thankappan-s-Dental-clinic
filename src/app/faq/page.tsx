@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     title: 'Dental FAQ | Dr.Thankappan\'s Dental Clinic',
     description:
       'Get answers to common questions about root canal, teeth cleaning, braces, implants, appointments, and more.',
-    url: 'https://drthankappandental.com/faq',
+    url: '/faq',
   },
   alternates: {
-    canonical: 'https://drthankappandental.com/faq',
+    canonical: '/faq',
   },
 };
 

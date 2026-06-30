@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Section';
 import { getBreadcrumbSchema, getFAQSchema, getServiceSchema } from '@/lib/schemas';
 import ServicesContent from './page.client';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Dental Services — Root Canal, Cleaning, Implants & Braces in Kochi',
@@ -14,16 +14,16 @@ export const metadata: Metadata = {
     title: 'Dental Services | Dr.Thankappan\'s Dental Clinic',
     description:
       'Laser dentistry, root canal, dental cleaning, crowns & bridges, dental implants, braces & aligners, teeth whitening, smile correction, and gum depigmentation — all in one trusted Kochi clinic.',
-    url: `${baseUrl}/services`,
+    url: '/services',
   },
   alternates: {
-    canonical: `${baseUrl}/services`,
+    canonical: '/services',
   },
 };
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Dental Services', url: `${baseUrl}/services` },
+  { name: 'Dental Services', url: '/services' },
 ]);
 
 const serviceListSchema = getServiceSchema([

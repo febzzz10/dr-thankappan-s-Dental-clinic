@@ -20,7 +20,7 @@
 ### 4. Business Information
 - **Name:** Dr. Thankappan's Dental Clinic
 - **Phone:** +91 94471 21519
-- **Website:** https://drthankappandental.com
+- **Website:** https://www.drthankappandentalclinic.com
 - **Address:** [Add exact clinic address here]
 - **Service Area:** Kochi, Kerala
 

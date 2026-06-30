@@ -6,7 +6,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema } from '@/lib/schemas';
 import { DoctorDetailContent } from '@/components/doctors/DoctorDetailContent';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   try {
@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         url: `${baseUrl}/doctors/${slug}`,
       },
       alternates: {
-        canonical: `${baseUrl}/doctors/${slug}`,
+        canonical: `/doctors/${slug}`,
       },
     };
   } catch {

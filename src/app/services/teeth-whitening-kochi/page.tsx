@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 import { ThreeDImageCard } from '@/components/ui/3d-image-card';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Teeth Whitening in Kochi | Professional Teeth Whitening Treatment',
@@ -13,10 +13,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Teeth Whitening in Kochi | Dr. Thankappan\'s Dental Clinic',
     description: 'Professional teeth whitening treatment in Kochi for a brighter, more confident smile.',
-    url: `${baseUrl}/services/teeth-whitening-kochi`,
+    url: '/services/teeth-whitening-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/services/teeth-whitening-kochi`,
+    canonical: '/services/teeth-whitening-kochi',
   },
 };
 
@@ -27,7 +27,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Teeth Whitening in Kochi', url: `${baseUrl}/services/teeth-whitening-kochi` },
+  { name: 'Teeth Whitening in Kochi', url: '/services/teeth-whitening-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);

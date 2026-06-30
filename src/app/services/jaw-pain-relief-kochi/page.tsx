@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Jaw Pain Relief in Kochi | TMJ Treatment',
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Jaw Pain Relief in Kochi | Dr. Thankappan\'s Dental Clinic',
     description: 'Jaw pain relief and TMJ treatment in Kochi for patients with jaw discomfort and related issues.',
-    url: `${baseUrl}/services/jaw-pain-relief-kochi`,
+    url: '/services/jaw-pain-relief-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/services/jaw-pain-relief-kochi`,
+    canonical: '/services/jaw-pain-relief-kochi',
   },
 };
 
@@ -26,7 +26,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Jaw Pain Relief in Kochi', url: `${baseUrl}/services/jaw-pain-relief-kochi` },
+  { name: 'Jaw Pain Relief in Kochi', url: '/services/jaw-pain-relief-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);

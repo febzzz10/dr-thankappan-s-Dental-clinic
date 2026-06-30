@@ -7,6 +7,8 @@ const ALLOWED_ORIGINS = [
   'https://dr-thankappan-s-dental-clinic-theta.vercel.app',
   'https://drthankappandental.com',
   'https://www.drthankappandental.com',
+  'https://drthankappandentalclinic.com',
+  'https://www.drthankappandentalclinic.com',
   /\.vercel\.app$/,
 ];
 

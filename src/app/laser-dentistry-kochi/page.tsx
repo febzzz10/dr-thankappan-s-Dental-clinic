@@ -5,7 +5,7 @@ import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema, getMedicalServiceSchema } from '@/lib/schemas';
 import { ThreeDImageCard } from '@/components/ui/3d-image-card';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Laser Dentistry in Kochi | Advanced Dental Treatments',
@@ -15,10 +15,10 @@ export const metadata: Metadata = {
     title: 'Laser Dentistry in Kochi | Dr. Thankappan\'s Dental Clinic',
     description:
       'Advanced laser-assisted dental treatments in Kochi including teeth whitening, gum depigmentation, smile correction, clear aligners, and aesthetic restorations.',
-    url: `${baseUrl}/laser-dentistry-kochi`,
+    url: '/laser-dentistry-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/laser-dentistry-kochi`,
+    canonical: '/laser-dentistry-kochi',
   },
 };
 
@@ -37,7 +37,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Laser Dentistry in Kochi', url: `${baseUrl}/laser-dentistry-kochi` },
+  { name: 'Laser Dentistry in Kochi', url: '/laser-dentistry-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);
@@ -45,7 +45,7 @@ const faqSchema = getFAQSchema(faqs);
 const medicalServiceSchema = getMedicalServiceSchema({
   name: 'Laser Dentistry in Kochi',
   description: 'Advanced laser-assisted dental treatments in Kochi including teeth whitening, gum depigmentation, smile correction, clear aligners, and aesthetic restorations.',
-  url: `${baseUrl}/laser-dentistry-kochi`,
+  url: '/laser-dentistry-kochi',
 });
 
 export default function LaserDentistryPage() {

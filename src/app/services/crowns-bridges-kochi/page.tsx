@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Crowns and Bridges in Kochi | Restorative Dental Treatment',
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Crowns and Bridges in Kochi | Dr. Thankappan\'s Dental Clinic',
     description: 'Restorative crowns and bridges treatment in Kochi for damaged or missing teeth.',
-    url: `${baseUrl}/services/crowns-bridges-kochi`,
+    url: '/services/crowns-bridges-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/services/crowns-bridges-kochi`,
+    canonical: '/services/crowns-bridges-kochi',
   },
 };
 
@@ -26,7 +26,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Crowns and Bridges in Kochi', url: `${baseUrl}/services/crowns-bridges-kochi` },
+  { name: 'Crowns and Bridges in Kochi', url: '/services/crowns-bridges-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);

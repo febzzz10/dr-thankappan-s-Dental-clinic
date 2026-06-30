@@ -9,10 +9,10 @@ export const metadata: Metadata = {
     title: 'Testimonials | Dr.Thankappan\'s Dental Clinic',
     description:
       'See why patients trust Dr.Thankappan\'s Dental Clinic for their dental care in Kochi.',
-    url: 'https://drthankappandental.com/testimonials',
+    url: '/testimonials',
   },
   alternates: {
-    canonical: 'https://drthankappandental.com/testimonials',
+    canonical: '/testimonials',
   },
 };
 

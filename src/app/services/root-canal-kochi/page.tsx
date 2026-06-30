@@ -4,7 +4,7 @@ import { Container } from '@/components/ui/Section';
 import { JsonLd } from '@/components/seo/JsonLd';
 import { getBreadcrumbSchema, getFAQSchema } from '@/lib/schemas';
 
-const baseUrl = 'https://drthankappandental.com';
+const baseUrl = 'https://www.drthankappandentalclinic.com';
 
 export const metadata: Metadata = {
   title: 'Root Canal Treatment in Kochi | Painless Root Canal Therapy',
@@ -12,10 +12,10 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Root Canal Treatment in Kochi | Dr. Thankappan\'s Dental Clinic',
     description: 'Professional root canal treatment in Kochi to save infected teeth and relieve pain.',
-    url: `${baseUrl}/services/root-canal-kochi`,
+    url: '/services/root-canal-kochi',
   },
   alternates: {
-    canonical: `${baseUrl}/services/root-canal-kochi`,
+    canonical: '/services/root-canal-kochi',
   },
 };
 
@@ -26,7 +26,7 @@ const faqs = [
 
 const breadcrumbSchema = getBreadcrumbSchema([
   { name: 'Home', url: baseUrl },
-  { name: 'Root Canal Treatment in Kochi', url: `${baseUrl}/services/root-canal-kochi` },
+  { name: 'Root Canal Treatment in Kochi', url: '/services/root-canal-kochi' },
 ]);
 
 const faqSchema = getFAQSchema(faqs);
