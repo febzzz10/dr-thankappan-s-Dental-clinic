@@ -166,8 +166,9 @@ export async function loadSlots(from?: string, to?: string): Promise<SlotItem[]>
     from = formatDate(new Date(d.getFullYear(), d.getMonth(), 1));
   }
   if (!to) {
-    const d = new Date();
-    to = formatDate(new Date(d.getFullYear(), d.getMonth() + 3, 0));
+    const d = new Date(from + 'T00:00:00');
+    d.setDate(d.getDate() + 60);
+    to = formatDate(d);
   }
   const raw = await getSlots(from, to);
   slotsCache = mapSlots(raw);
