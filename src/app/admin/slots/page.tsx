@@ -163,9 +163,9 @@ export default function AdminSlotsPage() {
 
   const handleGenerateSlots = async () => {
     saveConfig(genConfig);
-    const dates = getWeekDates(formatDate(new Date()));
+    const dates = getWeekDates(selectedDate);
     const result = await generateSlots(genConfig, dates);
-    showToast(`Generated ${result.length} new slots`);
+    showToast(`Generated ${result.length} new slots for ${shortDate(dates[0])} – ${shortDate(dates[6])}`);
     setShowBulkModal(false);
     await refresh();
   };
@@ -770,7 +770,10 @@ export default function AdminSlotsPage() {
                     return Math.floor(total / genConfig.durationMinutes) * genConfig.selectedDays.length;
                   })()} slots
                 </p>
-                <p className="mt-0.5 text-xs text-teal-600">Across {genConfig.selectedDays.length} days · This week</p>
+                <p className="mt-0.5 text-xs text-teal-600">
+                  Week of {shortDate(getWeekDates(selectedDate)[0])} – {shortDate(getWeekDates(selectedDate)[6])}
+                  {' · '}{genConfig.selectedDays.length} day{genConfig.selectedDays.length !== 1 ? 's' : ''}
+                </p>
               </div>
             </div>
             <div className="flex gap-3 border-t border-slate-100 px-6 py-4">
