@@ -261,10 +261,10 @@ export default function AdminDoctorsPage() {
           onClick={() => setShowModal(false)}
         >
           <div
-            className="w-full max-w-lg rounded-2xl bg-white shadow-2xl"
+            className="flex w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl max-h-[calc(100vh-2rem)] overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4">
+            <div className="flex items-center justify-between border-b border-slate-100 px-6 py-4 shrink-0">
               <h3 className="font-display text-lg font-semibold text-slate-900">
                 {editingId ? 'Edit Doctor' : 'Add Doctor'}
               </h3>
@@ -275,137 +275,139 @@ export default function AdminDoctorsPage() {
                 <X className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
-            <div className="space-y-4 p-6">
+            <div className="flex-1 overflow-y-auto px-6 py-5">
               {error && (
-                <div className="flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <div className="mb-4 flex items-start gap-2 rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700">
                   <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Doctor Name</label>
-                <input
-                  value={form.doctor_name}
-                  onChange={(e) => setForm({ ...form, doctor_name: e.target.value, slug: editingId ? form.slug : slugFromName(e.target.value) })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                  placeholder="e.g. Dr. John Doe"
-                  autoFocus
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Slug</label>
-                <input
-                  value={form.slug}
-                  onChange={(e) => setForm({ ...form, slug: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                  placeholder="dr-john-doe"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Qualification</label>
-                <input
-                  value={form.qualification}
-                  onChange={(e) => setForm({ ...form, qualification: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                  placeholder="e.g. BDS, MDS"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Specialization</label>
-                <input
-                  value={form.specialization}
-                  onChange={(e) => setForm({ ...form, specialization: e.target.value })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                  placeholder="e.g. Orthodontist"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Experience (years)</label>
-                <input
-                  type="number"
-                  value={form.experience_yrs ?? ''}
-                  onChange={(e) => setForm({ ...form, experience_yrs: e.target.value ? parseInt(e.target.value) : null })}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
-                  placeholder="e.g. 10"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Bio</label>
-                <textarea
-                  value={form.bio}
-                  onChange={(e) => setForm({ ...form, bio: e.target.value })}
-                  rows={3}
-                  className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none resize-none"
-                  placeholder="Brief description about the doctor..."
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture</label>
-                <div className="flex items-start gap-4">
-                  {(filePreview || form.image_url) && !selectedFile ? (
-                    <Image
-                      src={form.image_url}
-                      alt="Preview"
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
-                      unoptimized
-                    />
-                  ) : filePreview ? (
-                    <Image
-                      src={filePreview}
-                      alt="Preview"
-                      width={64}
-                      height={64}
-                      className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
-                      unoptimized
-                    />
-                  ) : (
-                    <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-300 shrink-0 border-2 border-dashed border-slate-200">
-                      <Upload className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="flex-1">
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/jpeg,image/png,image/webp"
-                      onChange={handleFileSelect}
-                      className="hidden"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:shadow-sm"
-                    >
-                      <Upload className="h-4 w-4" />
-                      {selectedFile ? selectedFile.name : 'Choose Image'}
-                    </button>
-                    {selectedFile && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Doctor Name</label>
+                  <input
+                    value={form.doctor_name}
+                    onChange={(e) => setForm({ ...form, doctor_name: e.target.value, slug: editingId ? form.slug : slugFromName(e.target.value) })}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+                    placeholder="e.g. Dr. John Doe"
+                    autoFocus
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Slug</label>
+                  <input
+                    value={form.slug}
+                    onChange={(e) => setForm({ ...form, slug: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+                    placeholder="dr-john-doe"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Qualification</label>
+                  <input
+                    value={form.qualification}
+                    onChange={(e) => setForm({ ...form, qualification: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+                    placeholder="e.g. BDS, MDS"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Specialization</label>
+                  <input
+                    value={form.specialization}
+                    onChange={(e) => setForm({ ...form, specialization: e.target.value })}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+                    placeholder="e.g. Orthodontist"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Experience (years)</label>
+                  <input
+                    type="number"
+                    value={form.experience_yrs ?? ''}
+                    onChange={(e) => setForm({ ...form, experience_yrs: e.target.value ? parseInt(e.target.value) : null })}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none"
+                    placeholder="e.g. 10"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Bio</label>
+                  <textarea
+                    value={form.bio}
+                    onChange={(e) => setForm({ ...form, bio: e.target.value })}
+                    rows={3}
+                    className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-sm focus:ring-2 focus:ring-teal-400 focus:outline-none resize-none"
+                    placeholder="Brief description about the doctor..."
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-slate-700 mb-1">Profile Picture</label>
+                  <div className="flex items-start gap-4">
+                    {(filePreview || form.image_url) && !selectedFile ? (
+                      <Image
+                        src={form.image_url}
+                        alt="Preview"
+                        width={64}
+                        height={64}
+                        className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
+                        unoptimized
+                      />
+                    ) : filePreview ? (
+                      <Image
+                        src={filePreview}
+                        alt="Preview"
+                        width={64}
+                        height={64}
+                        className="h-16 w-16 rounded-full object-cover shrink-0 border border-slate-200"
+                        unoptimized
+                      />
+                    ) : (
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full bg-slate-50 text-slate-300 shrink-0 border-2 border-dashed border-slate-200">
+                        <Upload className="h-5 w-5" />
+                      </div>
+                    )}
+                    <div className="flex-1">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp"
+                        onChange={handleFileSelect}
+                        className="hidden"
+                      />
                       <button
                         type="button"
-                        onClick={() => { setSelectedFile(null); setFilePreview(null); }}
-                        className="ml-2 text-xs text-red-500 hover:underline"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-600 transition-all hover:bg-slate-50 hover:shadow-sm"
                       >
-                        Remove
+                        <Upload className="h-4 w-4" />
+                        {selectedFile ? selectedFile.name : 'Choose Image'}
                       </button>
-                    )}
-                    <p className="mt-1.5 text-xs text-slate-400">JPG, PNG, or WebP. Max 5 MB.</p>
+                      {selectedFile && (
+                        <button
+                          type="button"
+                          onClick={() => { setSelectedFile(null); setFilePreview(null); }}
+                          className="ml-2 text-xs text-red-500 hover:underline"
+                        >
+                          Remove
+                        </button>
+                      )}
+                      <p className="mt-1.5 text-xs text-slate-400">JPG, PNG, or WebP. Max 5 MB.</p>
+                    </div>
                   </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  id="is_active"
-                  checked={form.is_active === 1}
-                  onChange={(e) => setForm({ ...form, is_active: e.target.checked ? 1 : 0 })}
-                  className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
-                />
-                <label htmlFor="is_active" className="text-sm font-medium text-slate-700">Active</label>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id="is_active"
+                    checked={form.is_active === 1}
+                    onChange={(e) => setForm({ ...form, is_active: e.target.checked ? 1 : 0 })}
+                    className="rounded border-slate-300 text-teal-600 focus:ring-teal-500"
+                  />
+                  <label htmlFor="is_active" className="text-sm font-medium text-slate-700">Active</label>
+                </div>
               </div>
             </div>
-            <div className="flex gap-3 border-t border-slate-100 px-6 py-4">
+            <div className="sticky bottom-0 z-10 flex gap-3 border-t border-slate-100 bg-white px-6 py-4 shrink-0">
               <Button variant="outline" className="flex-1" onClick={() => setShowModal(false)} disabled={uploading}>Cancel</Button>
               <Button className="flex-1" onClick={handleSave} disabled={!form.doctor_name || !form.slug || uploading}>
                 {uploading ? (
