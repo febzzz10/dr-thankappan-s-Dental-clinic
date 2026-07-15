@@ -75,6 +75,17 @@ export function Footer() {
             <Link href="/terms" className="transition-colors hover:text-teal-600 focus-visible:ring-2 focus-visible:ring-teal-500 focus-visible:ring-offset-2 focus-visible:outline-none">Terms of Service</Link>
           </div>
         </div>
+        <p className="mt-4 text-center text-xs text-slate-400">
+          Created by{' '}
+          <a
+            href="https://kochicode.online/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="font-medium text-teal-600 transition-colors hover:text-teal-500 hover:underline"
+          >
+            Kochicode
+          </a>
+        </p>
       </div>
     </footer>
   );

@@ -135,7 +135,7 @@ export function BookingForm() {
         notes: form.notes || undefined,
       });
       const ref = result.booking_ref;
-      const waNumber = clinicSettings.whatsapp_number ?? '';
+      const waNumber = clinicSettings.whatsapp_number || '919447121519';
       const msg = [
         '*New Appointment Booking*',
         '',
@@ -152,7 +152,7 @@ export function BookingForm() {
       const waUrl = generateWhatsAppUrl(waNumber, msg);
 
       window.open(waUrl, '_blank');
-      router.push(`/book/confirmation?ref=${ref}&name=${encodeURIComponent(form.patient_name)}&date=${form.appointment_date}&time=${encodeURIComponent(formatTime(form.appointment_time))}&treatment=${encodeURIComponent(form.treatment)}`);
+      router.push(`/book/confirmation?ref=${ref}&name=${encodeURIComponent(form.patient_name)}&date=${form.appointment_date}&time=${encodeURIComponent(formatTime(form.appointment_time))}&treatment=${encodeURIComponent(form.treatment)}&wa=${encodeURIComponent(waUrl)}`);
     } catch (err) {
       if (err instanceof Error) {
         setError(err.message);

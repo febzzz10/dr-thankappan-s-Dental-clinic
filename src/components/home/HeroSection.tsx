@@ -52,7 +52,7 @@ export function HeroSection() {
   }, []);
 
   const waUrl = generateWhatsAppUrl(
-    whatsappNumber || '0',
+    whatsappNumber || '919447121519',
     'Hi! I\'d like to book a dental appointment.'
   );
 
