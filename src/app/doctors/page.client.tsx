@@ -103,7 +103,7 @@ function DoctorsContent() {
                 {!loading && doctor.slug ? (
                   <Link href={`/doctors/${doctor.slug}`}>
                     <Card className="h-full overflow-hidden text-center transition-all hover:shadow-lg">
-                      <div className="bg-gradient-to-b from-teal-50 to-white p-6 pb-4">
+                      <div className="bg-gradient-to-b from-teal-50 to-white pb-4">
                         <motion.div
                           initial={{ scale: 0 }}
                           whileInView={{ scale: 1 }}
@@ -126,7 +126,7 @@ function DoctorsContent() {
                           {doctor.qualification}
                         </p>
                       </div>
-                      <div className="p-6 pt-4">
+                      <div className="pt-4">
                         <p className="mb-1 text-fluid-sm text-slate-600">{doctor.specialization}</p>
                         <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
                       </div>
@@ -134,7 +134,7 @@ function DoctorsContent() {
                   </Link>
                 ) : (
                   <Card className="h-full overflow-hidden text-center transition-all hover:shadow-lg">
-                    <div className="bg-gradient-to-b from-teal-50 to-white p-6 pb-4">
+                    <div className="bg-gradient-to-b from-teal-50 to-white pb-4">
                       <motion.div
                         initial={{ scale: 0 }}
                         whileInView={{ scale: 1 }}
@@ -157,7 +157,7 @@ function DoctorsContent() {
                         {doctor.qualification}
                       </p>
                     </div>
-                    <div className="p-6 pt-4">
+                    <div className="pt-4">
                       <p className="mb-1 text-fluid-sm text-slate-600">{doctor.specialization}</p>
                       <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
                     </div>

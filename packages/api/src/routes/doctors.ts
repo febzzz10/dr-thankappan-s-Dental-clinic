@@ -6,7 +6,7 @@ const doctors = new Hono<{ Bindings: Env }>();
 
 doctors.get('/', async (c) => {
   const rows = await all<any>(c.env.DB,
-    'SELECT * FROM doctors WHERE is_active = 1 AND deleted_at IS NULL ORDER BY sort_order'
+    'SELECT * FROM doctors WHERE is_active = 1 AND deleted_at IS NULL ORDER BY sort_order, id'
   );
   return c.json({ success: true, data: rows });
 });

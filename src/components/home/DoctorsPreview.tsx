@@ -79,7 +79,7 @@ export function DoctorsPreview() {
                 whileTap={{ scale: 0.98 }}
               >
                 <Card className="overflow-hidden text-center">
-                  <div className="bg-gradient-to-b from-teal-50 to-white p-6">
+                  <div className="bg-gradient-to-b from-teal-50 to-white pb-4">
                     <motion.div
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
@@ -102,7 +102,7 @@ export function DoctorsPreview() {
                       {doctor.qualification}
                     </p>
                   </div>
-                  <div className="p-6 pt-4">
+                  <div className="pt-4">
                     <p className="mb-1 text-sm text-slate-600">{doctor.specialization}</p>
                     <p className="text-sm text-slate-400">{doctor.experience_yrs} years experience</p>
                   </div>
